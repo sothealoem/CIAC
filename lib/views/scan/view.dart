@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:swis_school/core/core.dart';
+import 'package:swis_school/views/views.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+
+class ScanView extends GetView<ScanController> {
+  const ScanView({super.key});
+
+  final double cutOutSize = 300;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            MobileScanner(
+              controller: controller.mobileScannerCtl,
+              onDetect: (capture) {},
+              scanWindow: Rect.fromCenter(
+                center: Offset(
+                  Get.width / 2,
+                  Get.height / 2,
+                ),
+                width: cutOutSize,
+                height: cutOutSize,
+              ),
+            ),
+
+            // Overlay
+            Container(
+              decoration: ShapeDecoration(
+                shape: OverlayShape(
+                  borderRadius: 10,
+                  borderColor: AppColor.white,
+                  borderLength: 40,
+                  borderWidth: 10,
+                  cutOutBottomOffset: 0,
+                  cutOutWidth: null,
+                  cutOutHeight: null,
+                  cutOutSize: cutOutSize,
+                  overlayColor: const Color.fromRGBO(0, 0, 0, 80),
+                ),
+              ),
+            ),
+
+            TitleWidget(cutOutSize: cutOutSize),
+
+            MessageWidget(cutOutSize: cutOutSize),
+          ],
+        ),
+      ),
+    );
+  }
+}

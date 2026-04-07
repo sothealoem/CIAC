@@ -1,0 +1,135 @@
+import 'dart:convert';
+
+import 'package:get/get.dart';
+import 'package:swis_school/flavor/flavor.dart';
+import 'package:logging/logging.dart';
+import 'package:dio/dio.dart' as d;
+
+class ApiService extends GetxService {
+  ApiService init() => this;
+
+  String get baseUrl => AppConfig.shared.baseUrl;
+
+  Logger get logger => Logger.root;
+
+  Future<d.Dio> _dioClient({bool? isShowLoading}) async {
+    final client = d.Dio(
+      d.BaseOptions(
+        followRedirects: false,
+        contentType: 'application/json',
+        responseType: d.ResponseType.json,
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          'Charset': 'utf-8',
+        },
+        baseUrl: baseUrl,
+        sendTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 30),
+      ),
+    );
+
+    // client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
+    //
+    // client.interceptors.add(AuthenticationInterceptor(accessToken: AppConfig.shared.token));
+    //
+    // // DO NOT change order of these interceptors
+    // client.interceptors.add(
+    //   LoggingInterceptor(
+    //     requestHeader: true,
+    //     logPrint: (step, message) {
+    //       switch (step) {
+    //         case InterceptStep.request:
+    //           logger.info(message);
+    //           break;
+    //         case InterceptStep.response:
+    //           logger.info(message);
+    //           break;
+    //         case InterceptStep.error:
+    //           logger.severe(message);
+    //           break;
+    //       }
+    //     },
+    //   ),
+    // );
+    //
+    // client.interceptors.add(ConnectivityInterceptor());
+    print(client);
+    return client;
+  }
+
+  Future<d.Response> get(
+    String? path, {
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    bool? isShowLoading,
+  }) async {
+    if (path == null) {
+      throw 'Path is null';
+    }
+    final client = await _dioClient(isShowLoading: isShowLoading);
+
+    if (headers != null) {
+      for (MapEntry entry in headers.entries) {
+        client.options.headers[entry.key] = entry.value;
+      }
+    }
+
+    return client.get(path, queryParameters: queryParameters);
+  }
+
+  Future<d.Response> post(
+    String path,
+    dynamic formData, {
+    int? retries,
+    String? baseUrl,
+    bool encode = true,
+    Map<String, dynamic>? cusHeaders,
+    bool? isShowLoading,
+  }) async {
+    final client = await _dioClient(isShowLoading: isShowLoading);
+
+    if (baseUrl != null) {
+      client.options.baseUrl = baseUrl;
+    }
+
+    if (cusHeaders != null) {
+      client.options.headers.addEntries(cusHeaders.entries);
+    }
+
+    return client.post(
+      path,
+      data:
+          formData is d.FormData
+              ? formData
+              : encode
+              ? jsonEncode(formData)
+              : formData,
+    );
+  }
+
+  Future<d.Response> put(String path, {dynamic formData}) async {
+    final client = await _dioClient();
+
+    return client.put(
+      path,
+      data: formData is d.FormData ? formData : jsonEncode(formData),
+    );
+  }
+
+  Future<d.Response> delete(String path, {dynamic data}) async {
+    final client = await _dioClient();
+
+    return client.delete(path, data: data);
+  }
+
+  Future<d.Response> patch(String path, {dynamic formData}) async {
+    final client = await _dioClient();
+
+    return client.patch(
+      path,
+      data: formData is d.FormData ? formData : jsonEncode(formData),
+    );
+  }
+}
