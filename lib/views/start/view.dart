@@ -16,6 +16,7 @@ class StartView extends GetView<StartController> {
         controller.handleClickBack();
       },
       child: Scaffold(
+        extendBody: true,
         appBar: CustomAppBar(
           // title: controller.getTitle(),
           title: '',
@@ -54,31 +55,39 @@ class StartView extends GetView<StartController> {
                 : null,
 
         bottomNavigationBar: Obx(
-          () => ConvexAppBar(
-            backgroundColor: AppColor.white,
-            color: AppColor.grey,
-            activeColor: AppColor.primary,
-            height: 60,
-            style: TabStyle.reactCircle,
-            initialActiveIndex: controller.selectedIndex.value,
-            onTap: (index) {
-              controller.selectedIndex.value = index;
-            },
-            shadowColor: const Color.fromARGB(255, 179, 211, 207),
-            items: [
-              TabItem(icon: Icons.dashboard, title: LocaleKeys.dashboard.tr),
-              TabItem(icon: Icons.notifications, title: LocaleKeys.amount.tr),
-              TabItem(
-                icon: Icons.qr_code_scanner,
-                title:
-                    UserRepository.shared.isDriver
-                        ? LocaleKeys.scanner.tr
-                        : LocaleKeys.tracking.tr,
-              ),
-              TabItem(icon: Icons.payment, title: LocaleKeys.payments.tr),
+          () => Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15),
+              ],
+            ),
+            child: ConvexAppBar(
+              backgroundColor: AppColor.white,
+              color: AppColor.grey,
+              activeColor: AppColor.primary,
+              height: 60,
+              style: TabStyle.reactCircle,
+              initialActiveIndex: controller.selectedIndex.value,
+              onTap: (index) {
+                controller.selectedIndex.value = index;
+              },
+              shadowColor: const Color.fromARGB(255, 179, 211, 207),
+              items: [
+                TabItem(icon: Icons.dashboard, title: LocaleKeys.dashboard.tr),
+                TabItem(icon: Icons.notifications, title: LocaleKeys.amount.tr),
+                TabItem(
+                  icon: Icons.qr_code_scanner_sharp,
+                  title:
+                      UserRepository.shared.isDriver
+                          ? LocaleKeys.scanner.tr
+                          : LocaleKeys.tracking.tr,
+                ),
+                TabItem(icon: Icons.payment, title: LocaleKeys.payments.tr),
 
-              TabItem(icon: Icons.person, title: LocaleKeys.profile.tr),
-            ],
+                TabItem(icon: Icons.person, title: LocaleKeys.profile.tr),
+              ],
+            ),
           ),
         ),
 

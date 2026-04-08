@@ -22,8 +22,8 @@ class AttendanceView extends GetView<AttendanceController> {
           SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'លទ្ធផលការសិក្សា',
-              subTitle: 'លោកអ្នកអាចពិនិត្យ',
+              title: 'ពិនិត្យវត្តមានកូនៗ',
+              subTitle: 'សូមពិនិត្យវត្តមានកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
             ),
           ),
           Expanded(

@@ -96,6 +96,11 @@ class AppTextStyle {
     fontSize: 18,
     fontWeight: AppStyle._semiBold,
   );
+  static const mediumPrimaryGreenBold = TextStyle(
+    color: AppColor.primary,
+    fontSize: 18,
+    fontWeight: AppStyle._bold,
+  );
   static const mediumPrimaryBold = TextStyle(
     color: AppColor.primaryText,
     fontSize: 18,
@@ -235,10 +240,19 @@ class AppTextStyle {
     fontSize: 14,
     fontWeight: AppStyle._regular,
   );
-
+  static const smallPrimary = TextStyle(
+    fontSize: 13,
+    color: Color(0xFF666666),
+    fontWeight: FontWeight.w400,
+  );
   // fontSize: 12
   static const smallPrimaryRegular = TextStyle(
     color: AppColor.primaryText,
+    fontSize: 12,
+    fontWeight: AppStyle._regular,
+  );
+  static const smallPrimaryGreenRegular = TextStyle(
+    color: AppColor.primary,
     fontSize: 12,
     fontWeight: AppStyle._regular,
   );
@@ -286,6 +300,11 @@ class AppTextStyle {
     color: AppColor.primaryText,
     fontSize: 12,
     fontWeight: AppStyle._semiBold,
+  );
+  static const smallPrimaryGreenBold = TextStyle(
+    color: AppColor.primary,
+    fontSize: 12,
+    fontWeight: AppStyle._bold,
   );
   static const smallPrimaryBold = TextStyle(
     color: AppColor.primaryText,

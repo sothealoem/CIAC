@@ -18,7 +18,7 @@ class CustomizeAppBar extends StatelessWidget {
     return SizedBox(
       width: size.width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,10 +31,10 @@ class CustomizeAppBar extends StatelessWidget {
                   },
                   icon: Icon(Icons.arrow_back_ios),
                 ),
-                Text(title, style: AppTextStyle.mediumPrimaryBold),
+                Text(title, style: AppTextStyle.mediumPrimaryGreenBold),
               ],
             ),
-            Text(subTitle, style: AppTextStyle.smallPrimaryRegular),
+            Text(subTitle, style: AppTextStyle.smallPrimaryGreenRegular),
           ],
         ),
       ),

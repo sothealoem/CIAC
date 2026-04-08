@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
 
@@ -20,18 +21,13 @@ class RequestLeaveView extends GetView<RequestLeaveController> {
       body: SafeArea(
         child: Column(
           children: [
-            CustomizeAppBar(title: 'សុំច្បាប់', subTitle: 'លោកអ្នកអាចបំពេញ'),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  //   image: AssetImage("assets/images/sc-background.jpg"),
-                  //   fit: BoxFit.fill,
-                  // ),
-                ),
-                child: StudentCardWidget(),
-              ),
+            CustomizeAppBar(
+              title: 'ស្នើសុំច្បាប់',
+              subTitle: 'លោកអ្នកអាចបំពេញ',
             ),
+            SizedBox(height: 10),
+            CustomIndicator(progress: 20),
+            Expanded(child: Container(child: StudentCardWidget())),
           ],
         ),
       ),

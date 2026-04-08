@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
+import 'package:swis_school/views/start/widgets/custom_appbar.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
+import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
 
 class PaymentCollectionView extends GetView<PaymentCollectionController> {
@@ -29,40 +32,19 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: Icon(Icons.arrow_back_ios),
-                        ),
-                        Text(
-                          LocaleKeys.payment.tr,
-                          style: AppTextStyle.mediumPrimaryBold,
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'លោកអ្នកអាចត្រួតពិនិត្យតាមខាងក្រោម',
-                      style: AppTextStyle.smallPrimaryRegular,
+                    CustomizeAppBar(
+                      title: 'ការបង់ថ្លៃសិក្សា',
+                      subTitle:
+                          'សូមត្រួតពិនិត្យការបង់ថ្លៃសិក្សាកូនៗ​ របស់លោកអ្នកតាមខាងក្រោមនេះ',
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              // decoration: BoxDecoration(
-              //   image: DecorationImage(
-              //     image: AssetImage("assets/images/sc-background.jpg"),
-              //     fit: BoxFit.fill,
-              //   ),
-              // ),
-              child: PaymentCardWidget(),
-            ),
-          ),
+          UIConstants.spacing.height,
+          CustomIndicator(progress: 10),
+          Expanded(child: Container(child: PaymentCardWidget())),
         ],
       ),
     );

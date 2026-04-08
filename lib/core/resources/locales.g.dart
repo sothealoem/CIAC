@@ -227,6 +227,7 @@ class LocaleKeys {
   static const paymentDes = 'paymentDes';
   static const completeDate = 'completeDate';
   static const login = 'login';
+  static const send = 'send';
   static const next = 'next';
   static const change = 'change';
   static const cancel = 'cancel';
@@ -254,6 +255,7 @@ class Locales {
     'yourRecievingDataIsTimeout': 'Your recieving data is timeout',
     'somethingWentWrong': 'Something went wrong',
     'notFound': 'Not found',
+    'request': 'Request',
     'yourRequestedUrlWasNotFound': 'Your requested url was not found',
     'areYouSureYourWantToLogout': 'Are you sure you want to logout?',
     'areYouSureYourWantToDelete':
@@ -477,6 +479,7 @@ class Locales {
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់អ៊ីនធឺណិតបានទេ',
     'cancelled': 'បានលុបចោល',
+    'send': 'ចុចបញ្ចូន',
     'yourRequestHasBeenCancelled': 'សំណើរបស់អ្នកត្រូវបានលុបចោល',
     'connectionTimeout': 'អស់ពេលនៃការតភ្ជាប់',
     'yourConnectionIsTimeout': 'ការតភ្ជាប់របស់អ្នកអស់ពេលហើយ',

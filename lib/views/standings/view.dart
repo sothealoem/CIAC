@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
+import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
-
-import '../start/widgets/customize_app_bar.dart';
 
 class StandingsView extends GetView<StandingsController> {
   const StandingsView({super.key});
@@ -22,21 +24,16 @@ class StandingsView extends GetView<StandingsController> {
           SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'លទ្ធផលការសិក្សា',
-              subTitle: 'លោកអ្នកអាចពិនិត្យ',
+              title: 'ពិនិត្យលទ្ធផលពិន្ទុ',
+              subTitle: 'លោកអ្នកអាចពិនិត្យលទ្ធផលកូនៗ​ បាននៅខាងក្រោមនេះ',
             ),
           ),
+          UIConstants.spacing.height,
+          CustomIndicator(progress: 32),
+          UIConstants.spacing.height,
           Expanded(
             child: SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  //   image: AssetImage("assets/images/sc-background.jpg"),
-                  //   fit: BoxFit.cover,
-                  // ),
-                ),
-                child: StandingsCardWidget(),
-              ),
+              child: Container(child: StandingsCardWidget()),
             ),
           ),
         ],

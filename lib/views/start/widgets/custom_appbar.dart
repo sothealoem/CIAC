@@ -27,7 +27,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Image.asset(imagePath, fit: BoxFit.cover),
 
-            // Overlay
             Container(color: Colors.black.withOpacity(0.3)),
           ],
         ),

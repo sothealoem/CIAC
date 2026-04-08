@@ -20,9 +20,9 @@ PreferredSizeWidget appBarWidget() {
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Image.asset(
-            'assets/images/logo_title_05.png', // Replace with your logo asset path
-            width: 230, // Adjust width as needed
-            height: 190, // Adjust height as needed
+            'assets/images/logo_title_05.png',
+            width: 230,
+            height: 190,
           ),
         ),
       ],

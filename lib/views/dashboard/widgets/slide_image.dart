@@ -33,8 +33,9 @@ class _PremiumSliderState extends State<PremiumSlider> {
                 children: <Widget>[
                   CachedNetworkImage(
                     imageUrl: item,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                     height: 350,
+
                     width: MediaQuery.of(context).size.width,
                     placeholder: (context, url) => const ShimmerPreloader(),
                     errorWidget:
@@ -63,23 +64,25 @@ class _PremiumSliderState extends State<PremiumSlider> {
         /// CAROUSEL SLIDER IMAGES
         SizedBox(
           // height: 180,
-          child: CarouselSlider(
-            items: imageSliders,
-            carouselController: _sliderRef,
-            options: CarouselOptions(
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 10),
-              initialPage: 0,
-              autoPlayCurve: Curves.fastOutSlowIn,
-              enlargeCenterPage: true,
-              aspectRatio: 2.0,
-              pauseAutoPlayOnTouch: true,
-              // height: 180,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _current = index;
-                });
-              },
+          child: ClipRRect(
+            child: CarouselSlider(
+              items: imageSliders,
+              carouselController: _sliderRef,
+              options: CarouselOptions(
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 10),
+                initialPage: 0,
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                aspectRatio: 2.0,
+                pauseAutoPlayOnTouch: true,
+                // height: 180,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+              ),
             ),
           ),
         ),
@@ -94,10 +97,10 @@ class _PremiumSliderState extends State<PremiumSlider> {
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOut,
                     width: _current == curSlide ? 30 : 12,
-                    height: 12.0,
+                    height: 11.0,
                     margin: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 4.0,
+                      vertical: 2.0,
+                      horizontal: 2.0,
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),

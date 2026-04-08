@@ -9,15 +9,15 @@ class PaymentCardWidget extends StatelessWidget {
   PaymentCardWidget({super.key});
 
   final List<List<String>> data = [
-    ['១', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', 'មានការទទួល'],
-    ['២', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', 'មានការទទួល'],
-    ['៣', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', 'បាត់បង់'],
-    ['៤', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', 'បាត់បង់'],
-    ['៥', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', 'បាត់បង់'],
-    ['៦', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', 'បាត់បង់'],
-    ['៧', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', 'បាត់បង់'],
-    ['៨', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', 'បាត់បង់'],
-    ['៩', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', 'បាត់បង់'],
+    ['១', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', '09/09/2012', 'មានការទទួល', ''],
+    ['២', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', '09/09/2012', 'មានការទទួល'],
+    ['៣', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', '09/09/2012', 'បាត់បង់'],
+    ['៤', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', '09/09/2012', 'បាត់បង់'],
+    ['៥', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', '09/09/2012', 'បាត់បង់'],
+    ['៦', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', '09/09/2012', 'បាត់បង់'],
+    ['៧', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គម', '09/09/2012', 'បាត់បង់'],
+    ['៨', 'ជាផ្នែកនៃទំនាក់ទំនងសង្គមជាក់ស្តែង', '09/09/2012', 'បាត់បង់'],
+    ['៩', 'ជាផ្នែកនៃទំនាក់ទំនងបច្ចុប្បន្ន', '09/09/2012', 'បាត់បង់'],
   ];
 
   @override
@@ -160,7 +160,7 @@ class PaymentCardWidget extends StatelessWidget {
   Widget _buildHeaderRow() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-      color: Colors.grey.withOpacity(0.2),
+      color: AppColor.white,
       child: Row(
         children: const [
           Expanded(
@@ -168,7 +168,7 @@ class PaymentCardWidget extends StatelessWidget {
             child: Text('ល.រ', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Text(
               'ប្រភេទសកម្មភាព',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -177,7 +177,22 @@ class PaymentCardWidget extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
+              'កាលបរិច្ជេក',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
               'ស្ថានភាព',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+
+          Expanded(
+            flex: 1,
+            child: Text(
+              'បង្កាន់ដៃ',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),

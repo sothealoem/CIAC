@@ -19,19 +19,21 @@ class StudentCardWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 8, left: 10),
+                padding: const EdgeInsets.only(left: 10),
                 child: Text(
                   "១.ជ្រើសរើសថ្នាក់រៀនកូនៗដែកលោកអ្នកអ្នកចង់ស្នើសុំច្បាប់",
-                  style: AppTextStyle.smallPrimaryBold,
+                  style: AppTextStyle.smallPrimaryGreenBold,
                 ),
               ),
             ],
           ),
           Card.outlined(
+            color: AppColor.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
+              side: BorderSide(color: AppColor.white, width: 1.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
+
             child: Padding(
               padding: const EdgeInsets.all(10.0), // Inner padding for content
               child: Row(
@@ -131,16 +133,17 @@ class StudentCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8, left: 10),
                 child: Text(
                   "២.បំពេញព័ត៌មានអំពីសំណើរសុំច្បាប់របស់លោកអ្នក",
-                  style: AppTextStyle.smallPrimaryBold,
+                  style: AppTextStyle.smallPrimaryGreenBold,
                 ),
               ),
             ],
           ),
           Card.outlined(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
+            color: AppColor.white,
+            // shape: RoundedRectangleBorder(
+            //   side: BorderSide(color: AppColor.white),
+            //   borderRadius: BorderRadius.circular(10.0),
+            // ),
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
@@ -282,6 +285,18 @@ class StudentCardWidget extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          UIConstants.spacing.height,
+
+          Column(
+            children: [
+              // Login button
+              PrimaryButton(text: LocaleKeys.send.tr, onPressed: () {}),
+
+              SizedBox(height: 4.0), // Vertical spacing
+              // Register text widget
+              // const NoAccountWidget(),
+            ],
           ),
         ],
       ),

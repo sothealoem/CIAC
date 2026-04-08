@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swis_school/core/core.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 
 class AttendanceCardWidget extends StatelessWidget {
   const AttendanceCardWidget({super.key});
@@ -31,8 +32,10 @@ class AttendanceCardWidget extends StatelessWidget {
     return Container(
       padding: 5.padAll,
       margin: 5.padAll,
+
       child: Column(
         children: [
+          CustomIndicator(progress: 20),
           Card(
             child: Container(
               margin: const EdgeInsets.only(top: 5.0),
@@ -41,12 +44,20 @@ class AttendanceCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                    offset: const Offset(0, -3),
                   ),
                 ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey.withOpacity(0.5),
+                //     spreadRadius: 5,
+                //     blurRadius: 7,
+                //     offset: const Offset(0, 2),
+                //   ),
+                // ],
               ),
               child: Padding(
                 padding: const EdgeInsets.all(6.0),
