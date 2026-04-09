@@ -74,18 +74,35 @@ class StartView extends GetView<StartController> {
               },
               shadowColor: const Color.fromARGB(255, 179, 211, 207),
               items: [
-                TabItem(icon: Icons.dashboard, title: LocaleKeys.dashboard.tr),
-                TabItem(icon: Icons.notifications, title: LocaleKeys.amount.tr),
+                TabItem(
+                  icon: Icons.dashboard_outlined,
+                  title: LocaleKeys.dashboard.tr,
+                  fontFamily: 'Battambang',
+                ),
+                TabItem(
+                  icon: Icons.notifications_outlined,
+                  title: LocaleKeys.notification.tr,
+                  fontFamily: 'Battambang',
+                ),
                 TabItem(
                   icon: Icons.qr_code_scanner_sharp,
                   title:
                       UserRepository.shared.isDriver
                           ? LocaleKeys.scanner.tr
                           : LocaleKeys.tracking.tr,
+                  fontFamily: 'Battambang',
                 ),
-                TabItem(icon: Icons.payment, title: LocaleKeys.payments.tr),
+                TabItem(
+                  icon: Icons.mobile_friendly_outlined,
+                  title: LocaleKeys.payments.tr,
+                  fontFamily: 'Battambang',
+                ),
 
-                TabItem(icon: Icons.person, title: LocaleKeys.profile.tr),
+                TabItem(
+                  icon: Icons.contact_phone,
+                  title: LocaleKeys.contact.tr,
+                  fontFamily: 'Battambang',
+                ),
               ],
             ),
           ),

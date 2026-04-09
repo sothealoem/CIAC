@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
 
@@ -20,14 +21,17 @@ class EventGalleryView extends GetView<EventGalleryController> {
       body: Column(
         children: [
           SafeArea(
+            bottom: false,
             child: CustomizeAppBar(
-              title: 'ពិនិត្យសកម្មភាពក្នុងថ្នាក់',
-              subTitle: 'មើលទៅបងមើលទៅ',
+              title: 'សកម្មភាពក្នុងថ្នាក់',
+              subTitle: 'សូមពិនិត្យសកម្មភាពកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
             ),
           ),
+          UIConstants.spacing.height,
+          CustomIndicator(progress: 1 / 4),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               child: ListView(
                 children: [
                   Container(
@@ -60,20 +64,17 @@ class EventGalleryView extends GetView<EventGalleryController> {
                     padding: 5.padAll,
                     margin: 5.padAll,
                     child: GridView.builder(
+                      shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Number of columns in the grid
-                        crossAxisSpacing: 10, // Spacing between columns
-                        mainAxisSpacing: 10, // Spacing between rows
-                        childAspectRatio:
-                            1.0, // Ratio of width to height for grid cells
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 1.0,
                       ),
                       itemBuilder: (context, index) {
-                        return YourGridItemWidget(
-                          index: index,
-                        ); // Replace with your grid item widget
+                        return YourGridItemWidget(index: index);
                       },
-                      itemCount:
-                          10, // Replace with the actual number of items in your grid
+                      itemCount: 10,
                     ),
                   ),
                 ],

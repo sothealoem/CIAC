@@ -10,7 +10,8 @@ class AppColor {
 
   static const backgroundColor = Color(0xFFF5F5F5);
   static const divider = Color(0xFFE4E5E6);
-
+  static const primaryColor = Color(0xFF00796B);
+  static const greyTextColor = Colors.grey;
   static const white = Color(0xFFFFFFFF);
   static const green = Color(0xFF4CAF50);
   static const lightPink = Color(0xFFfffbff);
@@ -253,7 +254,7 @@ class AppTextStyle {
   );
   static const smallPrimaryGreenRegular = TextStyle(
     color: AppColor.primary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: AppStyle._regular,
   );
   static const smallWhiteSemibold = TextStyle(
@@ -310,6 +311,23 @@ class AppTextStyle {
     color: AppColor.primaryText,
     fontSize: 12,
     fontWeight: AppStyle._bold,
+  );
+  static const mediumPrimaryBoldText = TextStyle(
+    color: AppColor.primaryColor,
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+    fontFamily: 'Battambang',
+  );
+
+  static const TextStyle smallBold = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 14,
+    fontFamily: 'Battambang',
+  );
+
+  static const TextStyle smallRegular = TextStyle(
+    fontSize: 12,
+    fontFamily: 'Battambang',
   );
 }
 

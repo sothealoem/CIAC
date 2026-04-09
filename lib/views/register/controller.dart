@@ -6,6 +6,7 @@ class RegisterController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController nameCon = TextEditingController();
+  final TextEditingController email = TextEditingController();
   final TextEditingController phoneNumberCon = TextEditingController();
   final TextEditingController locationCon = TextEditingController();
   final TextEditingController bankCon = TextEditingController();

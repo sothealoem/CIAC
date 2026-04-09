@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
 import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
@@ -25,8 +27,8 @@ class RequestLeaveView extends GetView<RequestLeaveController> {
               title: 'ស្នើសុំច្បាប់',
               subTitle: 'លោកអ្នកអាចបំពេញ',
             ),
-            SizedBox(height: 10),
-            CustomIndicator(progress: 20),
+            UIConstants.spacingSmall.height,
+            CustomIndicator(progress: 1 / 4),
             Expanded(child: Container(child: StudentCardWidget())),
           ],
         ),

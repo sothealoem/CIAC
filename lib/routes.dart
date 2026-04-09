@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:swis_school/views/dashboard/biding.dart';
+import 'package:swis_school/views/student_document/view.dart';
 import 'package:swis_school/views/views.dart';
 
 class Routes {
@@ -25,6 +26,7 @@ class Routes {
   static const String schedule = '/schedule';
   static const String attendance = '/attendance';
   static const String studentInforation = '/studentInforation';
+  static const String studentDocument = '/studentDocument';
   static const String onlineCourses = '/onlineCourses';
   static const String eventGallery = '/eventGallery';
   static const String dashbord = '/dashbord';
@@ -98,8 +100,8 @@ class Routes {
       binding: AttendanceBinding(),
     ),
     GetPage(
-      name: studentInforation,
-      page: () => const StudentInformationView(),
+      name: studentDocument,
+      page: () => const StudentDocumentView(),
       binding: StudentInformationBinding(),
     ),
     GetPage(

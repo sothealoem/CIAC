@@ -21,8 +21,8 @@ class StudentCardWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Text(
-                  "១.ជ្រើសរើសថ្នាក់រៀនកូនៗដែកលោកអ្នកអ្នកចង់ស្នើសុំច្បាប់",
-                  style: AppTextStyle.smallPrimaryGreenBold,
+                  "១.ជ្រើសរើសថ្នាក់រៀនកូនៗដែlលោកអ្នកចង់ស្នើសុំច្បាប់",
+                  style: AppTextStyle.mediumPrimaryBoldText,
                 ),
               ),
             ],
@@ -133,7 +133,7 @@ class StudentCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8, left: 10),
                 child: Text(
                   "២.បំពេញព័ត៌មានអំពីសំណើរសុំច្បាប់របស់លោកអ្នក",
-                  style: AppTextStyle.smallPrimaryGreenBold,
+                  style: AppTextStyle.mediumPrimaryBoldText,
                 ),
               ),
             ],

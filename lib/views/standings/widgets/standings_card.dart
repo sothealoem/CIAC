@@ -1,58 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-
-enum SingingCharacter1 { lafayette, jefferson, las }
+import 'package:swis_school/core/constants/ui_constants.dart'; // Ensure correct path
 
 class StandingsCardWidget extends StatelessWidget {
-  final SingingCharacter1 _character = SingingCharacter1.lafayette;
-
   const StandingsCardWidget({super.key});
 
-  Widget _buildInfoRow(
-    String label1,
-    String value1,
-    String label2,
-    String value2,
-  ) {
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Flexible(
-            flex: 2,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          // 1. Student Info Header Box
+          _buildStudentHeader('សុខ សាន្ត – ថ្នាក់ ៧ "ក"'),
+          const SizedBox(height: 16),
+
+          // 2. Dropdown Filters Row
+          Row(
+            children: [
+              _buildSmallDropdown('មករា'),
+              const SizedBox(width: 8),
+              _buildSmallDropdown('ឆមាស ២'),
+              const SizedBox(width: 8),
+              _buildSmallDropdown('២០២៦'),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 3. Score Table
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFF00675B), width: 1.5),
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("$label1:", style: AppTextStyle.normalGreyRegular),
+                // Table Header
+                _buildTableHeader(),
+
+                // Table Rows
+                _buildScoreRow('អក្សរសាស្ត្រខ្មែរ', '៨០', 'ល្អ', Colors.green),
+                _buildScoreRow('គណិតវិទ្យា', '៧០', 'ល្អ', Colors.green),
+                _buildScoreRow('សិក្សាសង្គម', '៣០', 'គួរកែម្អ', Colors.red),
+                _buildScoreRow(
+                  'វិទ្យាសាស្ត្រ',
+                  '៥០',
+                  'ព្យាយាមបន្ថែម',
+                  Colors.orange,
+                ),
+                _buildScoreRow('ភាសាអង់គ្លេស', '៩០', 'ល្អណាស់', Colors.teal),
+
+                // Table Footer (Total)
+                _buildTableFooter('សរុប', '៣២០', '១២'),
               ],
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [Text(value1, style: AppTextStyle.normalPrimaryBold)],
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: SizedBox(
-              width: 300.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("$label2:", style: AppTextStyle.normalGreyRegular),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 1, // Adjust flex factor as needed
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(value2, style: AppTextStyle.normalPrimaryBold)],
             ),
           ),
         ],
@@ -60,961 +60,178 @@ class StandingsCardWidget extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: 3.padAll,
-      margin: 3.padAll,
-      child: Column(
-        children: [
-          Card.outlined(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0), // Inner padding for content
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset('assets/images/profiles.png'),
-                  10.width,
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'សម្រាប់ខែ មករា ឆ្នាំ២០២៤',
-                                  style: AppTextStyle.normalGreyRegular,
-                                ),
-                                Text(
-                                  'វៃ ករណា',
-                                  style: AppTextStyle.midSecondaryBold,
-                                ),
-                                Text(
-                                  'ថ្នាក់ចំណោះទូទៅភាសាអង់គ្លេស',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                              ],
-                            ),
-                          ],
-                        ),
-                        // Row(children: [
-                        //   Radio(
-                        //     value: SingingCharacter1.jefferson,
-                        //     groupValue: _character,
-                        //     onChanged: (SingingCharacter1? value) {
-                        //     },
-                        //   ),
-                        //   Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: <Widget>[
-                        //       Text(
-                        //         'ថ្នាក់ចំណោះទូទៅភាសាអង់គ្លេស',
-                        //         style: TextStyle(fontWeight: FontWeight.bold),
-                        //       ),
-                        //       Text(
-                        //         'កម្រិត Level2',
-                        //         style: TextStyle(fontSize: 9, color: Colors.grey),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ],),
-                        // Row(children: [
-                        //   Radio(
-                        //     value: SingingCharacter1.las,
-                        //     groupValue: _character,
-                        //     onChanged: (SingingCharacter1? value) {
-                        //     },
-                        //   ),
-                        //   Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: <Widget>[
-                        //       Text(
-                        //         'ថ្នាក់ចំណោះទូទៅភាសាចិន',
-                        //         style: TextStyle(fontWeight: FontWeight.bold),
-                        //       ),
-                        //       Text(
-                        //         'កម្រិត Level2',
-                        //         style: TextStyle(fontSize: 9, color: Colors.grey),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ],),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0), // Inner padding for content
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow("ចំណាត់ថ្នាក់", "2", "សរុបអវត្ដមាន", "0"),
-                  _buildInfoRow("សិស្សសរុប", "12", "ឥតច្បាប់", "1"),
-                  _buildInfoRow("មធ្យមភាគ", "8.74", "ចូលរៀនយឺត", "0"),
-                  _buildInfoRow("និទ្ទេស", "ល្អប្រសើរ", "មានច្បាប់", "0"),
-                ],
-              ),
-            ),
-          ),
-          // Content for Tab 3
-          Card(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white70.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 2,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
+  // --- Helper Widgets ---
 
-              child: DataTable(
-                dataRowHeight: 40, // Adjust row height as needed
-                columnSpacing: 10,
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'មុខវិជ្ជា',
-                      style: TextStyle(fontStyle: FontStyle.normal),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'ពិន្ទុ',
-                      style: TextStyle(fontStyle: FontStyle.normal),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'ពិន្ទុអតិបរមា',
-                      style: TextStyle(fontStyle: FontStyle.normal),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'និទ្ទេស',
-                      style: TextStyle(fontStyle: FontStyle.normal),
-                    ),
-                  ),
-                ],
-                rows: [
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('រៀនអាន'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '9.71',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អប្រសើរ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('រឿងនិទាន'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '8.5',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អប្រសើរ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('តែងសេចក្តី'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '9.07',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អប្រសើរ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('សរសេរតាមអាន'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '9.58',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អប្រសើរ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('មេសូត្រ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '8.98',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អប្រសើរ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('វេយ្យាករណ៏'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('9', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('អក្សរផ្ចង់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('នព្វន្ត'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '7.78',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('មាត្រាប្រព័ន្ធ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '5.8',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('ធរណីមាត្រ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '7.7',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('វិទ្យាសាស្រ្ត'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '9.4',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('ប្រវត្តិវិទ្យា'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '8.6',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('ភូមិវិទ្យា'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('8', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('ពលរដ្ឋ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '6.4',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('គំនូរ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '9.1',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('ចម្រៀង-របាំ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('5', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('អង់គ្លេស'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('8', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('កុំព្យូទ័រ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '6.8',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អ'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('កីឡា'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text(
-                            '8.6',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('អប់រំកាយ'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('7', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 100, //SET width
-                          child: Text('វិន័យ សីលធម៌'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.centerLeft,
-                          width: 50, //SET width
-                          child: Text('8', style: TextStyle(color: Colors.red)),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('10'),
-                        ),
-                      ),
-                      DataCell(
-                        Container(
-                          padding: EdgeInsets.zero, // Remove padding
-                          alignment: Alignment.center,
-                          width: 50, //SET width
-                          child: Text('ល្អណាស់'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+  Widget _buildStudentHeader(String label) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF00675B),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSmallDropdown(String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(value, style: const TextStyle(fontSize: 12)),
+            const Icon(Icons.arrow_drop_down, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      decoration: const BoxDecoration(
+        color: Color(0xFF00675B),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      ),
+      child: const Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              'មុខវិជ្ជា',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.comment, color: Colors.black, size: 25.0),
-              title: Text(
-                'មូលវិចារគ្រូបន្ទុកថ្នាក់',
-                style: AppTextStyle.normalPrimarySemiBold,
-                textAlign: TextAlign.left,
+          Expanded(
+            child: Text(
+              'ពិន្ទុ',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              trailing: Icon(
-                Icons.keyboard_arrow_right,
-                color: Colors.black,
-                size: 25.0,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              'ចំណាត់ថ្នាក់',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScoreRow(
+    String subject,
+    String score,
+    String grade,
+    Color gradeColor,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              subject,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              score,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              grade,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: gradeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
             ),
           ),
-          // Content for Tab 2
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.comment, color: Colors.black, size: 25.0),
-              title: Text(
-                'មតិយោបល់អ្នកអាណាព្យាបាល',
-                style: AppTextStyle.normalPrimarySemiBold,
-                textAlign: TextAlign.left,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableFooter(String label, String totalScore, String rank) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      decoration: const BoxDecoration(
+        color: Color(0xFF00675B),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              trailing: Icon(
-                Icons.keyboard_arrow_right,
-                color: Colors.black,
-                size: 25.0,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              totalScore,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              rank,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

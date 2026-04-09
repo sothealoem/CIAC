@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
 import 'package:swis_school/models/models.dart';
 
-class AttendanceController extends GetxController {
+class StudentDocumentController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final RxList<TrackingModel> trackings = <TrackingModel>[].obs;
   bool isDone = false;
-  var selectedMonth = 'មករា'.obs;
+
   @override
   void onClose() {
     searchCtl.dispose();
@@ -33,9 +33,5 @@ class AttendanceController extends GetxController {
     } catch (e) {
       ExceptionHandler.handleException(e);
     }
-  }
-
-  Future<void> filter() async {
-    print("Refreshing data for: ${selectedMonth.value}");
   }
 }

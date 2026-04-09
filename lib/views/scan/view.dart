@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:swis_school/views/views.dart' hide AppColor;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanView extends GetView<ScanController> {
@@ -20,10 +20,7 @@ class ScanView extends GetView<ScanController> {
               controller: controller.mobileScannerCtl,
               onDetect: (capture) {},
               scanWindow: Rect.fromCenter(
-                center: Offset(
-                  Get.width / 2,
-                  Get.height / 2,
-                ),
+                center: Offset(Get.width / 2, Get.height / 2),
                 width: cutOutSize,
                 height: cutOutSize,
               ),

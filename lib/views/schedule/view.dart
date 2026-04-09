@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';
 
@@ -19,19 +22,18 @@ class ScheduleView extends GetView<ScheduleController> {
       body: Column(
         children: [
           SafeArea(
+            bottom: false,
             child: CustomizeAppBar(
               title: 'កាលវិភាគសិក្សា',
-              subTitle: 'សូមពិនិត្យ',
+              subTitle:
+                  'លោកអ្នកអាចដឹងពីសកម្មភាពកូនៗ របស់លោកអ្នកពេលកំពុងសិក្សាបាន៖',
             ),
           ),
+          UIConstants.spacingSmall.height,
+          CustomIndicator(progress: 1 / 4),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
-                // image: DecorationImage(
-                //   image: AssetImage("assets/images/sc-background.jpg"),
-                //   fit: BoxFit.fill,
-                // ),
-              ),
+              decoration: BoxDecoration(),
               child: ScheduleCardWidget(),
             ),
           ),

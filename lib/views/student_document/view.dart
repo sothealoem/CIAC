@@ -4,10 +4,11 @@ import 'package:swis_school/core/constants/ui_constants.dart';
 import 'package:swis_school/core/extensions/int.dart';
 import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:swis_school/views/student_document/controller.dart';
+import 'package:swis_school/views/student_document/widget/student_document.dart';
 
-class StandingsView extends GetView<StandingsController> {
-  const StandingsView({super.key});
+class StudentDocumentView extends GetView<StudentDocumentController> {
+  const StudentDocumentView({super.key});
 
   void onSearch() async {
     if (!controller.formKey.currentState!.validate()) {
@@ -24,18 +25,13 @@ class StandingsView extends GetView<StandingsController> {
           SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'ពិនិត្យលទ្ធផលពិន្ទុ',
-              subTitle: 'លោកអ្នកអាចពិនិត្យលទ្ធផលកូនៗ​ បាននៅខាងក្រោមនេះ',
+              title: 'ព័ត៌មានប្រវត្ដិរូបសិស្ស',
+              subTitle: 'លោកអ្នកអាចតាមដានពី ស្ថានភាពកូនៗ បាននៅខាងក្រោម៖',
             ),
           ),
           UIConstants.spacingSmall.height,
           CustomIndicator(progress: 1 / 4),
-          UIConstants.spacingSmall.height,
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(child: StandingsCardWidget()),
-            ),
-          ),
+          StudentDocumentWidget(),
         ],
       ),
     );

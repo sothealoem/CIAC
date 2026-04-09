@@ -45,7 +45,6 @@ class RegisterView extends GetView<RegisterController> {
                   padding: UIConstants.spacing.padHorizontal,
                   child: Column(
                     children: [
-                      // Name
                       CustomTextField(
                         controller: controller.nameCon,
                         hintText: LocaleKeys.enterYourName.tr,
@@ -55,7 +54,6 @@ class RegisterView extends GetView<RegisterController> {
                       ),
 
                       UIConstants.spacing.height,
-                      // Phone number
                       CustomTextField(
                         controller: controller.phoneNumberCon,
                         hintText: LocaleKeys.phoneNumber.tr,
@@ -85,12 +83,12 @@ class RegisterView extends GetView<RegisterController> {
                       UIConstants.spacing.height,
                       // Phone number
                       CustomTextField(
-                        controller: controller.phoneNumberCon,
+                        controller: controller.email,
                         hintText: LocaleKeys.email.tr,
-                        validator: (text) => FormValidator.phoneNumber(text),
+                        validator: (text) => FormValidator.email(text),
                         inputFormatters: [FormValidator.maskInputPhoneNumber()],
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.phone,
+                        keyboardType: TextInputType.emailAddress,
                         prefixIcon: Icon(Icons.phone, color: AppColor.primary),
                       ),
 
@@ -188,13 +186,20 @@ class RegisterView extends GetView<RegisterController> {
                         //style: TextStyle(color: AppColor.primary),
                       ),
                       SizedBox(width: 10),
-                      Text(
-                        "Log In",
-                        style: TextStyle(
-                          color: AppColor.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/login');
+                          print("welcome Log In!");
+                        },
+
+                        child: Text(
+                          "Log In",
+                          style: TextStyle(
+                            color: AppColor.primary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],

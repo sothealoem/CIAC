@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/views/attendance/widgets/month_filter.dart';
+import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/views.dart';
 
 import '../start/widgets/customize_app_bar.dart';
@@ -24,17 +28,16 @@ class AttendanceView extends GetView<AttendanceController> {
             child: CustomizeAppBar(
               title: 'ពិនិត្យវត្តមានកូនៗ',
               subTitle: 'សូមពិនិត្យវត្តមានកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
+              trailing: MonthFilterWidget(controller: controller),
             ),
           ),
+          UIConstants.spacingSmall.height,
+
+          CustomIndicator(progress: 1 / 4),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  // image: AssetImage("assets/images/sc-background.jpg"),
-                  // fit: BoxFit.fill,
-                  // ),
-                ),
+                decoration: BoxDecoration(),
                 child: AttendanceCardWidget(),
               ),
             ),

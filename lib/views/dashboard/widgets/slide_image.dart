@@ -35,7 +35,6 @@ class _PremiumSliderState extends State<PremiumSlider> {
                     imageUrl: item,
                     fit: BoxFit.cover,
                     height: 350,
-
                     width: MediaQuery.of(context).size.width,
                     placeholder: (context, url) => const ShimmerPreloader(),
                     errorWidget:

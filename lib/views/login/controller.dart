@@ -74,17 +74,18 @@ class LoginController extends GetxController {
       final data = getPropertyFromJson(res.data, 'data');
 
       final LoginModel login = LoginModel.fromJson(data);
-
-      // final String permission = login.permission;
+      //uncomment this line
+      final String permission = login.permission;
       final String token = login.token;
 
-      // if (permission != Rule.customer.name && permission != Rule.parent.name) {
-      //   DialogManager.showDialog(
-      //     title: LocaleKeys.permission.tr,
-      //     subTitle: LocaleKeys.noPermission.tr,
-      //   );
-      //   return;
-      // }
+      //uncomment this line
+      if (permission != Rule.customer.name && permission != Rule.parent.name) {
+        DialogManager.showDialog(
+          title: LocaleKeys.permission.tr,
+          subTitle: LocaleKeys.noPermission.tr,
+        );
+        return;
+      }
 
       /// Pass token becuase when user login at the first time there is no token value when we init AppConfig in main
       AppConfig.shared.token = token;

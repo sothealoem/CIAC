@@ -61,6 +61,7 @@ class LocaleKeys {
   static const filterDate = 'filterDate';
   static const termAndCondition = 'termAndCondition';
   static const contactUs = 'contactUs';
+  static const contact = 'contact';
   static const noPackage = 'noPackage';
   static const totalAmount = 'totalAmount';
   static const deliveriesC = 'deliveriesC';
@@ -246,6 +247,7 @@ class LocaleKeys {
 
 class Locales {
   static const EN_US = {
+    'enterYourName': 'Enter your name',
     'unableToConnectToTheInternet': 'Unable to connect to the internet',
     'cancelled': 'Cancelled',
     'yourRequestHasBeenCancelled': 'Your request has been cancelled.',
@@ -298,6 +300,7 @@ class Locales {
     'filterDate': 'Filter date',
     'termAndCondition': 'Term and Conditions',
     'contactUs': 'Contact Us',
+    'contact': 'Contact',
     'noPackage': 'No Package',
     'totalAmount': 'Total amount',
     'deliveriesC': 'DELIVERIES',
@@ -529,6 +532,7 @@ class Locales {
     'toDate': 'រហូតដល់កាលបរិច្ឆេទ',
     'filterDate': 'កំណត់កាលបរិច្ឆេទ',
     'termAndCondition': 'លក្ខខណ្ឌ',
+    'contact': 'ទាក់ទង​',
     'contactUs': 'ទាក់ទង​មក​ពួក​យើង',
     'noPackage': 'គ្មានកញ្ចប់',
     'totalAmount': 'ទឹកប្រាក់​សរុប',
@@ -572,6 +576,7 @@ class Locales {
     'anyExtraType': 'ប្រភេទបន្ថែមណាមួយ',
     'serviceFee': 'ថ្លៃ​សេវា',
     'confirmation': 'ការបញ្ជាក់',
+    'enterYourName': 'បញ្ចូលឈ្មោះអ្នក',
     'areYouSureYouWantToDeleteThisBooking': 'តើអ្នកប្រាកដថាចង់លុបការកក់នេះទេ?',
     'thanksYou': 'អរគុណ',
     'yourBookingHasBeenAdded': 'ការកក់របស់អ្នកត្រូវបានបន្ថែម',
@@ -602,7 +607,6 @@ class Locales {
     'filter': 'ការកំណត់',
     'doNotHaveAnAccount': 'មិនមានគណនី? ',
     'register': 'បង្កើតគណនី',
-    'enterYourName': 'បញ្ចូលឈ្មោះអ្នក',
     'confirmPassword': 'បញ្ជាក់ពាក្យសម្ងាត់',
     'registerSuccessful': 'ការបង្កើតគណនីទទូលបានជោគជ័យ',
     'typeOfCoc': 'ប្រភេទ COD',

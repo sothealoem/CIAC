@@ -27,7 +27,7 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
             child: SizedBox(
               width: size.width,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,16 +35,17 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
                     CustomizeAppBar(
                       title: 'ការបង់ថ្លៃសិក្សា',
                       subTitle:
-                          'សូមត្រួតពិនិត្យការបង់ថ្លៃសិក្សាកូនៗ​ របស់លោកអ្នកតាមខាងក្រោមនេះ',
+                          'សូមពិនិត្យការបង់ថ្លៃសិក្សាកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          UIConstants.spacing.height,
-          CustomIndicator(progress: 10),
+          UIConstants.spacingSmall.height,
+          CustomIndicator(progress: 1 / 4),
           Expanded(child: Container(child: PaymentCardWidget())),
+          UIConstants.spacingHigh.height,
         ],
       ),
     );

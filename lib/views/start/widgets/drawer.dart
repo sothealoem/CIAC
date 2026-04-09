@@ -39,9 +39,8 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Drawer(
-      backgroundColor: AppColor.primary,
+    return Drawer(
+      backgroundColor: AppColor.primaryColor,
       shape: const RoundedRectangleBorder(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,10 +97,7 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
           ),
-          SafeArea(
-            top: false,
-            child: versionWidget(),
-          ),
+          SafeArea(top: false, child: versionWidget()),
           8.height,
         ],
       ),

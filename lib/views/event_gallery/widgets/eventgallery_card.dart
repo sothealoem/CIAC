@@ -36,8 +36,8 @@ class YourGridItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blueGrey, // Example background color
-        borderRadius: BorderRadius.circular(8), // Rounded corners
+        color: Colors.blueGrey,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Center(
         child: Text(
