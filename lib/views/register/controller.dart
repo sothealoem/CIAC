@@ -17,6 +17,7 @@ class RegisterController extends GetxController {
   final TextEditingController confirmCon = TextEditingController();
 
   final RxBool isPassVisible = true.obs;
+  final RxBool isPassVisibleConfirm = true.obs;
   final RxBool isLogVaiEmail = false.obs;
   @override
   void onClose() {

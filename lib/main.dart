@@ -53,9 +53,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppStyle.themeData(),
 
-      //initialRoute: Routes.root,
+      initialRoute: Routes.root,
       //dashbord screen
-      initialRoute: Routes.start,
+      //initialRoute: Routes.start,
       getPages: Routes.pages,
       builder: (context, child) {
         final MediaQueryData mediaQueryData = MediaQuery.of(context);

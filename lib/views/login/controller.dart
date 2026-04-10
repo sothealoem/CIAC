@@ -22,7 +22,7 @@ class LoginController extends GetxController {
   // final TextEditingController usernameCtl = TextEditingController(text: '093322910');
   // final TextEditingController passCtl = TextEditingController(text: '093322910');
 
-  // Customer
+  //Customer
   // final TextEditingController usernameCtl = TextEditingController(text: '078358272@gmail.com');
   // final TextEditingController passCtl = TextEditingController(text: '078358272');
 
@@ -77,9 +77,19 @@ class LoginController extends GetxController {
       //uncomment this line
       final String permission = login.permission;
       final String token = login.token;
-
-      //uncomment this line
+      List<String> allowedRoles = [
+        'admin',
+        'teacher',
+        'parent',
+      ]; //uncomment this line
       if (permission != Rule.customer.name && permission != Rule.parent.name) {
+        DialogManager.showDialog(
+          title: LocaleKeys.permission.tr,
+          subTitle: LocaleKeys.noPermission.tr,
+        );
+        return;
+      }
+      if (!allowedRoles.contains(permission.toLowerCase())) {
         DialogManager.showDialog(
           title: LocaleKeys.permission.tr,
           subTitle: LocaleKeys.noPermission.tr,

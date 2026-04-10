@@ -226,6 +226,7 @@ class AppTextStyle {
     fontSize: 14,
     fontWeight: AppStyle._regular,
   );
+
   static const normalSecondaryRegular = TextStyle(
     color: AppColor.secondaryText,
     fontSize: 14,
@@ -256,6 +257,13 @@ class AppTextStyle {
     color: AppColor.primary,
     fontSize: 11,
     fontWeight: AppStyle._regular,
+    fontFamily: 'Battambang',
+  );
+  static const smallPrimaryGreenBold = TextStyle(
+    color: AppColor.primary,
+    fontSize: 12,
+    fontWeight: AppStyle._bold,
+    fontFamily: 'Battambang',
   );
   static const smallWhiteSemibold = TextStyle(
     color: AppColor.white,
@@ -302,15 +310,34 @@ class AppTextStyle {
     fontSize: 12,
     fontWeight: AppStyle._semiBold,
   );
-  static const smallPrimaryGreenBold = TextStyle(
-    color: AppColor.primary,
-    fontSize: 12,
-    fontWeight: AppStyle._bold,
-  );
+
   static const smallPrimaryBold = TextStyle(
     color: AppColor.primaryText,
     fontSize: 12,
     fontWeight: AppStyle._bold,
+  );
+
+  //-------------CIAC-APP Below-----------------//
+  static const smallPrimarytext = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 10,
+    fontFamily: 'battambang',
+  );
+  static const mendiumPrimary = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 13,
+    fontFamily: 'battambang',
+  );
+  static const mendiumPrimaryBold = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    fontFamily: 'battambang',
+  );
+  static const mendiumPrimaryBoldwhite = TextStyle(
+    fontWeight: FontWeight.w600,
+    color: AppColor.white,
+    fontSize: 13,
+    fontFamily: 'battambang',
   );
   static const mediumPrimaryBoldText = TextStyle(
     color: AppColor.primaryColor,
@@ -330,6 +357,7 @@ class AppTextStyle {
     fontFamily: 'Battambang',
   );
 }
+//-------------CIAC-APP Above-----------------//
 
 class AppStyle {
   AppStyle._();

@@ -17,7 +17,7 @@ class RegisterView extends GetView<RegisterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.register.tr)),
+      //appBar: AppBar(title: Text(LocaleKeys.register.tr)),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
@@ -55,62 +55,63 @@ class RegisterView extends GetView<RegisterController> {
 
                       UIConstants.spacing.height,
                       CustomTextField(
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: AppColor.primary,
+                        ),
+                        controller: controller.email,
+                        hintText: LocaleKeys.email.tr,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (text) => FormValidator.email(text),
+                      ),
+                      // CustomTextField(
+                      //   prefixIcon: Icon(Icons.email),
+                      //   controller: controller.email,
+                      //   hintText: LocaleKeys.email.tr,
+
+                      //   // controller.isLogVaiEmail.value
+                      //   //     ? LocaleKeys.email.tr
+                      //   //     : LocaleKeys.phoneNumber.tr,
+                      //   validator: (text) {
+                      //     if (controller.isLogVaiEmail.value) {
+                      //       return FormValidator.email(text); // Validate email
+                      //     }
+                      //     // return FormValidator.phoneNumber(text);
+                      //   },
+                      // ),
+
+                      // CustomTextField(
+                      //   controller: controller.phoneNumberCon,
+                      //   hintText: LocaleKeys.phoneNumber.tr,
+                      //   validator: (text) => FormValidator.phoneNumber(text),
+                      //   inputFormatters: [FormValidator.maskInputPhoneNumber()],
+                      //   textInputAction: TextInputAction.next,
+                      //   keyboardType: TextInputType.phone,
+                      //   prefixIcon: Icon(Icons.email, color: AppColor.primary),
+                      // ),
+                      UIConstants.spacing.height,
+                      // Phone number
+                      CustomTextField(
                         controller: controller.phoneNumberCon,
                         hintText: LocaleKeys.phoneNumber.tr,
                         validator: (text) => FormValidator.phoneNumber(text),
                         inputFormatters: [FormValidator.maskInputPhoneNumber()],
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.phone,
-                        prefixIcon: Icon(Icons.email, color: AppColor.primary),
-                      ),
-                      // CustomTextField(
-                      //             controller: controller.usernameCtl,
-                      //             hintText: LocaleKeys.username.tr,
-                      //             // controller.isLogVaiEmail.value
-                      //             //     ? LocaleKeys.email.tr
-                      //             //     : LocaleKeys.phoneNumber.tr,
-                      //             validator: (text) {
-                      //               if (controller.isLogVaiEmail.value) {
-                      //                 return FormValidator.email(
-                      //                   text,
-                      //                 ); // Validate email
-                      //               }
-                      //               return FormValidator.phoneNumber(
-                      //                 text,
-                      //               ); // Validate phone number
-                      //             },
-                      //           ),
-                      UIConstants.spacing.height,
-                      // Phone number
-                      CustomTextField(
-                        controller: controller.email,
-                        hintText: LocaleKeys.email.tr,
-                        validator: (text) => FormValidator.email(text),
-                        inputFormatters: [FormValidator.maskInputPhoneNumber()],
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.emailAddress,
                         prefixIcon: Icon(Icons.phone, color: AppColor.primary),
                       ),
 
                       UIConstants.spacing.height,
 
-                      // Password
-                      // CustomTextField(
-                      //   controller: controller.passCon,
-                      //   hintText: LocaleKeys.password.tr,
-                      //   validator: (text) => FormValidator.empty(text),
-                      //   textInputAction: TextInputAction.next,
-                      //   prefixIcon: Icon(Icons.lock, color: AppColor.primary),
-                      //   suffixIcon: Icon(
-                      //     Icons.visibility,
-                      //     color: AppColor.primary,
-                      //   ),
-                      // ),
                       Obx(
                         () => CustomTextField(
                           prefixIcon: Icon(Icons.lock, color: AppColor.primary),
                           controller: controller.passCon,
+                          validator: (text) => FormValidator.empty(text),
+
                           hintText: LocaleKeys.password.tr,
+
+                          obscureText: controller.isPassVisible.value,
                           suffixIcon: InkWell(
                             onTap:
                                 () =>
@@ -123,29 +124,34 @@ class RegisterView extends GetView<RegisterController> {
                               color: AppColor.primary,
                             ),
                           ),
-                          obscureText: controller.isPassVisible.value,
-                          validator: (text) => FormValidator.empty(text),
-                          textInputAction: TextInputAction.next,
                         ),
                       ),
                       UIConstants.spacing.height,
 
                       // Confirm password
-                      CustomTextField(
-                        controller: controller.confirmCon,
-                        hintText: LocaleKeys.confirmPassword.tr,
-                        validator:
-                            (text) => FormValidator.equalValues(
-                              original: controller.passCon.text,
-                              confirm: text,
+                      Obx(
+                        () => CustomTextField(
+                          controller: controller.confirmCon,
+                          hintText: LocaleKeys.confirmPassword.tr,
+                          validator:
+                              (text) => FormValidator.equalValues(
+                                original: controller.passCon.text,
+                                confirm: text,
+                              ),
+                          textInputAction: TextInputAction.next,
+                          prefixIcon: Icon(Icons.lock, color: AppColor.primary),
+                          suffixIcon: InkWell(
+                            onTap:
+                                () =>
+                                    controller.isPassVisibleConfirm.value =
+                                        !controller.isPassVisibleConfirm.value,
+                            child: Icon(
+                              controller.isPassVisibleConfirm.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColor.primary,
                             ),
-                        textInputAction: TextInputAction.next,
-                        prefixIcon: Icon(Icons.lock, color: AppColor.primary),
-                        suffixIcon: Icon(
-                          controller.isPassVisible.value
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColor.primary,
+                          ),
                         ),
                       ),
                     ],
@@ -159,23 +165,7 @@ class RegisterView extends GetView<RegisterController> {
                   child: PrimaryButton(text: 'Sign Up', onPressed: registerTab),
                 ),
                 UIConstants.spacing.height,
-                // Center(
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Text(
-                //         "Have an account?",
-                //         textAlign: TextAlign.center,
-                //         style: AppTextStyle.normalPrimaryRegular,
-                //       ),
-                //       Text(
-                //         "Log In",
-                //         textAlign: TextAlign.center,
-                //         style: AppTextStyle.normalPrimaryRegular,
-                //       ),
-                //     ],
-                //   ),
-                // ),
+
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

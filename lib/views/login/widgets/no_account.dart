@@ -30,7 +30,7 @@ class NoAccountWidget extends StatelessWidget {
               ),
               onTap: () => Get.toNamed(Routes.register),
             ),
-            40.width,
+            20.width,
             InkWell(
               child: Container(
                 height: 24,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swis_school/core/core.dart';
 
 class ScheduleCardWidget extends StatefulWidget {
   const ScheduleCardWidget({super.key});
@@ -37,14 +38,16 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF006D5B)),
+                  border: Border.all(color: AppColor.primaryColor),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
                   'ថ្នាក់ទីមួយ ក',
                   style: TextStyle(
-                    color: Color(0xFF006D5B),
+                    color: AppColor.primaryColor,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'battambang',
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -60,28 +63,33 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
               bool isSelected = selectedDayIndex == index;
               return GestureDetector(
                 onTap: () => setState(() => selectedDayIndex = index),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color:
-                            isSelected
-                                ? const Color(0xFF006D5B)
-                                : Colors.transparent,
-                        width: 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color:
+                              isSelected
+                                  ? AppColor.primaryColor
+                                  : Colors.transparent,
+                          width: 2,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text(
-                    days[index],
-                    style: TextStyle(
-                      color: isSelected ? const Color(0xFF006D5B) : Colors.grey,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    child: Text(
+                      days[index],
+                      style: TextStyle(
+                        fontFamily: 'Battambang',
+                        fontSize: 14,
+                        color: isSelected ? AppColor.primaryColor : Colors.grey,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
                     ),
                   ),
                 ),
@@ -89,33 +97,36 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
             }),
           ),
         ),
-        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: const Divider(height: 1.2),
+        ),
         // Schedule List
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               _buildClassItem(
-                session: "ម៉ោងទី១",
-                time: "7:00 - 9:05 ព្រឹក",
+                session: "ម៉ោងទី ១",
+                time: "07:00 - 9:05 ព្រឹក",
                 subject: "គណិតវិទ្យា",
-                teacher: "ហេង",
+                teacher: "ហេង ដារ៉ា",
                 room: "០១",
               ),
               _buildClassItem(
-                session: "ម៉ោងទី២",
-                time: "9:15 - 10:05 ព្រឹក",
+                session: "ម៉ោងទី ២",
+                time: "09:15 - 10:05 ព្រឹក",
                 subject: "ភាសាខ្មែរ",
-                teacher: "ហុង",
-                room: "០១",
+                teacher: "ពេជ្រ រស្មី",
+                room: "០៨",
               ),
               _buildBreakTimeItem(timeRange: "11:00 ព្រឹក → 1:00 រសៀល"),
               _buildClassItem(
-                session: "ម៉ោងទី៣",
+                session: "ម៉ោងទី ៣",
                 time: "10:15 - 11:00 ព្រឹក",
                 subject: "ភាសាអង់គ្លេស",
-                teacher: "ហាក់",
-                room: "០១",
+                teacher: "វ៉ាន់ ដា",
+                room: "០៥",
               ),
             ],
           ),
@@ -135,88 +146,101 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left Side: Session and Time
           SizedBox(
-            width: 100,
+            width: 102,
             child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  session,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
+                Text(session, style: AppTextStyle.mendiumPrimary),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     const Icon(Icons.access_time, size: 12, color: Colors.grey),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: .0),
                     Expanded(
-                      child: Text(
-                        time,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      child: Text(time, style: AppTextStyle.smallPrimarytext),
                     ),
                   ],
                 ),
               ],
             ),
           ),
+          SizedBox(width: 3.0),
           // Right Side: Card Detail
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F7F9),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IntrinsicHeight(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF006D5B),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          bottomLeft: Radius.circular(12),
-                        ),
-                      ),
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Container(
+                  width: 40,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    color: AppColor.primaryColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "ម៉ោង : $subject",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "លោកគ្រូ : $teacher  |  បន្ទប់ $room",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+
+                // 2. The Main Content Card
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F7F9),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          // Inner accent (Optional: remove this if the Stack bar is enough)
+                          // Container(
+                          //   width: 10,
+                          //   decoration: const BoxDecoration(
+                          //     color: Color(0xFF006D5B),
+                          //     borderRadius: BorderRadius.only(
+                          //       topLeft: Radius.circular(15),
+                          //       bottomLeft: Radius.circular(15),
+                          //     ),
+                          //   ),
+                          // ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ម៉ោង : $subject",
+                                    style: AppTextStyle.mendiumPrimaryBold,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "លោកគ្រូ : $teacher  |  បន្ទប់ $room",
+                                    style: AppTextStyle.mendiumPrimary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -230,7 +254,8 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF006D5B),
+        color: AppColor.primaryColor,
+
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -239,17 +264,15 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
           const SizedBox(width: 10),
           Text(
             "ម៉ោងសម្រាក | $timeRange",
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
-            ),
+            style: AppTextStyle.mendiumPrimaryBoldwhite,
           ),
         ],
       ),
     );
   }
 }
+
+//------------------- UI Schedule old version Need Later----------------------//
 // import 'package:flutter/material.dart';
 // import 'package:photo_view/photo_view.dart';
 // import 'package:swis_school/core/core.dart';

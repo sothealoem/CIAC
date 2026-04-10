@@ -38,10 +38,7 @@ class CustomizeAppBar extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                subTitle,
-                style: AppTextStyle.smallPrimaryGreenRegular,
-              ),
+              child: Text(subTitle, style: AppTextStyle.smallPrimaryGreenBold),
             ),
           ],
         ),

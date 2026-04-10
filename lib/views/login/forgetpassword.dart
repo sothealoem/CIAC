@@ -5,8 +5,8 @@ import 'package:swis_school/routes.dart';
 import 'package:swis_school/views/login/widgets/socialButtonCustom.dart';
 import 'package:swis_school/views/views.dart';
 
-class LoginView extends GetView<LoginController> {
-  const LoginView({super.key});
+class ForgetPasswordVies extends GetView<LoginController> {
+  const ForgetPasswordVies({super.key});
 
   void loginTab() async {
     if (!controller.formKey.currentState!.validate()) {
@@ -52,12 +52,12 @@ class LoginView extends GetView<LoginController> {
                               children: [
                                 SizedBox(height: 10.0),
                                 Text(
-                                  "Log In Now",
+                                  "Forget Password",
                                   style: AppTextStyle.hugePrimaryMediumBold,
                                 ),
                                 UIConstants.spacing.height,
                                 Text(
-                                  "Please login to countinue using our app",
+                                  "Provide your account's phone number for reset your password.",
                                   style: AppTextStyle.normalGreenBold,
                                 ),
                                 UIConstants.spacing.height,
@@ -146,10 +146,7 @@ class LoginView extends GetView<LoginController> {
                                           decoration: TextDecoration.underline,
                                         ),
                                       ),
-                                      onTap:
-                                          () => Get.toNamed(
-                                            Routes.changePassword,
-                                          ),
+                                      onTap: () => Get.toNamed(Routes.register),
                                     ),
                                   ],
                                 ),

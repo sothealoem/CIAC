@@ -32,8 +32,8 @@ class SocialButtonCustom extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(50),
       child: Container(
-        height: 35,
-        width: 35,
+        height: 30,
+        width: 30,
         padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -47,20 +47,11 @@ class SocialButtonCustom extends StatelessWidget {
             ),
           ],
         ),
-        // child: Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Image.asset(imagePath, width: 30, height: 30),
-        //     Text(
-        //       buttonText,
-        //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        //     ),
-        //   ],
-        // ),
+
         child: ClipOval(
           child: Image.asset(
             imagePath,
-            fit: BoxFit.cover, // 👈 fill the circle
+            fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
           ),
@@ -83,15 +74,13 @@ class SocialButtonCustomWidget extends StatelessWidget {
           children: [
             SocialButtonCustom(
               buttonText: '',
-              imagePath: AssetPath.fb.path, // Replace with your image path
+              imagePath: AssetPath.fb.path,
               onPressed: handleFacebookLogin,
             ),
-            SizedBox(
-              width: 6,
-            ), // Adjust horizontal spacing between buttons if needed
+            SizedBox(width: 6),
             SocialButtonCustom(
               buttonText: '',
-              imagePath: AssetPath.twitter.path, // Replace with your image path
+              imagePath: AssetPath.twitter.path,
               onPressed: handleGoogleLogin,
             ),
             SizedBox(
