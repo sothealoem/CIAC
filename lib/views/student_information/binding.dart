@@ -4,6 +4,8 @@ import 'package:swis_school/views/views.dart';
 class StudentInformationBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<StudentInformationController>(() => StudentInformationController());
+    Get.lazyPut<StudentInformationController>(
+      () => StudentInformationController(),
+    );
   }
 }

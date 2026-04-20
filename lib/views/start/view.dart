@@ -7,9 +7,9 @@ import 'package:swis_school/views/views.dart';
 
 class StartView extends GetView<StartController> {
   const StartView({super.key});
-
   @override
   Widget build(BuildContext context) {
+    final dashboardController = Get.find<DashboardController>();
     return PopScope(
       canPop: controller.selectedIndex.value == 0 ? true : false,
       onPopInvoked: (didPop) {
@@ -18,8 +18,40 @@ class StartView extends GetView<StartController> {
       child: Scaffold(
         extendBody: true,
         appBar: CustomAppBar(
+          profile: 'assets/images/teacher.jpg',
           // title: controller.getTitle(),
-          title: '',
+          title: Obx(() {
+            final name = dashboardController.displayName;
+
+            return RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: "Welcome, ",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  TextSpan(
+                    text: dashboardController.displayName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontStyle: FontStyle.italic,
+                      color: AppColor.yellow,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const TextSpan(
+                    text: " 👋",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ],
+              ),
+            );
+          }),
+          subTitle: 'here is your dashboard.',
           imagePath: 'assets/images/sliver_banner1.png', // your header image
         ),
         //appBar: appBarWidget(),
@@ -70,9 +102,11 @@ class StartView extends GetView<StartController> {
               style: TabStyle.reactCircle,
               initialActiveIndex: controller.selectedIndex.value,
               onTap: (index) {
-                controller.selectedIndex.value = index;
+                //controller.selectedIndex.value = index;
+                controller.changeMenuIndex(index);
               },
               shadowColor: const Color.fromARGB(255, 179, 211, 207),
+
               items: [
                 TabItem(
                   icon: Icons.dashboard_outlined,
@@ -107,27 +141,6 @@ class StartView extends GetView<StartController> {
             ),
           ),
         ),
-
-        // bottomNavigationBar: BottomAppBar(
-        //   elevation: 0,
-        //   surfaceTintColor: AppColor.red,
-        //   height: 70,
-        //   color: AppColor.white,
-        //   padding: 4.padHorizontal,
-        //   shape: const CircularNotchedRectangle(),
-        //   child: Expanded(
-        //     child: Obx(
-        //       () => Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //         // children: [...controller.getItems().map((e) => e)],
-        //         children:
-        //             controller.getItems().map((e) {
-        //               return Expanded(child: e);
-        //             }).toList(),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ),
     );
   }

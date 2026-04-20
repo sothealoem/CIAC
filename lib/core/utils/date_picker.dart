@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
 import 'package:intl/intl.dart';
+import 'package:swis_school/core/configs/app_style.dart';
+import 'package:swis_school/core/repositories/user.dart';
+import 'package:swis_school/core/resources/locales.g.dart';
 
 class DatePicker {
   final TextEditingController controller;
@@ -86,7 +88,8 @@ class DatePicker {
         minimumYear: minYear,
         maximumYear: maxYear,
         mode: CupertinoDatePickerMode.date,
-        onDateTimeChanged: (date) => controller.text = date.toString().split(' ')[0],
+        onDateTimeChanged:
+            (date) => controller.text = date.toString().split(' ')[0],
       ),
     );
   }

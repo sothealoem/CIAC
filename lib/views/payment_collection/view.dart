@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/start/widgets/custom_appbar.dart';
 import 'package:swis_school/views/start/widgets/custom_indicator.dart';
 import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
 import 'package:swis_school/views/views.dart';

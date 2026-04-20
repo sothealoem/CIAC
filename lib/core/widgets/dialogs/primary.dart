@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/configs/app_style.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/core/widgets/buttons/close_icon.dart';
+import 'package:swis_school/core/widgets/buttons/primary.dart';
 
 class PrimaryDialog extends StatelessWidget {
   const PrimaryDialog({

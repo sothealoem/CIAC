@@ -1,147 +1,137 @@
+import 'package:swis_school/core/libraries/shared_preferences.dart';
+import 'package:swis_school/core/services/end_points.dart';
+import 'package:swis_school/core/utils/exception_manager.dart';
+import 'package:swis_school/flavor/app_config.dart';
+import 'package:swis_school/routes.dart';
+import 'package:swis_school/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/flavor/flavor.dart';
-import 'package:swis_school/models/models.dart';
-import 'package:swis_school/routes.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/dialog_manager.dart';
 
 class LoginController extends GetxController {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
-  /// Development
-  // Driver
-  // final TextEditingController usernameCtl = TextEditingController(text: '078420717');
-  // final TextEditingController passCtl = TextEditingController(text: '078420717');
-
-  // Customer
-  // final TextEditingController usernameCtl = TextEditingController(text: '0769523373@gmail.com');
-  // final TextEditingController passCtl = TextEditingController(text: '0769523373');
-
-  /// Production
-  // Driver
-  // final TextEditingController usernameCtl = TextEditingController(text: '093322910');
-  // final TextEditingController passCtl = TextEditingController(text: '093322910');
-
-  //Customer
-  // final TextEditingController usernameCtl = TextEditingController(text: '078358272@gmail.com');
-  // final TextEditingController passCtl = TextEditingController(text: '078358272');
-
-  final TextEditingController usernameCtl = TextEditingController();
+  final TextEditingController emailCtl = TextEditingController();
   final TextEditingController passCtl = TextEditingController();
-  final TextEditingController userCtl = TextEditingController();
 
-  final RxBool isPassVisible = true.obs;
-  final RxBool isLogVaiEmail = false.obs;
+  var isLoading = false.obs;
+  var isPassVisible = true.obs;
 
-  @override
-  void onInit() {
-    _onInit();
-    super.onInit();
-  }
-
-  Future<void> _onInit() async {
-    final String username =
-        await SharedPreferencesManager.get(Credential.username.name) ?? '';
-    final String password =
-        await SharedPreferencesManager.get(Credential.password.name) ?? '';
-
-    if (username.isNotEmpty && password.isNotEmpty) {
-      usernameCtl.text = username;
-      passCtl.text = password;
-    }
-  }
+  var emailError = RxnString();
+  var passwordError = RxnString();
 
   @override
   void onClose() {
-    usernameCtl.dispose();
+    emailCtl.dispose();
     passCtl.dispose();
     super.onClose();
   }
 
   Future<void> login() async {
+    if (!formKey.currentState!.validate()) return;
+
+    if (isLoading.value) return;
+
+    final String username = emailCtl.text.trim();
+    final String password = passCtl.text.trim();
+
     try {
-      final Map<String, dynamic> payload = {
-        'username': usernameCtl.text,
-        'password': passCtl.text,
-      };
+      isLoading.value = true;
 
-      final res = await Get.find<ApiService>().post(
-        EndPoints.login,
-        payload,
-        isShowLoading: true,
-      );
+      final res = await Get.find<ApiService>().post(EndPoints.login, {
+        "username": username,
+        "password": password,
+      }, isShowLoading: true);
 
-      final data = getPropertyFromJson(res.data, 'data');
+      final response = res.data;
+      print("LOGIN RESPONSE: $response");
 
-      final LoginModel login = LoginModel.fromJson(data);
-      //uncomment this line
-      final String permission = login.permission;
-      final String token = login.token;
-      List<String> allowedRoles = [
-        'admin',
-        'teacher',
-        'parent',
-      ]; //uncomment this line
-      if (permission != Rule.customer.name && permission != Rule.parent.name) {
+      if (response == null) {
         DialogManager.showDialog(
-          title: LocaleKeys.permission.tr,
-          subTitle: LocaleKeys.noPermission.tr,
-        );
-        return;
-      }
-      if (!allowedRoles.contains(permission.toLowerCase())) {
-        DialogManager.showDialog(
-          title: LocaleKeys.permission.tr,
-          subTitle: LocaleKeys.noPermission.tr,
+          title: "Error",
+          subTitle: "No response from server",
         );
         return;
       }
 
-      /// Pass token becuase when user login at the first time there is no token value when we init AppConfig in main
+      ///  check success
+      if (response['success'] != true) {
+        DialogManager.showDialog(
+          title: "Login Failed",
+          subTitle: response['message'] ?? "Invalid credentials",
+        );
+        return;
+      }
+
+      final data = response['data'];
+
+      if (data == null) {
+        DialogManager.showDialog(
+          title: "Error",
+          subTitle: "Invalid server response",
+        );
+        return;
+      }
+
+      ///  extract values safely
+      final String token = data['token']?.toString() ?? '';
+      final String role = (data['role'] ?? '').toString().toLowerCase();
+      final String name = data['name']?.toString() ?? '';
+
+      if (token.isEmpty) {
+        DialogManager.showDialog(
+          title: "Login Failed",
+          subTitle: "Token missing",
+        );
+        return;
+      }
+
+      ///  role check
+      const allowedRoles = ['admin', 'teacher', 'parent'];
+
+      if (!allowedRoles.contains(role)) {
+        DialogManager.showDialog(
+          title: "Permission",
+          subTitle: "No permission",
+        );
+        return;
+      }
+
+      ///  SET NAME (clean & safe)
+      final dashboardController = Get.find<DashboardController>();
+      dashboardController.userName.value = name;
+      print("CONTROLLER NAME: ${dashboardController.userName.value}");
+
+      ///  save token
       AppConfig.shared.token = token;
-      await _getProfile();
 
-      await SharedPreferencesManager.setValue(Credential.token.name, token);
-      await SharedPreferencesManager.setValue(
-        Credential.username.name,
-        usernameCtl.text,
-      );
-      await SharedPreferencesManager.setValue(
-        Credential.password.name,
-        passCtl.text,
-      );
+      await SharedPreferencesManager.setValue('token', token);
+      await SharedPreferencesManager.setValue('username', username);
+      await SharedPreferencesManager.setValue('password', password);
+      await SharedPreferencesManager.setValue('name', name);
 
-      DialogManager.hideLoading();
+      ///  navigate
       Get.offAllNamed(Routes.start);
     } catch (e) {
-      if (isClosed) {
-        return;
-      }
+      print("LOGIN ERROR: $e");
+
+      DialogManager.showDialog(
+        title: "Error",
+        subTitle: "Something went wrong. Please try again.",
+      );
+
       ExceptionHandler.handleException(e);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  Future<void> _getProfile() async {
-    try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.profile,
-        isShowLoading: false,
-      );
-
-      final data = getPropertyFromJson(res.data, 'data');
-
-      if (data != null) {
-        final ProfileModel profile = ProfileModel.fromJson(data);
-        UserRepository.shared.setProfile(profile);
-        return;
-      }
-
-      Get.offAllNamed(Routes.login);
-    } catch (e) {
-      if (isClosed) {
-        return;
-      }
-      ExceptionHandler.handleException(e);
-    }
+  ///  logout
+  Future<void> logout() async {
+    await SharedPreferencesManager.clear();
+    AppConfig.shared.token = '';
+    Get.offAllNamed(Routes.login);
   }
 }

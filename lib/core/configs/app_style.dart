@@ -103,10 +103,10 @@ class AppTextStyle {
     fontWeight: AppStyle._bold,
   );
   static const mediumPrimaryBold = TextStyle(
-    color: AppColor.primaryText,
     fontSize: 18,
     fontWeight: AppStyle._bold,
   );
+
   static const mediumRedBold = TextStyle(
     color: AppColor.red,
     fontSize: 18,
@@ -321,6 +321,41 @@ class AppTextStyle {
   static const smallPrimarytext = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 10,
+    fontFamily: 'battambang',
+  );
+  static const smallPrimaryBoldBlack = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 11,
+    fontFamily: 'battambang',
+  );
+  static const smallPrimarytextgrey = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 10,
+    color: Colors.grey,
+    fontFamily: 'battambang',
+  );
+  static const regularPrimarytext = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    color: AppColor.white,
+    fontFamily: 'battambang',
+  );
+  static const regularPrimarytextblack = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    color: AppColor.black,
+    fontFamily: 'battambang',
+  );
+  static const regularPrimaryBoldblack = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+    color: AppColor.black,
+    fontFamily: 'battambang',
+  );
+  static const regularPrimarytextPrimary = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+    color: AppColor.primary,
     fontFamily: 'battambang',
   );
   static const mendiumPrimary = TextStyle(

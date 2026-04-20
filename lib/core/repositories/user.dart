@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/flavor/flavor.dart';
-import 'package:swis_school/models/models.dart';
+import 'package:swis_school/core/constants/storage_key.dart';
+import 'package:swis_school/core/libraries/shared_preferences.dart';
+import 'package:swis_school/flavor/app_config.dart';
+import 'package:swis_school/models/profile/model.dart';
 import 'package:swis_school/routes.dart';
 
 class UserRepository {

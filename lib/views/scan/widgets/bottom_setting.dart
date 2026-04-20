@@ -4,10 +4,7 @@ import 'package:swis_school/views/views.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BottomSettingWidget extends StatelessWidget {
-  BottomSettingWidget({
-    super.key,
-    this.bottomBarText = 'Scan QR Code',
-  });
+  BottomSettingWidget({super.key, this.bottomBarText = 'Scan QR Code'});
 
   final String bottomBarText;
   final ScanController scanCtl = Get.find<ScanController>();
@@ -33,9 +30,7 @@ class BottomSettingWidget extends StatelessWidget {
         tooltip: 'Flash',
         onPressed: () => scanCtl.switchFlash(),
         icon: Icon(
-          scanCtl.isTorchOn.value
-              ? Icons.flash_on
-              : Icons.flash_off,
+          scanCtl.isTorchOn.value ? Icons.flash_on : Icons.flash_off,
           color: scanCtl.isTorchOn.value ? Colors.orange : Colors.grey,
         ),
       ),

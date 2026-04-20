@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/configs/app_style.dart';
+import 'package:swis_school/core/widgets/text_field/custom.dart';
 
 class StackTextField extends StatelessWidget {
   const StackTextField({

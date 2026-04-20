@@ -1,5 +1,5 @@
 class EndPoints {
-  static String get login => 'login';
+  static String get login => '/api/v1/login';
   static String get profile => 'your-profile';
   static String get dashboard => 'dashboard';
   static String get payment => 'payment';

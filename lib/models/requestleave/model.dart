@@ -1,40 +1,39 @@
-import 'package:flutter/foundation.dart';
-
 class RequestLeaveModel {
+  String? name;
+  String? grade;
   String? dateStart;
   String? dateEnd;
-  String? leaveType;
   String? reason;
+  String? status;
 
   RequestLeaveModel({
+    this.name,
+    this.grade,
     this.dateStart,
     this.dateEnd,
-    this.leaveType,
     this.reason,
+    this.status,
   });
 
   factory RequestLeaveModel.fromJson(Map<String, dynamic> json) {
     return RequestLeaveModel(
+      name: json['name'],
+      grade: json['grade'],
       dateStart: json['date_start'],
       dateEnd: json['date_end'],
-      leaveType: json['leave_type'],
       reason: json['reason'],
+      status: json['status'],
     );
   }
 
-  // RequestLeave.fromJson(Map<String, dynamic> json) {
-  //   dateStart = json['date_start'];
-  //   dateEnd = json['date_end'];
-  //   leaveType = json['leave_type'];
-  //   reason = json['reason'];
-  // }
-
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = new Map<String, dynamic>();
-  //   data['date_start'] = this.dateStart;
-  //   data['date_end'] = this.dateEnd;
-  //   data['leave_type'] = this.leaveType;
-  //   data['reason'] = this.reason;
-  //   return data;
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'grade': grade,
+      'date_start': dateStart,
+      'date_end': dateEnd,
+      'reason': reason,
+      'status': status,
+    };
+  }
 }

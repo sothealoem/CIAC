@@ -61,29 +61,32 @@ class LoginView extends GetView<LoginController> {
                                   style: AppTextStyle.normalGreenBold,
                                 ),
                                 UIConstants.spacing.height,
-                                Obx(() {
-                                  return CustomTextField(
+
+                                // Email Field
+                                Obx(
+                                  () => CustomTextField(
                                     prefixIcon: Icon(
-                                      Icons.person,
+                                      Icons.email,
                                       color: AppColor.primary,
                                     ),
-                                    controller: controller.usernameCtl,
-                                    hintText:
-                                        controller.isLogVaiEmail.value
-                                            ? LocaleKeys.username.tr
-                                            : LocaleKeys.phoneNumber.tr,
-                                    validator: (text) {
-                                      if (controller.isLogVaiEmail.value) {
-                                        return FormValidator.email(
-                                          text,
-                                        ); // Validate email
-                                      }
-                                      return FormValidator.phoneNumber(text);
-                                    },
-                                  );
-                                }),
+                                    controller: controller.emailCtl,
+                                    hintText: "Email",
+                                    errorText:
+                                        controller
+                                            .emailError
+                                            .value, // This shows the error below the field
+                                    onChanged:
+                                        (val) =>
+                                            controller.emailError.value =
+                                                null, // Clear error when typing
+                                    validator:
+                                        (text) => FormValidator.email(text),
+                                  ),
+                                ),
 
                                 UIConstants.spacing.height,
+
+                                // Password Field
                                 Obx(
                                   () => CustomTextField(
                                     prefixIcon: Icon(
@@ -91,7 +94,16 @@ class LoginView extends GetView<LoginController> {
                                       color: AppColor.primary,
                                     ),
                                     controller: controller.passCtl,
-                                    hintText: LocaleKeys.password.tr,
+                                    hintText: "Password",
+                                    errorText:
+                                        controller
+                                            .passwordError
+                                            .value, // This shows the error below the field
+                                    onChanged:
+                                        (val) =>
+                                            controller.passwordError.value =
+                                                null,
+                                    obscureText: controller.isPassVisible.value,
                                     suffixIcon: InkWell(
                                       onTap:
                                           () =>
@@ -106,34 +118,15 @@ class LoginView extends GetView<LoginController> {
                                         color: AppColor.primary,
                                       ),
                                     ),
-                                    obscureText: controller.isPassVisible.value,
                                     validator:
                                         (text) => FormValidator.empty(text),
                                   ),
                                 ),
+                                //Inside your build method, replacing the form fields:
+                                //mail/Username Field
                                 UIConstants.spacing.height,
-                                // Toggle between login with email/phone number
-                                //tes inkWell
-                                // InkWell(
-                                //   onTap: () {
-                                //     controller.isLogVaiEmail.value =
-                                //         !controller.isLogVaiEmail.value;
-                                //   },
-                                //   child: Container(
-                                //     height: 24,
-                                //     alignment: Alignment.center,
-                                //     child: Obx(
-                                //       () => Text(
-                                //         controller.isLogVaiEmail.value
-                                //             ? LocaleKeys.loginWithPhoneNumber.tr
-                                //             : LocaleKeys
-                                //                 .loginWithUsernameEmail
-                                //                 .tr,
-                                //         style: AppTextStyle.normalPrimaryRegular,
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
+
+                                // Update button to call the controller method
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -154,21 +147,13 @@ class LoginView extends GetView<LoginController> {
                                   ],
                                 ),
                                 UIConstants.spacing.height,
-                                Column(
-                                  children: [
-                                    // Login button
-                                    PrimaryButton(
-                                      text: LocaleKeys.login.tr,
-                                      // onPressed: loginTab,
-                                      onPressed:
-                                          () => Get.toNamed(Routes.start),
-                                    ),
-
-                                    SizedBox(height: 4.0),
-                                    // Register text widget
-                                  ],
+                                PrimaryButton(
+                                  text: LocaleKeys.login.tr,
+                                  onPressed: () => controller.login(),
                                 ),
+
                                 UIConstants.spacing.height,
+
                                 Center(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,

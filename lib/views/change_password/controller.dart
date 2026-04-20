@@ -34,7 +34,10 @@ class ChangePasswordController extends GetxController {
       );
       clearTextField();
 
-      await SharedPreferencesManager.setValue(Credential.password.name, newPassCtl.text);
+      await SharedPreferencesManager.setValue(
+        Credential.password.name,
+        newPassCtl.text,
+      );
 
       DialogManager.showDialog(
         title: LocaleKeys.congratulation.tr,

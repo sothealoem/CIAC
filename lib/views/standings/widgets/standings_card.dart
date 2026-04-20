@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/constants/ui_constants.dart'; // Ensure correct path
 
 class StandingsCardWidget extends StatelessWidget {
   const StandingsCardWidget({super.key});

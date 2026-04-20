@@ -6,7 +6,13 @@ import 'package:swis_school/views/views.dart';
 class StartController extends GetxController {
   final RxInt selectedIndex = 0.obs;
   late Rx<Widget> selectedScreen = screens[0].obs;
-  static List<Widget> screens = [const DashboardView()];
+  static List<Widget> screens = [
+    const DashboardView(),
+    NotificationView(),
+    ScanView(),
+    PaymentCollectionView(),
+    ContactUsView(),
+  ];
 
   @override
   void onInit() {
@@ -28,6 +34,11 @@ class StartController extends GetxController {
 
   void changeIndex(int index) {
     currentIndex.value = index;
+  }
+
+  void changeMenuIndex(int index) {
+    selectedIndex.value = index;
+    selectedScreen.value = screens[index];
   }
 
   void changeMenu(
@@ -58,19 +69,19 @@ class StartController extends GetxController {
         const Spacer()
       else
         BottomBarWidget(
-          label: LocaleKeys.tracking.tr,
+          label: LocaleKeys.scanner.tr,
           isSelected: selectedIndex.value == 2,
           icon: Icons.timelapse_outlined,
           onTap: () => changeMenu(2),
         ),
       BottomBarWidget(
-        label: LocaleKeys.contactUs.tr,
+        label: LocaleKeys.payment.tr,
         isSelected: selectedIndex.value == 3,
         icon: Icons.send,
         onTap: () => changeMenu(3),
       ),
       BottomBarWidget(
-        label: LocaleKeys.reason.tr,
+        label: LocaleKeys.contactUs.tr,
         isSelected: selectedIndex.value == 4,
         icon: Icons.more,
         onTap: () => changeMenu(4),
@@ -80,29 +91,45 @@ class StartController extends GetxController {
   }
 
   String getTitle() {
-    String title = 'StartView';
-
     switch (selectedIndex.value) {
       case 0:
-        title = LocaleKeys.dashboard;
-        break;
+        return LocaleKeys.dashboard.tr;
       case 1:
-        title = LocaleKeys.payments;
-        break;
+        return LocaleKeys.notification.tr;
       case 2:
-        if (UserRepository.shared.isDriver) {
-          title = LocaleKeys.scanner;
-          break;
-        }
-        title = LocaleKeys.tracking;
-        break;
+        return LocaleKeys.scanner.tr;
       case 3:
-        title = LocaleKeys.delivery;
-        break;
+        return LocaleKeys.payment.tr;
       case 4:
-        title = LocaleKeys.profile;
-        break;
+        return LocaleKeys.contactUs.tr;
+      default:
+        return "App";
     }
-    return title.tr;
   }
+  // String getTitle() {
+  //   String title = 'StartView';
+
+  //   switch (selectedIndex.value) {
+  //     case 0:
+  //       title = LocaleKeys.dashboard;
+  //       break;
+  //     case 1:
+  //       title = LocaleKeys.payments;
+  //       break;
+  //     case 2:
+  //       if (UserRepository.shared.isDriver) {
+  //         title = LocaleKeys.scanner;
+  //         break;
+  //       }
+  //       title = LocaleKeys.tracking;
+  //       break;
+  //     case 3:
+  //       title = LocaleKeys.delivery;
+  //       break;
+  //     case 4:
+  //       title = LocaleKeys.profile;
+  //       break;
+  //   }
+  //   return title.tr;
+  // }
 }

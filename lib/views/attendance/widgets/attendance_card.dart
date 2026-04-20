@@ -12,7 +12,7 @@ class AttendanceCardWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              _buildSummaryItem('មកេរៀន', '២៥', Colors.green),
+              _buildSummaryItem('មករៀន', '២៥', Colors.green),
               _buildSummaryItem('សុំច្បាប់', '២', Colors.blue),
               _buildSummaryItem('អវត្តមាន', '៣', Colors.red),
               _buildSummaryItem('មកយឺត', '១', Colors.orange),
@@ -24,7 +24,7 @@ class AttendanceCardWidget extends StatelessWidget {
             'សុខ សាន្ត',
             'ថ្នាក់ទី ៧ "ក"',
             '07-05-2023',
-            'មកេរៀន',
+            'មករៀន',
             Colors.teal,
           ),
           _buildAttendanceCard(
@@ -79,24 +79,18 @@ class AttendanceCardWidget extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(label, style: AppTextStyle.mendiumPrimaryBold),
               const SizedBox(height: 4),
               Text(
                 count,
                 style: TextStyle(
+                  fontFamily: 'battambang',
                   color: color,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 12),
-              // --- The dynamic bottom line ---
               Container(
                 height: 4,
                 width: double.infinity,
@@ -137,13 +131,7 @@ class AttendanceCardWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$name  $grade',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
+              Text('$name  $grade', style: AppTextStyle.mendiumPrimary),
               const SizedBox(height: 6),
               Row(
                 children: [
@@ -153,28 +141,21 @@ class AttendanceCardWidget extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    date,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
+                  Text(date, style: AppTextStyle.mendiumPrimary),
                 ],
               ),
             ],
           ),
           Container(
+            width: 80,
+
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: statusColor,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(
-              status,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            alignment: Alignment.center,
+            child: Text(status, style: AppTextStyle.regularPrimarytext),
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/configs/app_style.dart';
 
 class CloseIcon extends StatelessWidget {
   const CloseIcon({super.key});
@@ -21,10 +21,7 @@ class CloseIcon extends StatelessWidget {
                 color: AppColor.grey,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.close,
-                color: AppColor.white,
-              ),
+              child: const Icon(Icons.close, color: AppColor.white),
             ),
           ),
         ),

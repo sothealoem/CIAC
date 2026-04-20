@@ -10,17 +10,17 @@ class PaymentCardWidget extends StatelessWidget {
 
   // Data structure updated based on the image
   final List<List<String>> data = [
-    ['១', 'ថ្នាក់ចំណោះទូទៅភាសាខ្មែរ', '07/04/2025', 'បានបង់'],
-    ['២', 'English Level 2', '07/04/2025', 'មិនទាន់បានបង់'],
-    ['៣', 'ថ្នាក់ចំណោះទូទៅភាសាចិន', '07/04/2025', 'បានបង់'],
-    ['៤', 'ថ្នាក់ចំណោះទូទៅគណិតវិទ្យា', '07/04/2025', 'មិនទាន់បានបង់'],
+    ['១', 'ចំណោះទូទៅភាសាខ្មែរ', '27/04/2025', 'បានបង់'],
+    ['២', 'ចំណោះទូទៅ​ ភាសាអង់គ្លេស', '12/06/2025', 'មិនទាន់បានបង់'],
+    ['៣', 'ចំណោះទូទៅ ភាសាចិន', '07/04/2025', 'បានបង់'],
+    ['៤', 'ចំណោះទូទៅ គណិតវិទ្យា', '07/04/2025', 'មិនទាន់បានបង់'],
   ];
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,12 +66,10 @@ class PaymentCardWidget extends StatelessWidget {
                         121,
                         107,
                       );
-                      //  final rowColor = isEven ? tealBackgroundColor : Colors.transparent;
                       final contentColor =
                           isEven ? Colors.white : AppColor.primary;
                       final iconColor =
                           isEven ? Colors.white : AppColor.darkGrey;
-                      // Determine background color for alternative rows based on UI
                       final rowColor =
                           isEven
                               ? const Color.fromARGB(
@@ -80,12 +78,12 @@ class PaymentCardWidget extends StatelessWidget {
                                 121,
                                 107,
                               ).withOpacity(1)
-                              : Colors.transparent;
+                              : Colors.white;
                       return Container(
                         color: rowColor,
                         padding: const EdgeInsets.symmetric(
                           vertical: 8,
-                          horizontal: 8,
+                          horizontal: 6,
                         ),
                         child: Row(
                           children: [
@@ -97,7 +95,7 @@ class PaymentCardWidget extends StatelessWidget {
                             ),
                             _buildCell(
                               data[index][1],
-                              flex: 4,
+                              flex: 3,
                               leftPadding: true,
                               textColor: contentColor,
                             ),
@@ -108,14 +106,14 @@ class PaymentCardWidget extends StatelessWidget {
                             ),
                             _buildCell(
                               data[index][3],
-                              flex: 3,
+                              flex: 2,
                               textColor: contentColor,
                             ),
                             Expanded(
-                              flex: 1,
+                              flex: 2,
                               child: Icon(
                                 Icons.file_download_outlined,
-                                size: 20,
+                                size: 18,
                                 color: iconColor,
                               ),
                             ),
@@ -139,11 +137,11 @@ class PaymentCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 child: Center(
                   child: Text(
-                    'សរុបប្រាក់ដែលត្រូវបង់ : 150.00\$',
+                    'សរុបប្រាក់ដែលត្រូវបង់ : 450.00\$',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 15,
                       fontFamily: 'Battambang',
                     ),
                   ),
@@ -163,7 +161,7 @@ class PaymentCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        //  border: Border.all(color: Colors.grey.withOpacity(0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,13 +174,13 @@ class PaymentCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 // Replace with your actual student card image asset
                 child: Image.asset(
-                  'assets/images/event.png',
-                  width: 100,
+                  'assets/images/studentprofile.jpg',
+                  width: 90,
                   height: 100,
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               const Text('សិន ដារ៉ា'),
               const Text(
                 'សិស្ស',
@@ -194,11 +192,11 @@ class PaymentCardWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 10),
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildFeeOption(
                   character: SingingCharacter.lafayette,
@@ -206,23 +204,23 @@ class PaymentCardWidget extends StatelessWidget {
                   title: 'ថ្នាក់ចំណោះទូទៅភាសាខ្មែរ',
                   subtitle: 'ថ្នាក់ទី១ក វេនព្រឹក',
                   price: '150.00\$',
-                  date: '7/21/25',
+                  date: '17/09/25',
                 ),
                 _buildFeeOption(
                   character: SingingCharacter.jefferson,
                   groupValue: _character,
                   title: 'ថ្នាក់ចំណោះទូទៅភាសាអង់គ្លេស',
                   subtitle: 'កម្រិត Level 2',
-                  price: '0.00\$',
-                  date: '7/21/25',
+                  price: '120.00\$',
+                  date: '07/11/25',
                 ),
                 _buildFeeOption(
                   character: SingingCharacter.las,
                   groupValue: _character,
                   title: 'ថ្នាក់ចំណោះទូទៅគណិតវិទ្យា',
                   subtitle: 'កម្រិត Level 2',
-                  price: '0.00\$',
-                  date: '7/21/25',
+                  price: '180.00\$',
+                  date: '09/21/25',
                 ),
               ],
             ),
@@ -242,68 +240,63 @@ class PaymentCardWidget extends StatelessWidget {
   }) {
     final bool isSelected = false;
 
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(width: 48),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      fontFamily: 'Battambang',
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      color: AppColor.greyTextColor,
-                      fontSize: 10,
-                      fontFamily: 'Battambang',
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildDateTag(date),
-                      Text(
-                        price,
-
-                        style: TextStyle(
-                          fontFamily: 'Battambang',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.primaryColor,
-                        ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: AppTextStyle.regularPrimarytextblack,
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  subtitle,
+                                  style: AppTextStyle.smallPrimarytextgrey,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              _buildDateTag(date),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+
+                    const SizedBox(width: 18),
+
+                    Text(price, style: AppTextStyle.regularPrimarytextPrimary),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  // Helper to build the date tag (e.g., 7/21/25)
   Widget _buildDateTag(String date) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        // color: _primaryColor,
+        color: AppColor.primary,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -321,19 +314,19 @@ class PaymentCardWidget extends StatelessWidget {
   // Re-implemented header row to match image column widths
   Widget _buildHeaderRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       color: Colors.white,
       child: Row(
         children: [
           Expanded(flex: 1, child: _buildHeaderCell('ល.រ', centerText: true)),
           Expanded(
-            flex: 4,
+            flex: 3,
             child: _buildHeaderCell('ប្រភេទការសិក្សា', leftPadding: true),
           ),
           Expanded(flex: 3, child: _buildHeaderCell('កាលបរិច្ជេក')),
-          Expanded(flex: 3, child: _buildHeaderCell('ស្ថានភាព')),
+          Expanded(flex: 2, child: _buildHeaderCell('ស្ថានភាព')),
           Expanded(
-            flex: 1,
+            flex: 2,
             child: _buildHeaderCell('បង្កាន់ដៃ', centerText: true),
           ),
         ],
@@ -347,7 +340,7 @@ class PaymentCardWidget extends StatelessWidget {
     bool leftPadding = false,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: leftPadding ? 12.0 : 0),
+      padding: EdgeInsets.only(left: leftPadding ? 6.0 : 0),
       child: Text(
         text,
         textAlign: centerText ? TextAlign.center : TextAlign.left,
@@ -370,13 +363,13 @@ class PaymentCardWidget extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: EdgeInsets.only(left: leftPadding ? 12.0 : 0),
+        padding: EdgeInsets.only(left: leftPadding ? 0 : 0),
         child: Text(
           text,
           textAlign: centerText ? TextAlign.center : TextAlign.left,
           style: TextStyle(
-            fontFamily: 'Battombang',
-            fontSize: 12,
+            fontFamily: 'Battambang',
+            fontSize: 11,
             color: textColor ?? AppColor.primary,
           ),
         ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:swis_school/core/core.dart';
 import 'package:swis_school/flavor/flavor.dart';
 import 'package:swis_school/models/models.dart';
 import 'package:swis_school/views/views.dart';
+import 'package:intl/intl.dart';
 
 class DashboardController extends GetxController {
   final TextEditingController dateCtl = TextEditingController();
@@ -12,11 +12,20 @@ class DashboardController extends GetxController {
   final Rxn<DashboardModel> dashboardModel = Rxn<DashboardModel>();
   final RxBool isLoading = false.obs;
 
-  final StartController startCtl = Get.find<StartController>();
-
+  //final StartController startCtl = Get.find<StartController>();
+  StartController get startCtl => Get.find<StartController>();
   final RxList<BookingModel> bookings = <BookingModel>[].obs;
-  bool isFirst = true;
+
   final PageController pageController = PageController();
+
+  var userName = "".obs;
+  bool isFirst = true;
+  //get name user profile when they loggin
+  String get displayName {
+    if (userName.value.isEmpty) return "";
+    return userName.value[0].toUpperCase() + userName.value.substring(1);
+  }
+
   void togglePage() {
     isFirst = !isFirst;
     pageController.animateToPage(
@@ -49,6 +58,7 @@ class DashboardController extends GetxController {
     // reasonCtl.fetchReason();
     // fetchDashboard();
     super.onInit();
+    loadUserName();
   }
 
   @override
@@ -82,6 +92,11 @@ class DashboardController extends GetxController {
       dateFilter: dateCtl.text,
       deliveryStatus: deliveryStatus,
     );
+  }
+
+  Future<void> loadUserName() async {
+    final name = await SharedPreferencesManager.get('name') ?? '';
+    userName.value = name;
   }
 
   Future<void> fetchDashboard({String? date, bool isRefresh = false}) async {

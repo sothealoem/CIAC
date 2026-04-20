@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/resources/locales.g.dart';
+import 'package:swis_school/core/widgets/dialogs/loading.dart';
+import 'package:swis_school/core/widgets/dialogs/primary.dart';
 
 class DialogManager {
   DialogManager._();
@@ -62,10 +64,7 @@ class DialogManager {
       Get.back(closeOverlays: true);
     }
 
-    return Get.dialog(
-      barrierDismissible: false,
-      const LoadingDialog(),
-    );
+    return Get.dialog(barrierDismissible: false, const LoadingDialog());
   }
 
   static void hideLoading() => Get.back();

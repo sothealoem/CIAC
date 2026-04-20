@@ -15,6 +15,8 @@ class LanguageController extends GetxController {
 
   void updateLanguage() {
     isCambodia.value = !isCambodia.value;
-    AppConfig.shared.updateLanguage(isCambodia.value ? Language.kh.key : Language.en.key);
+    AppConfig.shared.updateLanguage(
+      isCambodia.value ? Language.kh.key : Language.en.key,
+    );
   }
 }

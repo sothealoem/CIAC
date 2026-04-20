@@ -4,13 +4,17 @@ import 'package:swis_school/core/core.dart';
 import 'package:swis_school/models/models.dart';
 import 'package:swis_school/routes.dart';
 
-class SplashController extends GetxController with GetSingleTickerProviderStateMixin {
+class SplashController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
   @override
   void onInit() {
-    controller = AnimationController(vsync: this, duration: const Duration(seconds: 3));
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
     animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
     controller.repeat();
 
@@ -26,7 +30,8 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
   }
 
   Future<void> fetchInit() async {
-    final String token = await SharedPreferencesManager.get(Credential.token.name) ?? '';
+    final String token =
+        await SharedPreferencesManager.get(Credential.token.name) ?? '';
     if (token.isEmpty) {
       Future.delayed(const Duration(seconds: 2)).then((value) {
         controller.stop();

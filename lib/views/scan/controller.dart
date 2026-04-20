@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:swis_school/models/student/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swis_school/core/core.dart';
@@ -15,6 +16,10 @@ class ScanController extends GetxController {
   late StreamSubscription<Object?> subscription;
   final Rx<CameraFacing> cameraFacing = CameraFacing.back.obs;
   final RxBool isTorchOn = false.obs;
+  var isLoading = false.obs;
+  var student = Rxn<Student>();
+  var message = ''.obs;
+  var isSuccess = false.obs;
   @override
   void onInit() async {
     mobileScannerCtl = MobileScannerController();
@@ -24,7 +29,9 @@ class ScanController extends GetxController {
 
   Future<void> cameraListen() async {
     // Call listen over here instead of onDetect property because https://github.com/juliansteenbakker/mobile_scanner/issues/925
-    subscription = mobileScannerCtl.barcodes.listen((BarcodeCapture capture) async {
+    subscription = mobileScannerCtl.barcodes.listen((
+      BarcodeCapture capture,
+    ) async {
       final List<Barcode> barcodes = capture.barcodes;
 
       for (final barcode in barcodes) {
@@ -51,11 +58,11 @@ class ScanController extends GetxController {
 
   Future<void> switchCamera() async {
     await mobileScannerCtl.switchCamera();
-    cameraFacing.value = cameraFacing.value == CameraFacing.back
-        ? CameraFacing.front
-        : CameraFacing.back;
+    cameraFacing.value =
+        cameraFacing.value == CameraFacing.back
+            ? CameraFacing.front
+            : CameraFacing.back;
   }
-
 
   Future<void> switchFlash() async {
     mobileScannerCtl.toggleTorch();
@@ -75,18 +82,61 @@ class ScanController extends GetxController {
       }
       await scanGetProduct(id: id, isFromScanner: true);
     } catch (e) {
-      ExceptionHandler.handleException('Scan complete failed. Please try again.');
+      ExceptionHandler.handleException(
+        'Scan complete failed. Please try again.',
+      );
     }
   }
 
-  Future<void> scanComplete({required String id, bool isFromScanner = false}) async {
+  Future<void> scanCard(String uid) async {
+    try {
+      mobileScannerCtl.stop();
+
+      final response = await Get.find<ApiService>().post(
+        "https://demo.school.softcreative.online/api/v1/student/scan-card",
+        {"card_uid": uid},
+        isShowLoading: true,
+      );
+
+      final data = response.data;
+
+      final student = data['student'];
+      final message = data['message'];
+      final success = data['success'];
+
+      DialogManager.showCustom(
+        PrimaryDialog(
+          title: success ? "Success" : "Warning",
+          subTitle: "${student['firstname']} ${student['lastname']}\n$message",
+          onPressed: () => Get.back(),
+        ),
+      ).then((_) {
+        mobileScannerCtl.start();
+      });
+    } catch (e) {
+      ExceptionHandler.handleException(
+        e,
+        onValue: (p0) {
+          mobileScannerCtl.start();
+        },
+      );
+    }
+  }
+
+  Future<void> scanComplete({
+    required String id,
+    bool isFromScanner = false,
+  }) async {
     try {
       if (isFromScanner) {
         mobileScannerCtl.stop();
       }
 
       final String endPoint = '${EndPoints.scanComplete}/$id';
-      final res = await Get.find<ApiService>().get(endPoint, isShowLoading: true);
+      final res = await Get.find<ApiService>().get(
+        endPoint,
+        isShowLoading: true,
+      );
 
       final data = getPropertyFromJson(res.data, 'data');
       final ScanCompleteModel model = ScanCompleteModel.fromJson(data);
@@ -102,33 +152,47 @@ class ScanController extends GetxController {
         mobileScannerCtl.start();
       });
     } catch (e) {
-      ExceptionHandler.handleException(e, onValue: (p0) {
-        mobileScannerCtl.start();
-      });
+      ExceptionHandler.handleException(
+        e,
+        onValue: (p0) {
+          mobileScannerCtl.start();
+        },
+      );
     }
   }
 
-  Future<void> scanGetProduct({required String id, bool isFromScanner = false}) async {
+  Future<void> scanGetProduct({
+    required String id,
+    bool isFromScanner = false,
+  }) async {
     try {
       if (isFromScanner) {
         mobileScannerCtl.stop();
       }
 
       final String endPoint = '${EndPoints.scanGetProduct}/$id';
-      final res = await Get.find<ApiService>().get(endPoint, isShowLoading: true);
+      final res = await Get.find<ApiService>().get(
+        endPoint,
+        isShowLoading: true,
+      );
       final message = getPropertyFromJson(res.data, 'message');
 
-      DialogManager.showCustom(PrimaryDialog(
-        title: LocaleKeys.getProduct.tr,
-        subTitle: message,
-        onPressed: () => Get.back(),
-      )).then((value) {
+      DialogManager.showCustom(
+        PrimaryDialog(
+          title: LocaleKeys.getProduct.tr,
+          subTitle: message,
+          onPressed: () => Get.back(),
+        ),
+      ).then((value) {
         mobileScannerCtl.start();
       });
     } catch (e) {
-      ExceptionHandler.handleException(e, onValue: (p0) {
-        mobileScannerCtl.start();
-      });
+      ExceptionHandler.handleException(
+        e,
+        onValue: (p0) {
+          mobileScannerCtl.start();
+        },
+      );
     }
   }
 }

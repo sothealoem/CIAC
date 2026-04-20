@@ -8,14 +8,15 @@ class ContactUsView extends GetView<ContactUsController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ContactUsController());
     return Scaffold(
       appBar: AppBar(title: Text(LocaleKeys.contactUs.tr)),
       body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColor.red),
-          );
-        }
+        // if (controller.isLoading.value) {
+        //   return const Center(
+        //     child: CircularProgressIndicator(color: AppColor.red),
+        //   );
+        // }
         return Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

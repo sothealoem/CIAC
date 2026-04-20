@@ -49,10 +49,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   List<Color> catColors = List.filled(9, Color(0xFFEEF7FE));
 
   final List<String> bannerImages = [
-    'https://i.pinimg.com/736x/2b/04/64/2b0464f4db9ad059f31fb6f9c05b0d01.jpg',
-    'https://i.pinimg.com/736x/8c/a5/15/8ca5158965df5d14798323e7640f40f3.jpg',
-    'https://i.pinimg.com/736x/2b/04/64/2b0464f4db9ad059f31fb6f9c05b0d01.jpg',
-    'https://i.pinimg.com/736x/8c/a5/15/8ca5158965df5d14798323e7640f40f3.jpg',
+    'assets/images/sliver_banner.png',
+    'assets/images/playground.jpg',
+    'assets/images/sliver_banner.png',
+    'assets/images/activity.png',
   ];
 
   DashboardController controller = Get.find<DashboardController>();
@@ -66,7 +66,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         Get.toNamed(Routes.attendance);
         break;
       case 2:
-        Get.toNamed(Routes.requestLeave);
+        Get.toNamed(Routes.allRequestLeave);
 
         break;
       case 3:
@@ -77,7 +77,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         Get.toNamed(Routes.standings);
         break;
       case 5:
-        Get.toNamed(Routes.attendance);
+        Get.toNamed(Routes.attendanceRecord);
         break;
       case 6:
         Get.toNamed(Routes.studentDocument);
@@ -99,10 +99,10 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       padding: const EdgeInsets.only(top: 5),
       child: Column(
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
 
           PremiumSlider(imagesList: bannerImages),
-          const SizedBox(height: 10),
+          const SizedBox(height: 2),
 
           // 3x3 Menu Grid
           Expanded(

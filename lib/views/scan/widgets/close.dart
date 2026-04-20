@@ -21,10 +21,7 @@ class CloseWidget extends StatelessWidget {
                 color: AppColor.grey,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.close,
-                color: AppColor.black,
-              ),
+              child: const Icon(Icons.close, color: AppColor.black),
             ),
           ),
         ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:swis_school/core/constants/env_key.dart';
+import 'package:swis_school/core/constants/storage_key.dart';
+import 'package:swis_school/core/libraries/shared_preferences.dart';
 
 class AppConfig {
   AppConfig._() {
@@ -14,11 +16,11 @@ class AppConfig {
   static AppConfig get shared => _instance;
 
   String get baseUrl => dotenv.env[EnvKey.baseUrl.value] ?? '';
+  //String get baseUrl => dotenv.env['BASE_URL'] ?? '';
 
   String _token = '';
   String get token => 'Bearer $_token';
   set token(String value) => _token = value;
-
   bool isDeliveryTapOpened = false;
 
   Future<void> _getToken() async {
@@ -30,7 +32,9 @@ class AppConfig {
 
   // set as default language
   void setLanguage(String value) async {
-    dynamic localLng = await SharedPreferencesManager.get(LanguageKey.language.name);
+    dynamic localLng = await SharedPreferencesManager.get(
+      LanguageKey.language.name,
+    );
     _language = localLng ?? value;
   }
 
@@ -38,10 +42,7 @@ class AppConfig {
   void updateLanguage(String value) {
     _language = value;
     Get.updateLocale(AppConfig.shared.languageLocale);
-    SharedPreferencesManager.setValue(
-      LanguageKey.language.name,
-      _language,
-    );
+    SharedPreferencesManager.setValue(LanguageKey.language.name, _language);
   }
 
   Locale get languageLocale {

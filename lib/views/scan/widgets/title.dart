@@ -16,10 +16,7 @@ class TitleWidget extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.only(bottom: cutOutSize + 200),
-        child: const Text(
-          'Scan QR Code',
-          style: AppTextStyle.hugeWhiteBold,
-        ),
+        child: const Text('Scan QR Code', style: AppTextStyle.hugeWhiteBold),
       ),
     );
   }

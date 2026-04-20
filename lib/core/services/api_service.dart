@@ -1,15 +1,17 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:swis_school/flavor/flavor.dart';
 import 'package:logging/logging.dart';
 import 'package:dio/dio.dart' as d;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:swis_school/core/services/interceptors/auth/auth_interceptor.dart';
+import 'package:swis_school/flavor/app_config.dart';
 
 class ApiService extends GetxService {
   ApiService init() => this;
 
-  String get baseUrl => AppConfig.shared.baseUrl;
-
+  // String get baseUrl => AppConfig.shared.baseUrl;
+  String get baseUrl => dotenv.env['BASE_URL'] ?? '';
   Logger get logger => Logger.root;
 
   Future<d.Dio> _dioClient({bool? isShowLoading}) async {
@@ -32,7 +34,9 @@ class ApiService extends GetxService {
 
     // client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
     //
-    // client.interceptors.add(AuthenticationInterceptor(accessToken: AppConfig.shared.token));
+    client.interceptors.add(
+      AuthenticationInterceptor(accessToken: AppConfig.shared.token),
+    );
     //
     // // DO NOT change order of these interceptors
     // client.interceptors.add(
@@ -83,20 +87,22 @@ class ApiService extends GetxService {
     String path,
     dynamic formData, {
     int? retries,
-    String? baseUrl,
+    String? customBaseUrl,
     bool encode = true,
     Map<String, dynamic>? cusHeaders,
     bool? isShowLoading,
   }) async {
     final client = await _dioClient(isShowLoading: isShowLoading);
 
-    if (baseUrl != null) {
-      client.options.baseUrl = baseUrl;
+    if (customBaseUrl != null) {
+      client.options.baseUrl = customBaseUrl;
     }
 
     if (cusHeaders != null) {
       client.options.headers.addEntries(cusHeaders.entries);
     }
+
+    print("BASE URL (ApiService): ${client.options.baseUrl}");
 
     return client.post(
       path,

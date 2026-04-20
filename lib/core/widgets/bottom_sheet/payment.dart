@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/models/models.dart';
+import 'package:swis_school/core/configs/app_style.dart';
+import 'package:swis_school/core/constants/asset_path.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/core/resources/locales.g.dart';
+import 'package:swis_school/core/widgets/buttons/primary.dart';
+import 'package:swis_school/core/widgets/divider/dark_gray.dart';
+import 'package:swis_school/models/payment/model.dart';
 import 'package:swis_school/routes.dart';
 
 class PaymentSheet extends StatelessWidget {

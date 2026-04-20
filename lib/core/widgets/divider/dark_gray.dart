@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/configs/app_style.dart';
 
 class DarkGreyDivider extends StatelessWidget {
-  const DarkGreyDivider({
-    super.key,
-    this.thickness,
-    this.indent,
-  });
+  const DarkGreyDivider({super.key, this.thickness, this.indent});
 
   final double? thickness;
   final double? indent;

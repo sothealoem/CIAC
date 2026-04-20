@@ -10,6 +10,10 @@ class SharedPreferencesManager {
   static Future<dynamic> get(String key) async => (await _instance).get(key);
 
   static Future<bool> remove(String key) async => (await _instance).remove(key);
+  static Future<void> clear() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
 
   static Future<bool> setValue(String key, dynamic value) async {
     switch (value.runtimeType) {

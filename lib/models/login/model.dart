@@ -1,7 +1,7 @@
 class LoginModel {
-  final String token;
+  final String? token;
   final String name;
-  final String permission;
+  final String? permission;
 
   LoginModel({
     required this.token,

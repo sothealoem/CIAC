@@ -31,25 +31,31 @@ class _PremiumSliderState extends State<PremiumSlider> {
               borderRadius: const BorderRadius.all(Radius.circular(12.0)),
               child: Stack(
                 children: <Widget>[
-                  CachedNetworkImage(
-                    imageUrl: item,
-                    fit: BoxFit.cover,
-                    height: 350,
-                    width: MediaQuery.of(context).size.width,
-                    placeholder: (context, url) => const ShimmerPreloader(),
-                    errorWidget:
-                        (context, url, error) => const Icon(
-                          Icons.broken_image,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                    // Optional: fade in/out for better UX
-                    fadeInDuration: const Duration(milliseconds: 300),
-                    fadeOutDuration: const Duration(milliseconds: 100),
-                    // Optional: image cache options
-                    cacheKey: item,
-                    useOldImageOnUrlChange: true,
-                  ),
+                  item.startsWith('http') || item.startsWith('https')
+                      ? CachedNetworkImage(
+                        imageUrl: item,
+                        fit: BoxFit.cover,
+                        // height: 350,
+                        width: MediaQuery.of(context).size.width,
+                        placeholder: (context, url) => const ShimmerPreloader(),
+                        errorWidget:
+                            (context, url, error) => const Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                        // Optional: fade in/out for better UX
+                        fadeInDuration: const Duration(milliseconds: 300),
+                        fadeOutDuration: const Duration(milliseconds: 100),
+                        // Optional: image cache options
+                        cacheKey: item,
+                        useOldImageOnUrlChange: true,
+                      )
+                      : Image.asset(
+                        item,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                      ),
                 ],
               ),
             ),
@@ -73,8 +79,9 @@ class _PremiumSliderState extends State<PremiumSlider> {
                 initialPage: 0,
                 autoPlayCurve: Curves.fastOutSlowIn,
                 enlargeCenterPage: true,
-                aspectRatio: 2.0,
+                aspectRatio: 16 / 9,
                 pauseAutoPlayOnTouch: true,
+                height: 150,
                 // height: 180,
                 onPageChanged: (index, reason) {
                   setState(() {
@@ -85,6 +92,7 @@ class _PremiumSliderState extends State<PremiumSlider> {
             ),
           ),
         ),
+        SizedBox(height: 2),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children:

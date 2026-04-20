@@ -15,7 +15,6 @@ class ScheduleController extends GetxController {
     super.onClose();
   }
 
-
   Future<void> fetchTracking() async {
     try {
       final Map<String, dynamic> param = {'invoice': searchCtl.text};

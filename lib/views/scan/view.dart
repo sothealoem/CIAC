@@ -8,9 +8,9 @@ class ScanView extends GetView<ScanController> {
   const ScanView({super.key});
 
   final double cutOutSize = 300;
-
   @override
   Widget build(BuildContext context) {
+    Get.put(ScanController());
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -18,7 +18,14 @@ class ScanView extends GetView<ScanController> {
           children: [
             MobileScanner(
               controller: controller.mobileScannerCtl,
-              onDetect: (capture) {},
+              onDetect: (capture) {
+                final barcode = capture.barcodes.first;
+                final code = barcode.rawValue;
+
+                if (code != null) {
+                  controller.scanCard(code); // ✅ now works
+                }
+              },
               scanWindow: Rect.fromCenter(
                 center: Offset(Get.width / 2, Get.height / 2),
                 width: cutOutSize,

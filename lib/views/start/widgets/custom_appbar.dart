@@ -1,37 +1,99 @@
+import 'package:swis_school/core/configs/app_style.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final Widget? title;
+  final String? subTitle;
   final String imagePath;
+  final String profile;
   final double height;
 
   const CustomAppBar({
     super.key,
     required this.title,
+    required this.subTitle,
     required this.imagePath,
-    this.height = 110,
+    required this.profile,
+    this.height = 130,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(25),
-        bottomRight: Radius.circular(25),
-      ),
-      child: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(imagePath, fit: BoxFit.cover),
-
-            Container(color: Colors.black.withOpacity(0.3)),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(25),
+          bottomRight: Radius.circular(25),
         ),
-        centerTitle: true,
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(25),
+          bottomRight: Radius.circular(25),
+        ),
+        child: AppBar(
+          centerTitle: true,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Image.asset('assets/images/logo.png', height: 40)],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Container(
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColor.primaryColor, width: 2),
+                ),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundImage: AssetImage(profile),
+                ),
+              ),
+            ),
+          ],
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          flexibleSpace: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(imagePath, fit: BoxFit.cover),
+              Container(color: Colors.black.withOpacity(0.3)),
+              Positioned(
+                left: 16,
+                bottom: 8,
+                right: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title ?? const SizedBox(),
+
+                    Text(
+                      subTitle ?? '',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

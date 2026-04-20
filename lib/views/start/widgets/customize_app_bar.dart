@@ -6,12 +6,12 @@ class CustomizeAppBar extends StatelessWidget {
   const CustomizeAppBar({
     super.key,
     required this.title,
-    required this.subTitle,
+    this.subTitle,
     this.trailing, // Added optional
   });
 
   final String title;
-  final String subTitle;
+  final String? subTitle;
   final Widget? trailing;
 
   @override
@@ -38,7 +38,7 @@ class CustomizeAppBar extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12.0),
-              child: Text(subTitle, style: AppTextStyle.smallPrimaryGreenBold),
+              child: Text(subTitle!, style: AppTextStyle.smallPrimaryGreenBold),
             ),
           ],
         ),

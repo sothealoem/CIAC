@@ -1,23 +1,28 @@
-import 'package:swis_school/models/models.dart';
+import 'package:swis_school/models/customer_payment/model.dart';
 
 class PaymentDetailsModel {
   final SummaryModel? summary;
   final List<DetailsModel> details;
   final DeliveryStatusCountModel? delivery;
 
-  PaymentDetailsModel({
-    required this.details,
-    this.summary,
-    this.delivery,
-  });
+  PaymentDetailsModel({required this.details, this.summary, this.delivery});
 
   factory PaymentDetailsModel.fromJson(Map<String, dynamic> json) {
     return PaymentDetailsModel(
-      summary: json['summary'] != null ? SummaryModel.fromJson(json['summary']) : null,
-      delivery: json['delivery'] != null ? DeliveryStatusCountModel.fromJson(json['delivery']) : null,
-      details: json['detail'] != null
-          ? (json['detail'] as List).map((e) => DetailsModel.fromJson(e)).toList()
-          : <DetailsModel>[],
+      summary:
+          json['summary'] != null
+              ? SummaryModel.fromJson(json['summary'])
+              : null,
+      delivery:
+          json['delivery'] != null
+              ? DeliveryStatusCountModel.fromJson(json['delivery'])
+              : null,
+      details:
+          json['detail'] != null
+              ? (json['detail'] as List)
+                  .map((e) => DetailsModel.fromJson(e))
+                  .toList()
+              : <DetailsModel>[],
     );
   }
 }

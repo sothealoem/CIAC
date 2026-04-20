@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:swis_school/core/constants/ui_constants.dart';
+import 'package:swis_school/core/extensions/int.dart';
+import 'package:swis_school/core/repositories/user.dart';
+import 'package:swis_school/core/resources/locales.g.dart';
+import 'package:swis_school/core/utils/exception_manager.dart';
 
 class ImagePickerManager {
   static final ImagePicker _picker = ImagePicker();
@@ -22,7 +26,9 @@ class ImagePickerManager {
                 ListTile(
                   title: Text(LocaleKeys.photoLibrary.tr),
                   leading: const Icon(Icons.photo_library),
-                  onTap: () => _handlePick(context, result: result, isGallery: true),
+                  onTap:
+                      () =>
+                          _handlePick(context, result: result, isGallery: true),
                 ),
 
                 const Divider(),
@@ -56,7 +62,9 @@ class ImagePickerManager {
       );
       result(image);
     } catch (e) {
-      ExceptionHandler.handleException(LocaleKeys.unableToPickImagePleaseTryAgain.tr);
+      ExceptionHandler.handleException(
+        LocaleKeys.unableToPickImagePleaseTryAgain.tr,
+      );
     }
   }
 }
