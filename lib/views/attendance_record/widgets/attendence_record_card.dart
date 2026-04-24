@@ -1,4 +1,5 @@
 import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/flavor/flavor.dart';
 import 'package:ciac_school/core/widgets/attendance/summary_item.dart';
 import 'package:ciac_school/models/staff/model.dart';
 import 'package:ciac_school/views/attendance_record/controller.dart';
@@ -6,11 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class AttendenceRecordCardWidget extends StatelessWidget {
+class AttendenceRecordCardWidget extends StatefulWidget {
   AttendenceRecordCardWidget({super.key});
 
-  final controller = Get.find<AttendanceRecordController>();
+  @override
+  State<AttendenceRecordCardWidget> createState() =>
+      _AttendenceRecordCardWidgetState();
+}
 
+class _AttendenceRecordCardWidgetState
+    extends State<AttendenceRecordCardWidget> {
+  final controller = Get.find<AttendanceRecordController>();
+  bool isLoading = true;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -191,7 +199,7 @@ class AttendenceRecordCardWidget extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: _statusColor(item.status),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       _statusText(item.status),
@@ -289,28 +297,74 @@ class AttendenceRecordCardWidget extends StatelessWidget {
 
   Widget _buildAvatar(String profileUrl) {
     const double size = 36;
-    if (profileUrl.isEmpty) {
-      return const CircleAvatar(
-        radius: 18,
-        backgroundImage: AssetImage('assets/images/teacher.jpg'),
+    final resolvedUrl = _resolveProfileUrl(profileUrl);
+    if (resolvedUrl.isEmpty) {
+      return _avatarPlaceholder(size);
+    }
+
+    return _buildImageAvatar(resolvedUrl, size);
+  }
+
+  Widget _avatarPlaceholder(double size) {
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: Colors.grey.shade200,
+      child: Icon(Icons.person, size: size * 0.55, color: Colors.grey.shade600),
+    );
+  }
+
+  Widget _buildImageAvatar(
+    String source,
+    double size, {
+    Widget Function()? onError,
+  }) {
+    final errorFallback = onError ?? () => _avatarPlaceholder(size);
+
+    if (_isNetworkUrl(source)) {
+      return ClipOval(
+        child: Image.network(
+          source,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => errorFallback(),
+        ),
       );
     }
 
     return ClipOval(
-      child: Image.network(
-        profileUrl,
+      child: Image.asset(
+        source,
         width: size,
         height: size,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) {
-          return Image.asset(
-            'assets/images/teacher.jpg',
-            width: size,
-            height: size,
-            fit: BoxFit.cover,
-          );
-        },
+        errorBuilder: (_, __, ___) => errorFallback(),
       ),
     );
+  }
+
+  String _resolveProfileUrl(String rawValue) {
+    final value = rawValue.trim();
+    if (value.isEmpty || value.toLowerCase() == 'n/a') {
+      return '';
+    }
+    if (_isNetworkUrl(value) || value.startsWith('assets/')) {
+      return value;
+    }
+
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) {
+      return '';
+    }
+
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    return baseUri
+        .resolve(value.startsWith('/') ? value.substring(1) : value)
+        .toString();
+  }
+
+  bool _isNetworkUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
   }
 }

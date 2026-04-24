@@ -21,8 +21,7 @@ class StartView extends GetView<StartController> {
           preferredSize: const Size.fromHeight(130),
           child: Obx(
             () => CustomAppBar(
-              profileUrl: controller.profileUrl.value,
-              profileFallbackAsset: 'assets/images/teacher.jpg',
+              profileUrl: controller.appBarProfileUrl,
               title: RichText(
                 text: TextSpan(
                   children: [

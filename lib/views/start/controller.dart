@@ -2,6 +2,7 @@ import 'package:ciac_school/views/scan/scan_log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/flavor/flavor.dart';
 import 'package:ciac_school/models/models.dart';
 import 'package:ciac_school/views/views.dart';
 
@@ -70,7 +71,7 @@ class StartController extends GetxController {
 
   void _setLocalProfileFallback() {
     try {
-      profileUrl.value = UserRepository.shared.profile.profile;
+      profileUrl.value = _normalizeProfileUrl(UserRepository.shared.profile.profile);
       userName.value = UserRepository.shared.profile.name;
     } catch (_) {
       profileUrl.value = '';
@@ -92,13 +93,64 @@ class StartController extends GetxController {
       final profile = ProfileModel.fromJson(data);
       UserRepository.shared.setProfile(profile);
 
-      profileUrl.value = profile.profile;
-      userName.value = profile.name;
+      final rawProfileUrl = _firstNonEmpty([
+        data['profile_path'],
+        data['profile'],
+        data['avatar'],
+        data['photo'],
+        data['image'],
+        data['profile_url'],
+      ]);
 
-      await SharedPreferencesManager.setValue('name', profile.name);
+      profileUrl.value = _normalizeProfileUrl(
+        rawProfileUrl.isNotEmpty ? rawProfileUrl : profile.profile,
+      );
+      userName.value = _firstNonEmpty([data['name'], profile.name]);
+
+      await SharedPreferencesManager.setValue('name', userName.value);
     } catch (_) {
       // Keep local fallback values when API call fails.
     }
+  }
+
+  String get appBarProfileUrl {
+    final current = profileUrl.value.trim();
+    if (current.isNotEmpty) {
+      return current;
+    }
+    try {
+      return _normalizeProfileUrl(UserRepository.shared.profile.profile);
+    } catch (_) {
+      return '';
+    }
+  }
+
+  String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final text = (value ?? '').toString().trim();
+      if (text.isNotEmpty && text.toLowerCase() != 'n/a') {
+        return text;
+      }
+    }
+    return '';
+  }
+
+  String _normalizeProfileUrl(String? rawUrl) {
+    final url = (rawUrl ?? '').trim();
+    if (url.isEmpty || url.toLowerCase() == 'n/a') {
+      return '';
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) {
+      return '';
+    }
+
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    return baseUri.resolve(url.startsWith('/') ? url.substring(1) : url).toString();
   }
 
   List<Widget> getItems() {

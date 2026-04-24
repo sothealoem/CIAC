@@ -42,26 +42,56 @@ class ProfileModel {
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    final profileValue = _firstNonEmpty([
+      json['profile_path'],
+      json['profile'],
+      json['avatar'],
+      json['photo'],
+      json['image'],
+      json['profile_url'],
+    ]);
+
     return ProfileModel(
-      id: json['id'],
-      name: json['name'] ?? 'N/A',
-      email: json['email'] ?? 'N/A',
-      profile: json['profile_path'] ?? 'N/A',
-      company: json['company'] ?? 'N/A',
-      phone: json['phone'] ?? 'N/A',
-      type: json['type'] ?? 'N/A',
+      id: json['id'] ?? 0,
+      name: _asText(json['name'], fallback: 'N/A'),
+      email: _asText(json['email'], fallback: 'N/A'),
+      profile: profileValue.isEmpty ? 'N/A' : profileValue,
+      company: _asText(json['company'], fallback: 'N/A'),
+      phone: _asText(json['phone'], fallback: 'N/A'),
+      type: _asText(json['type'], fallback: 'N/A'),
       gender: json['gender'] ?? 'N/A',
-      emailVerifiedAt: json['email_verified_at'] ?? 'N/A',
+      emailVerifiedAt: _asText(json['email_verified_at'], fallback: 'N/A'),
       status: json['status'],
       entryBy: json['entry_by'],
       updateBy: json['update_by'] ?? 'N/A',
       customerId: json['customer_id'] ?? 'N/A',
       driverId: json['driver_id'],
       branchId: json['branch_id'],
-      createdAt: json['created_at'] ?? 'N/A',
-      updatedAt: json['updated_at'] ?? 'N/A',
-      profilePath: json['profile_path'] ?? 'N/A',
-      policy: json['policy'] ?? 'N/A',
+      createdAt: _asText(json['created_at'], fallback: 'N/A'),
+      updatedAt: _asText(json['updated_at'], fallback: 'N/A'),
+      profilePath: profileValue.isEmpty ? 'N/A' : profileValue,
+      policy: _asText(json['policy'], fallback: 'N/A'),
     );
+  }
+
+  static String _asText(dynamic value, {String fallback = ''}) {
+    if (value == null) {
+      return fallback;
+    }
+    final text = value.toString().trim();
+    if (text.isEmpty || text.toLowerCase() == 'null') {
+      return fallback;
+    }
+    return text;
+  }
+
+  static String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final text = _asText(value);
+      if (text.isNotEmpty) {
+        return text;
+      }
+    }
+    return '';
   }
 }

@@ -1,12 +1,13 @@
 import 'package:ciac_school/core/configs/app_style.dart';
+import 'package:ciac_school/flavor/flavor.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  static const double _avatarSize = 36;
   final Widget? title;
   final String? subTitle;
   final String imagePath;
   final String? profileUrl;
-  final String profileFallbackAsset;
   final double height;
 
   const CustomAppBar({
@@ -15,7 +16,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.subTitle,
     required this.imagePath,
     this.profileUrl,
-    this.profileFallbackAsset = 'assets/images/teacher.jpg',
     this.height = 130,
   });
 
@@ -101,34 +101,86 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(height);
 
   Widget _buildProfileImage() {
-    final url = (profileUrl ?? '').trim();
-    final hasNetwork =
-        url.isNotEmpty &&
-        url != 'N/A' &&
-        (url.startsWith('http://') || url.startsWith('https://'));
+    final resolvedUrl = _resolveProfileUrl((profileUrl ?? '').trim());
+    if (resolvedUrl.isNotEmpty) {
+      return _buildImageFromPath(
+        resolvedUrl,
+        onError: () => _avatarPlaceholder(),
+      );
+    }
+    return _avatarPlaceholder();
+  }
 
-    if (hasNetwork) {
+  Widget _buildImageFromPath(
+    String path, {
+    required Widget Function() onError,
+  }) {
+    final source = path.trim();
+    final errorWidgetBuilder = (_, __, ___) => onError();
+
+    if (_isNetworkUrl(source)) {
       return ClipOval(
         child: Image.network(
-          url,
-          width: 36,
-          height: 36,
+          source,
+          width: _avatarSize,
+          height: _avatarSize,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallbackImage(),
+          errorBuilder: errorWidgetBuilder,
         ),
       );
     }
-    return _fallbackImage();
-  }
 
-  Widget _fallbackImage() {
     return ClipOval(
       child: Image.asset(
-        profileFallbackAsset,
-        width: 36,
-        height: 36,
+        source,
+        width: _avatarSize,
+        height: _avatarSize,
         fit: BoxFit.cover,
+        errorBuilder: errorWidgetBuilder,
       ),
     );
+  }
+
+  Widget _avatarPlaceholder() {
+    return CircleAvatar(
+      radius: _avatarSize / 2,
+      backgroundColor: Colors.grey.shade200,
+      child: Icon(
+        Icons.person,
+        size: _avatarSize * 0.55,
+        color: Colors.grey.shade600,
+      ),
+    );
+  }
+
+  String _resolveProfileUrl(String rawValue) {
+    if (!_isValidValue(rawValue)) {
+      return '';
+    }
+    if (_isNetworkUrl(rawValue) || rawValue.startsWith('assets/')) {
+      return rawValue;
+    }
+
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) {
+      return '';
+    }
+
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    return baseUri.resolve(
+      rawValue.startsWith('/') ? rawValue.substring(1) : rawValue,
+    ).toString();
+  }
+
+  bool _isValidValue(String value) {
+    return value.isNotEmpty && value.toLowerCase() != 'n/a';
+  }
+
+  bool _isNetworkUrl(String value) {
+    if (!_isValidValue(value)) {
+      return false;
+    }
+    final uri = Uri.tryParse(value);
+    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
   }
 }

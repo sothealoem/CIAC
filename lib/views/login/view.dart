@@ -66,11 +66,11 @@ class LoginView extends GetView<LoginController> {
                                 Obx(
                                   () => CustomTextField(
                                     prefixIcon: Icon(
-                                      Icons.email,
+                                      Icons.person,
                                       color: AppColor.primary,
                                     ),
                                     controller: controller.emailCtl,
-                                    hintText: "Email",
+                                    hintText: "Username or Email",
                                     errorText:
                                         controller
                                             .emailError
@@ -80,7 +80,7 @@ class LoginView extends GetView<LoginController> {
                                             controller.emailError.value =
                                                 null, // Clear error when typing
                                     validator:
-                                        (text) => FormValidator.email(text),
+                                        (text) => FormValidator.empty(text),
                                   ),
                                 ),
 
@@ -147,10 +147,72 @@ class LoginView extends GetView<LoginController> {
                                   ],
                                 ),
                                 UIConstants.spacing.height,
-                                PrimaryButton(
-                                  text: LocaleKeys.login.tr,
-                                  onPressed: () => controller.login(),
-                                ),
+                                Obx(() {
+                                  final isLoading = controller.isLoading.value;
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: UIConstants.btnHeight,
+                                    child: ElevatedButton(
+                                      onPressed: isLoading ? null : loginTab,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColor.primary,
+                                        disabledBackgroundColor: AppColor
+                                            .primary
+                                            .withOpacity(0.8),
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              UIConstants.radius.radiusAll,
+                                        ),
+                                      ),
+                                      child: AnimatedSwitcher(
+                                        duration: const Duration(
+                                          milliseconds: 220,
+                                        ),
+                                        child:
+                                            isLoading
+                                                ? Row(
+                                                  key: const ValueKey(
+                                                    'loading',
+                                                  ),
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: const [
+                                                    SizedBox(
+                                                      width: 18,
+                                                      height: 18,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2.4,
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation<
+                                                                  Color
+                                                                >(Colors.white),
+                                                          ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                      "Signing in...",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                                : Text(
+                                                  LocaleKeys.login.tr,
+                                                  key: const ValueKey('idle'),
+                                                  style:
+                                                      AppTextStyle
+                                                          .normalWhiteBold,
+                                                ),
+                                      ),
+                                    ),
+                                  );
+                                }),
 
                                 UIConstants.spacing.height,
 
