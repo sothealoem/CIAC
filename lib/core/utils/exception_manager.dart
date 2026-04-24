@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:swis_school/core/utils/dialog_manager.dart';
+import 'package:ciac_school/core/utils/utils.dart';
 
 class ExceptionHandler {
   ExceptionHandler._();

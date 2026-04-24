@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/views/views.dart';
+import 'package:ciac_school/views/attendance/controller.dart';
 
 class AttendanceBinding extends Bindings {
   @override

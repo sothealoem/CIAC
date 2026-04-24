@@ -1,9 +1,10 @@
-import 'package:swis_school/core/libraries/shared_preferences.dart';
-import 'package:swis_school/core/services/end_points.dart';
-import 'package:swis_school/core/utils/exception_manager.dart';
-import 'package:swis_school/flavor/app_config.dart';
-import 'package:swis_school/routes.dart';
-import 'package:swis_school/views/dashboard/controller.dart';
+import 'package:ciac_school/core/libraries/shared_preferences.dart';
+import 'package:ciac_school/core/services/end_points.dart';
+import 'package:ciac_school/core/utils/exception_manager.dart';
+import 'package:ciac_school/core/constants/constants.dart';
+import 'package:ciac_school/flavor/app_config.dart';
+import 'package:ciac_school/routes.dart';
+import 'package:ciac_school/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -79,6 +80,10 @@ class LoginController extends GetxController {
       final String token = data['token']?.toString() ?? '';
       final String role = (data['role'] ?? '').toString().toLowerCase();
       final String name = data['name']?.toString() ?? '';
+      final String scannerOwnerId = _resolveScannerOwnerId(
+        data: data,
+        fallbackUsername: username,
+      );
 
       if (token.isEmpty) {
         DialogManager.showDialog(
@@ -89,7 +94,7 @@ class LoginController extends GetxController {
       }
 
       ///  role check
-      const allowedRoles = ['admin', 'teacher', 'parent'];
+      final allowedRoles = UserType.allowedRoleKeys;
 
       if (!allowedRoles.contains(role)) {
         DialogManager.showDialog(
@@ -111,8 +116,12 @@ class LoginController extends GetxController {
       await SharedPreferencesManager.setValue('username', username);
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
+      await SharedPreferencesManager.setValue(
+        'scanner_owner_id',
+        scannerOwnerId,
+      );
 
-      ///  navigate
+      /// navigate
       Get.offAllNamed(Routes.start);
     } catch (e) {
       print("LOGIN ERROR: $e");
@@ -133,5 +142,33 @@ class LoginController extends GetxController {
     await SharedPreferencesManager.clear();
     AppConfig.shared.token = '';
     Get.offAllNamed(Routes.login);
+  }
+
+  String _resolveScannerOwnerId({
+    required dynamic data,
+    required String fallbackUsername,
+  }) {
+    if (data is! Map<String, dynamic>) {
+      return fallbackUsername;
+    }
+
+    final candidates = <dynamic>[
+      data['staff_code'],
+      data['card_uid'],
+      data['code'],
+      data['user_code'],
+      data['employee_code'],
+      data['id'],
+      data['username'],
+      fallbackUsername,
+    ];
+
+    for (final value in candidates) {
+      final text = (value ?? '').toString().trim();
+      if (text.isNotEmpty) {
+        return text;
+      }
+    }
+    return fallbackUsername;
   }
 }

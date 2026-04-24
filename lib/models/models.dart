@@ -17,3 +17,4 @@ export 'id_name/id_name.dart';
 export 'login/login.dart';
 export 'pagination/pagination.dart';
 export 'tracking/tracking.dart';
+export 'staff/staff.dart';

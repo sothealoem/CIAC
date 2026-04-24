@@ -1,24 +1,29 @@
+import 'package:ciac_school/views/scan/scan_log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/models/models.dart';
+import 'package:ciac_school/views/views.dart';
 
 class StartController extends GetxController {
   final RxInt selectedIndex = 0.obs;
+  final RxString profileUrl = ''.obs;
+  final RxString userName = ''.obs;
   late Rx<Widget> selectedScreen = screens[0].obs;
   static List<Widget> screens = [
     const DashboardView(),
     NotificationView(),
-    ScanView(),
+    CardScanView(),
+    //ScanView(),
     PaymentCollectionView(),
     ContactUsView(),
   ];
 
   @override
   void onInit() {
-    // Call over here becuase inside that UserRepository need to access Get.context
-    // Get.context must be call after GetMaterialApp
     UserRepository.shared;
+    _setLocalProfileFallback();
+    fetchUserProfileFromApi();
 
     super.onInit();
   }
@@ -37,6 +42,10 @@ class StartController extends GetxController {
   }
 
   void changeMenuIndex(int index) {
+    if (index == 2) {
+      _openScanFullScreen();
+      return;
+    }
     selectedIndex.value = index;
     selectedScreen.value = screens[index];
   }
@@ -47,8 +56,49 @@ class StartController extends GetxController {
     int deliveryStatus = 1,
     String dateFilter = '',
   }) async {
+    if (index == 2) {
+      _openScanFullScreen();
+      return;
+    }
     selectedIndex.value = index;
     selectedScreen.value = screens[selectedIndex.value];
+  }
+
+  Future<void> _openScanFullScreen() async {
+    await Get.to(() => CardScanView());
+  }
+
+  void _setLocalProfileFallback() {
+    try {
+      profileUrl.value = UserRepository.shared.profile.profile;
+      userName.value = UserRepository.shared.profile.name;
+    } catch (_) {
+      profileUrl.value = '';
+      userName.value = '';
+    }
+  }
+
+  Future<void> fetchUserProfileFromApi() async {
+    try {
+      final res = await Get.find<ApiService>().get(
+        EndPoints.profile,
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      if (data is! Map<String, dynamic>) {
+        return;
+      }
+
+      final profile = ProfileModel.fromJson(data);
+      UserRepository.shared.setProfile(profile);
+
+      profileUrl.value = profile.profile;
+      userName.value = profile.name;
+
+      await SharedPreferencesManager.setValue('name', profile.name);
+    } catch (_) {
+      // Keep local fallback values when API call fails.
+    }
   }
 
   List<Widget> getItems() {

@@ -6,14 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/flavor/flavor.dart';
+import 'package:ciac_school/routes.dart';
 import 'package:logging/logging.dart';
-import 'package:swis_school/core/configs/app_style.dart';
-import 'package:swis_school/core/constants/storage_key.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
-import 'package:swis_school/core/services/api_service.dart';
-import 'package:swis_school/core/utils/keyboard_helper.dart';
-import 'package:swis_school/flavor/app_config.dart';
-import 'package:swis_school/routes.dart';
 import 'package:upgrader/upgrader.dart';
 
 Future<void> main() async {

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
+import 'package:ciac_school/core/core.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
 
 class FormValidator {
   static String? empty(String? text) {

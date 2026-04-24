@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/flavor/app_config.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/flavor/app_config.dart';
 
 class LanguageController extends GetxController {
   final RxBool isCambodia = true.obs;

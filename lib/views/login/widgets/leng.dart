@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:ciac_school/core/core.dart';
 
 class SocialLoginWidget extends StatelessWidget {
   const SocialLoginWidget({super.key});

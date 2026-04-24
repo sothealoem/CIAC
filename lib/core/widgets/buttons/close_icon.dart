@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/configs/app_style.dart';
+import 'package:ciac_school/core/core.dart';
 
 class CloseIcon extends StatelessWidget {
   const CloseIcon({super.key});

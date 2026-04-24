@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/models/models.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/models/models.dart';
 
 class ContactUsController extends GetxController {
   final Rxn<ContactUsModel> contactUs = Rxn<ContactUsModel>();

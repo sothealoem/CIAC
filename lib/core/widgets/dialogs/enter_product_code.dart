@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/configs/app_style.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
-import 'package:swis_school/core/utils/form_validator.dart';
-import 'package:swis_school/core/widgets/buttons/primary.dart';
-import 'package:swis_school/core/widgets/text_field/custom.dart';
-import 'package:swis_school/views/scan/controller.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/views/views.dart';
 
 class EnterProductCodeDialog extends StatelessWidget {
   EnterProductCodeDialog({super.key});

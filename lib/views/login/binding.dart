@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/views/views.dart';
 
 class LoginBinding extends Bindings {
   @override

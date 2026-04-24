@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:dropdown_button2/dropdown_button2.dart';
 // import 'package:get/get.dart';
-// import 'package:swis_school/core/core.dart';
+// import 'package:ciac_school/core/core.dart';
 
 // class SearchDropDown<T> extends StatefulWidget {
 //   const SearchDropDown({

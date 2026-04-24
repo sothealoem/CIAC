@@ -1,11 +1,12 @@
-import 'package:swis_school/core/configs/app_style.dart';
+import 'package:ciac_school/core/configs/app_style.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
   final String? subTitle;
   final String imagePath;
-  final String profile;
+  final String? profileUrl;
+  final String profileFallbackAsset;
   final double height;
 
   const CustomAppBar({
@@ -13,7 +14,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     required this.subTitle,
     required this.imagePath,
-    required this.profile,
+    this.profileUrl,
+    this.profileFallbackAsset = 'assets/images/teacher.jpg',
     this.height = 130,
   });
 
@@ -58,10 +60,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: AppColor.primaryColor, width: 2),
                 ),
-                child: CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage(profile),
-                ),
+                child: CircleAvatar(radius: 18, child: _buildProfileImage()),
               ),
             ),
           ],
@@ -100,4 +99,36 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(height);
+
+  Widget _buildProfileImage() {
+    final url = (profileUrl ?? '').trim();
+    final hasNetwork =
+        url.isNotEmpty &&
+        url != 'N/A' &&
+        (url.startsWith('http://') || url.startsWith('https://'));
+
+    if (hasNetwork) {
+      return ClipOval(
+        child: Image.network(
+          url,
+          width: 36,
+          height: 36,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallbackImage(),
+        ),
+      );
+    }
+    return _fallbackImage();
+  }
+
+  Widget _fallbackImage() {
+    return ClipOval(
+      child: Image.asset(
+        profileFallbackAsset,
+        width: 36,
+        height: 36,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
 }

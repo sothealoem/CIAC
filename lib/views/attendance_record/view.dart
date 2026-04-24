@@ -1,11 +1,10 @@
-import 'package:swis_school/views/attendance_record/controller.dart';
-import 'package:swis_school/views/attendance_record/widgets/attendence_record_card.dart';
+import 'package:ciac_school/views/attendance_record/controller.dart';
+import 'package:ciac_school/views/attendance_record/widgets/attendence_record_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/views/attendance/widgets/month_filter.dart';
-import 'package:swis_school/views/start/widgets/custom_indicator.dart';
+import 'package:ciac_school/core/constants/ui_constants.dart';
+import 'package:ciac_school/core/extensions/int.dart';
+import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
 
 import '../start/widgets/customize_app_bar.dart';
 
@@ -16,7 +15,7 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
     if (!controller.formKey.currentState!.validate()) {
       return;
     }
-    await controller.fetchTracking();
+    await controller.loadAttendanceLogs();
   }
 
   @override

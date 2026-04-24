@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ciac_school/core/core.dart';
 import 'package:intl/intl.dart';
-import 'package:swis_school/core/configs/app_style.dart';
-import 'package:swis_school/core/repositories/user.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
 
 class DatePicker {
   final TextEditingController controller;

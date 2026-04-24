@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/configs/app_style.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/core/repositories/user.dart';
-import 'package:swis_school/core/widgets/buttons/close_icon.dart';
+import 'package:ciac_school/core/core.dart';
 
 class BottomSheetManager {
   static Future custom({required Widget content}) {

@@ -1,8 +1,9 @@
-import 'package:swis_school/models/requestleave/model.dart';
+import 'package:ciac_school/models/requestleave/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/models/models.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/models/models.dart';
+import 'package:intl/intl.dart';
 
 class RequestLeaveController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();
@@ -17,6 +18,33 @@ class RequestLeaveController extends GetxController {
   var startDate = "".obs;
   var endDate = "".obs;
   var isloading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Adding initial dummy data so the list isn't empty at start
+    requests.addAll([
+      RequestLeaveModel(
+        name: "សិន ដារ៉ា",
+        grade: '៥',
+        dateStart: "20/04/2026",
+        dateEnd: "22/04/2026",
+        leaveType: "Sick",
+        reason: "គ្រុនក្ដៅខ្លាំង",
+        status: "pending",
+      ),
+      RequestLeaveModel(
+        name: "សិន ដារ៉ា",
+        grade: '៥',
+        dateStart: "10/04/2026",
+        dateEnd: "11/04/2026",
+        leaveType: "Busy",
+        reason: "រវល់ការងារគ្រួសារ",
+        status: "approved",
+      ),
+    ]);
+  }
+
   @override
   void onClose() {
     searchCtl.dispose();
@@ -55,6 +83,92 @@ class RequestLeaveController extends GetxController {
           "${picked.month.toString().padLeft(2, '0')}/"
           "${picked.year}";
     }
+  }
+
+  String get _mappedLeaveType {
+    if (leaveType.value == 'ឈឺ') return "Sick";
+    if (leaveType.value == 'រវល់') return "Busy";
+    return "Other";
+  }
+
+  Future<void> submitRequest() async {
+    // 1. Validation
+    if (startDate.value.isEmpty ||
+        endDate.value.isEmpty ||
+        leaveType.value.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "សូមបំពេញព័ត៌មានឱ្យបានគ្រប់គ្រាន់",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isloading.value = true;
+
+    // 2. Setup IDs (Replace '1' with your actual dynamic student ID)
+    const String studentId = "000001";
+    final String url =
+        "https://demo.school.softcreative.online/api/v1/parent/$studentId/leave-request";
+
+    // 3. Prepare Payload
+    final Map<String, dynamic> payload = {
+      "date_start": _formatToIso(startDate.value),
+      "date_end": _formatToIso(endDate.value),
+      "leave_type": _mappedLeaveType,
+      "reason": reasonController.text,
+    };
+
+    try {
+      final res = await Get.find<ApiService>().post(
+        url,
+        payload,
+        isShowLoading: false,
+      );
+
+      // 5. Handle Response
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        // Add to local list for immediate UI feedback
+        requests.insert(
+          0,
+          RequestLeaveModel(
+            name: "សិន ដារ៉ា",
+            grade: selectedClass.value,
+            dateStart: startDate.value,
+            dateEnd: endDate.value,
+            leaveType: leaveType.value,
+            reason: reasonController.text,
+            status: "pending",
+          ),
+        );
+        // Get.snackbar(
+        //   "ជោគជ័យ",
+        //   "សំណើរបស់លោកអ្នកត្រូវបានបញ្ជូន",
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+        Get.back(); // Return to the list view
+
+        requests.refresh();
+        // Reset form
+        reasonController.clear();
+      }
+    } catch (e) {
+      debugPrint("POST Error: $e");
+      // Handle error (e.g., show message from server)
+      ExceptionHandler.handleException(e);
+    } finally {
+      isloading.value = false;
+    }
+  }
+
+  String _formatToIso(String dateStr) {
+    if (dateStr.isEmpty) return "";
+    final date = _parseDate(dateStr);
+    if (date == null) return "";
+    // Returns ISO format with Z suffix
+    return "${DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date)}Z";
   }
 
   Future<void> pickEndDate() async {
@@ -106,22 +220,6 @@ class RequestLeaveController extends GetxController {
     } catch (_) {
       return null;
     }
-  }
-
-  Future<void> submitRequest() async {
-    isloading.value = true;
-    await Future.delayed(const Duration(seconds: 1)); // simulate API
-    requests.add(
-      RequestLeaveModel(
-        name: "សិន ដារ៉ា",
-        grade: selectedClass.value,
-        dateStart: startDate.value,
-        dateEnd: endDate.value,
-        reason: reasonController.text,
-        status: "pending",
-      ),
-    );
-    isloading.value = false;
   }
 
   Future<void> fetchTracking() async {

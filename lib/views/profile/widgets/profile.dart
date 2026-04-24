@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/views/views.dart';
 
 class ProfileWidget extends StatelessWidget {
   ProfileWidget({super.key});

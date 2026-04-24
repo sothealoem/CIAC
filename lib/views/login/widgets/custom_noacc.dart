@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/routes.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/routes.dart';
 
 class CustomNoAccountWidget extends StatelessWidget {
   final bool showForgotPassword;

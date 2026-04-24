@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/repositories/user.dart';
+import 'package:ciac_school/core/core.dart';
 
 class KeyboardHelper {
   static void dismissKeyboard() {

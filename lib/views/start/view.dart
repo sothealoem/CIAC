@@ -1,9 +1,9 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/start/widgets/custom_appbar.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/views/start/widgets/custom_appbar.dart';
+import 'package:ciac_school/views/views.dart';
 
 class StartView extends GetView<StartController> {
   const StartView({super.key});
@@ -17,44 +17,47 @@ class StartView extends GetView<StartController> {
       },
       child: Scaffold(
         extendBody: true,
-        appBar: CustomAppBar(
-          profile: 'assets/images/teacher.jpg',
-          // title: controller.getTitle(),
-          title: Obx(() {
-            final name = dashboardController.displayName;
-
-            return RichText(
-              text: TextSpan(
-                children: [
-                  const TextSpan(
-                    text: "Welcome, ",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(130),
+          child: Obx(
+            () => CustomAppBar(
+              profileUrl: controller.profileUrl.value,
+              profileFallbackAsset: 'assets/images/teacher.jpg',
+              title: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Welcome, ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: dashboardController.displayName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontStyle: FontStyle.italic,
-                      color: AppColor.yellow,
-                      fontWeight: FontWeight.bold,
+                    TextSpan(
+                      text:
+                          controller.userName.value.trim().isEmpty
+                              ? dashboardController.displayName
+                              : controller.userName.value,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        color: AppColor.yellow,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const TextSpan(
-                    text: " 👋",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ],
+                    const TextSpan(
+                      text: ' !',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
-            );
-          }),
-          subTitle: 'here is your dashboard.',
-          imagePath: 'assets/images/sliver_banner1.png', // your header image
+              subTitle: 'here is your dashboard.',
+              imagePath: 'assets/images/sliver_banner1.png',
+            ),
+          ),
         ),
-        //appBar: appBarWidget(),
         drawer: const DrawerWidget(),
         body: Center(child: Obx(() => controller.selectedScreen.value)),
         floatingActionButtonLocation:
@@ -102,7 +105,6 @@ class StartView extends GetView<StartController> {
               style: TabStyle.reactCircle,
               initialActiveIndex: controller.selectedIndex.value,
               onTap: (index) {
-                //controller.selectedIndex.value = index;
                 controller.changeMenuIndex(index);
               },
               shadowColor: const Color.fromARGB(255, 179, 211, 207),
@@ -131,7 +133,6 @@ class StartView extends GetView<StartController> {
                   title: LocaleKeys.payments.tr,
                   fontFamily: 'Battambang',
                 ),
-
                 TabItem(
                   icon: Icons.contact_phone,
                   title: LocaleKeys.contact.tr,

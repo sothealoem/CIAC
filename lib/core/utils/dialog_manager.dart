@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
-import 'package:swis_school/core/widgets/dialogs/loading.dart';
-import 'package:swis_school/core/widgets/dialogs/primary.dart';
+import 'package:ciac_school/core/core.dart';
 
 class DialogManager {
   DialogManager._();

@@ -1,4 +1,4 @@
-import 'package:swis_school/models/requestleave/leave.dart';
+import 'package:ciac_school/models/requestleave/leave.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,8 +21,8 @@ class AllRequestleaveControlller extends GetxController {
     "ថ្នាក់ទី ៦",
   ];
 
-  RequestLeave buildRequest() {
-    return RequestLeave(
+  RequestLeaveModel buildRequest() {
+    return RequestLeaveModel(
       dateStart: dateStart.value,
       dateEnd: dateEnd.value,
       leaveType: leaveType.value,

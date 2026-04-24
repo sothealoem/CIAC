@@ -1,4 +1,4 @@
-import 'package:swis_school/models/customer_payment/model.dart';
+import 'package:ciac_school/models/models.dart';
 
 class PaymentDetailsModel {
   final SummaryModel? summary;

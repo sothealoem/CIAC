@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/views/attendance/widgets/month_filter.dart';
-import 'package:swis_school/views/start/widgets/custom_indicator.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/core/constants/ui_constants.dart';
+import 'package:ciac_school/core/extensions/int.dart';
+import 'package:ciac_school/views/attendance/widgets/month_filter.dart';
+import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
+import 'package:ciac_school/views/views.dart';
 
 import '../start/widgets/customize_app_bar.dart';
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/constants/storage_key.dart';
-import 'package:swis_school/core/libraries/shared_preferences.dart';
-import 'package:swis_school/flavor/app_config.dart';
-import 'package:swis_school/models/profile/model.dart';
-import 'package:swis_school/routes.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/flavor/flavor.dart';
+import 'package:ciac_school/models/models.dart';
+import 'package:ciac_school/routes.dart';
 
 class UserRepository {
   UserRepository._() {
@@ -38,13 +37,8 @@ class UserRepository {
   bool _isDriver = false;
   bool get isDriver => _isDriver;
   void setUserType(String value) {
-    switch (value) {
-      case 'parent':
-        _isDriver = true;
-        break;
-      default:
-        _isDriver = false;
-    }
+    final userType = UserType.fromKey(value);
+    _isDriver = userType == UserType.parent;
   }
 
   bool _isTablet = false;

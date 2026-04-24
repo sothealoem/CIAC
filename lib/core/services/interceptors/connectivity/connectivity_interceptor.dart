@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart' as dio;
-import 'package:swis_school/core/libraries/connectivity_plus.dart';
-import 'package:swis_school/core/utils/dialog_manager.dart';
+import 'package:ciac_school/core/core.dart';
 
 class ConnectivityInterceptor extends dio.Interceptor {
   ConnectivityInterceptor();

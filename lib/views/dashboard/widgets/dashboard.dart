@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/routes.dart';
-import 'package:swis_school/views/dashboard/controller.dart';
-import 'package:swis_school/views/dashboard/widgets/slide_image.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/routes.dart';
+import 'package:ciac_school/views/dashboard/controller.dart';
+import 'package:ciac_school/views/dashboard/widgets/slide_image.dart';
 
 class DashboardWidget extends StatefulWidget {
   const DashboardWidget({super.key});

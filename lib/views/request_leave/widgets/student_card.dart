@@ -1,8 +1,7 @@
-import 'package:swis_school/views/all_requested_leave/all_requested_leave.dart';
-import 'package:swis_school/views/request_leave/controller.dart';
+import 'package:ciac_school/views/request_leave/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:ciac_school/core/core.dart';
 
 class StudentCardWidget extends StatelessWidget {
   const StudentCardWidget({super.key});
@@ -149,9 +148,9 @@ class StudentCardWidget extends StatelessWidget {
                                 'ចំនួនឈប់សម្រាក៖',
                                 style: AppTextStyle.smallPrimaryBoldBlack,
                               ),
-                              5.width,
+                              2.width,
                               Container(
-                                width: 70,
+                                width: 55,
                                 height: 20,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
@@ -177,13 +176,13 @@ class StudentCardWidget extends StatelessWidget {
                               'សម្រាកពីថ្ងៃទី៖',
                               style: AppTextStyle.smallPrimaryBoldBlack,
                             ),
-                            5.width,
+                            2.width,
                             Expanded(
                               child: Obx(() {
                                 return Row(
                                   children: [
                                     Container(
-                                      width: 70,
+                                      width: 55,
                                       height: 20,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
@@ -286,6 +285,7 @@ class StudentCardWidget extends StatelessWidget {
                       backgroundColor: const Color(0xFF0F6B5B), // your green
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
+                      minimumSize: Size(200, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

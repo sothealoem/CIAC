@@ -1,6 +1,6 @@
 {
-    "name": "swis_school",
-    "short_name": "swis_school",
+    "name": "ciac_school",
+    "short_name": "ciac_school",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

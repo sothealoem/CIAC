@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
+import 'package:ciac_school/core/core.dart';
 
 class TermConditionView extends StatelessWidget {
   const TermConditionView({super.key});

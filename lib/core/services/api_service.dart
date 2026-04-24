@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:ciac_school/core/services/interceptors/auth/auth_interceptor.dart';
+import 'package:ciac_school/flavor/app_config.dart';
 import 'package:get/get.dart';
 import 'package:logging/logging.dart';
 import 'package:dio/dio.dart' as d;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:swis_school/core/services/interceptors/auth/auth_interceptor.dart';
-import 'package:swis_school/flavor/app_config.dart';
 
 class ApiService extends GetxService {
   ApiService init() => this;

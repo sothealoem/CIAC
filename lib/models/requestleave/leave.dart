@@ -1,26 +1,29 @@
-class RequestLeave {
+class RequestLeaveModel {
+  final String? name;
+  final String? grade;
   final String? dateStart;
   final String? dateEnd;
   final String? leaveType;
   final String? reason;
+  final String? status;
 
-  RequestLeave({this.dateStart, this.dateEnd, this.leaveType, this.reason});
+  RequestLeaveModel({
+    this.name,
+    this.grade,
+    this.dateStart,
+    this.dateEnd,
+    this.leaveType,
+    this.reason,
+    this.status,
+  });
 
-  factory RequestLeave.fromJson(Map<String, dynamic> json) {
-    return RequestLeave(
-      dateStart: json['date_start'],
-      dateEnd: json['date_end'],
-      leaveType: json['leave_type'],
-      reason: json['reason'],
-    );
-  }
-
+  // For API Submission
   Map<String, dynamic> toJson() {
     return {
-      'date_start': dateStart,
-      'date_end': dateEnd,
-      'leave_type': leaveType,
-      'reason': reason,
+      "date_start": dateStart,
+      "date_end": dateEnd,
+      "leave_type": leaveType,
+      "reason": reason ?? "",
     };
   }
 }

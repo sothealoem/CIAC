@@ -1,5 +1,5 @@
-import 'package:swis_school/core/utils/exception_manager.dart';
-import 'package:swis_school/main.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UrlLauncherManager {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/views/start/widgets/custom_indicator.dart';
-import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
-import 'package:swis_school/views/student_document/controller.dart';
-import 'package:swis_school/views/student_document/widget/student_document.dart';
+import 'package:ciac_school/core/constants/ui_constants.dart';
+import 'package:ciac_school/core/extensions/int.dart';
+import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
+import 'package:ciac_school/views/start/widgets/customize_app_bar.dart';
+import 'package:ciac_school/views/student_document/controller.dart';
+import 'package:ciac_school/views/student_document/widget/student_document.dart';
 
 class StudentDocumentView extends GetView<StudentDocumentController> {
   const StudentDocumentView({super.key});

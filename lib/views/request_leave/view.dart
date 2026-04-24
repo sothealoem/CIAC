@@ -1,10 +1,11 @@
+import 'package:ciac_school/views/request_leave/widgets/student_card1.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/views/start/widgets/custom_indicator.dart';
-import 'package:swis_school/views/start/widgets/customize_app_bar.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/core/constants/ui_constants.dart';
+import 'package:ciac_school/core/extensions/int.dart';
+import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
+import 'package:ciac_school/views/start/widgets/customize_app_bar.dart';
+import 'package:ciac_school/views/views.dart';
 
 class RequestLeaveView extends GetView<RequestLeaveController> {
   const RequestLeaveView({super.key});
@@ -29,7 +30,7 @@ class RequestLeaveView extends GetView<RequestLeaveController> {
             ),
             UIConstants.spacingSmall.height,
             CustomIndicator(progress: 1 / 4),
-            Expanded(child: Container(child: StudentCardWidget())),
+            Expanded(child: Container(child: StudentCard1Widget())),
           ],
         ),
       ),

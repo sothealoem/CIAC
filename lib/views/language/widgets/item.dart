@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/core/core.dart';
-import 'package:swis_school/views/language/language.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/views/language/language.dart';
 
 class ItemView extends StatelessWidget {
   const ItemView({super.key, this.isCambodia = true});

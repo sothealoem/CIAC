@@ -1,6 +1,10 @@
-import 'package:swis_school/views/attendance_record/controller.dart';
+import 'package:ciac_school/core/core.dart';
+import 'package:ciac_school/core/widgets/attendance/summary_item.dart';
+import 'package:ciac_school/models/staff/model.dart';
+import 'package:ciac_school/views/attendance_record/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AttendenceRecordCardWidget extends StatelessWidget {
   AttendenceRecordCardWidget({super.key});
@@ -13,11 +17,35 @@ class AttendenceRecordCardWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          /// =========================
-          /// 📅 DATE PICKER
-          /// =========================
-          Obx(() {
-            return GestureDetector(
+          Obx(
+            () => Row(
+              children: [
+                SummaryItem(
+                  label: 'Present',
+                  count: controller.presentSummary.value,
+                  color: Colors.green,
+                ),
+                SummaryItem(
+                  label: 'Late',
+                  count: controller.lateSummary.value,
+                  color: Colors.orange,
+                ),
+                SummaryItem(
+                  label: 'Absent',
+                  count: controller.absentSummary.value,
+                  color: Colors.red,
+                ),
+                SummaryItem(
+                  label: 'Permission',
+                  count: controller.permissionSummary.value,
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+          ),
+          10.height,
+          Obx(
+            () => GestureDetector(
               onTap: () => controller.pickDate(context),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -31,7 +59,7 @@ class AttendenceRecordCardWidget extends StatelessWidget {
                     Expanded(
                       child: Text(
                         controller.selectedDate.value.isEmpty
-                            ? "Select Date"
+                            ? 'Select Date'
                             : controller.selectedDate.value,
                         style: const TextStyle(fontSize: 14),
                       ),
@@ -40,53 +68,27 @@ class AttendenceRecordCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
-            );
-          }),
-
-          const SizedBox(height: 12),
-
-          /// =========================
-          /// 🔽 FILTER ROW
-          /// =========================
-          Row(
-            children: [
-              Expanded(child: _buildDropdown("ថ្នាក់ទី")),
-              const SizedBox(width: 10),
-
-              GestureDetector(
-                onTap: controller.filter,
-                child: _buildButton("Filter", Colors.amber, Colors.white),
-              ),
-            ],
+            ),
           ),
-
-          const SizedBox(height: 10),
-
-          /// =========================
-          /// 🔽 RESET ROW
-          /// =========================
-          Row(
-            children: [
-              Expanded(child: _buildDropdown("ជ្រើសរើស")),
-              const SizedBox(width: 10),
-
-              GestureDetector(
-                onTap: controller.reset,
-                child: _buildButton(
-                  "Reset",
-                  Colors.grey.shade400,
-                  Colors.white,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          /// =========================
-          /// 📋 ATTENDANCE LIST
-          /// =========================
+          20.height,
           Obx(() {
+            if (controller.isLoading.value) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.attendanceList.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Text(
+                  'No attendance logs for selected date.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              );
+            }
+
             return Column(
               children:
                   controller.attendanceList.map((item) {
@@ -99,93 +101,127 @@ class AttendenceRecordCardWidget extends StatelessWidget {
     );
   }
 
-  // =========================
-  // 🔹 CARD
-  // =========================
-  Widget _buildCard(Map item) {
+  Widget _buildCard(StaffAttendanceItem item) {
+    final staffId =
+        item.staffCode.isNotEmpty ? item.staffCode.trim() : item.id.trim();
+    final profileUrl = item.profile.trim();
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 25),
+      padding: const EdgeInsets.fromLTRB(12, 18, 12, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade300),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          /// DATE
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(item['date'] ?? ''),
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          /// NAME + STATUS
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 16,
-                backgroundImage: AssetImage('assets/images/teacher.jpg'),
-              ),
-              const SizedBox(width: 10),
-
-              Expanded(
-                child: Text(
-                  item['name'] ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Transform.translate(
+                offset: const Offset(-50, -30),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calendar_month,
+                        size: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        item.attendanceDate,
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color:
-                      item['status'] == "present"
-                          ? Colors.green
-                          : Colors.orange,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  item['status'] == "present" ? "គ្រប់" : "យឺត",
-                  style: const TextStyle(color: Colors.white, fontSize: 11),
-                ),
-              ),
-            ],
+            ),
           ),
-
-          const SizedBox(height: 10),
-
-          /// TIME (COLUMN STYLE)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("ចូលម៉ោង ${item['checkInMorning']}"),
-              const SizedBox(height: 4),
-              Text("ចេញម៉ោង ${item['checkOutMorning']}"),
-
+              Row(
+                children: [
+                  _buildAvatar(profileUrl),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        if (staffId.isNotEmpty)
+                          Text(
+                            'ID: $staffId',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusColor(item.status),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      _statusText(item.status),
+                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Text('Morning In: ${_timeText(item.timeIn1)}'),
+                  const Spacer(),
+                  Text('Morning Out | ${_timeText(item.timeOut1)}'),
+                ],
+              ),
               const SizedBox(height: 6),
-              Divider(color: Colors.grey.shade300),
-
+              Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.grey.shade300)),
+                ],
+              ),
               const SizedBox(height: 6),
-              Text("ចូលម៉ោង ${item['checkInAfternoon']}"),
-              const SizedBox(height: 4),
-              Text("ចេញម៉ោង ${item['checkOutAfternoon']}"),
+              Row(
+                children: [
+                  Text('Afternoon In:  ${_timeText(item.timeIn2)}'),
+                  const Spacer(),
+                  Text('Afternoon Out |  ${_timeText(item.timeOut2)}'),
+                ],
+              ),
             ],
           ),
         ],
@@ -193,42 +229,87 @@ class AttendenceRecordCardWidget extends StatelessWidget {
     );
   }
 
-  // =========================
-  // 🔹 DROPDOWN
-  // =========================
-  Widget _buildDropdown(String hint) {
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(hint, style: const TextStyle(fontSize: 13)),
-          const Icon(Icons.keyboard_arrow_down),
-        ],
-      ),
-    );
+  Color _statusColor(String rawStatus) {
+    final status = rawStatus.toLowerCase();
+    if (status.contains('permission')) {
+      return Colors.blue;
+    }
+    if (status.contains('late')) {
+      return Colors.orange;
+    }
+    if (status.contains('absent')) {
+      return Colors.red;
+    }
+    return Colors.green;
   }
 
-  // =========================
-  // 🔹 BUTTON
-  // =========================
-  Widget _buildButton(String text, Color bg, Color textColor) {
-    return Container(
-      height: 44,
-      width: 90,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+  String _statusText(String rawStatus) {
+    final status = rawStatus.toLowerCase();
+    if (status.contains('permission')) {
+      return 'Permission';
+    }
+    if (status.contains('late')) {
+      return 'Late';
+    }
+    if (status.contains('absent')) {
+      return 'Absent';
+    }
+    return 'Present';
+  }
+
+  String _timeText(String value) {
+    final normalized = value.trim();
+    if (normalized.isEmpty || normalized == '-') {
+      return 'N/A';
+    }
+
+    final formatted = _formatToAmPm(normalized);
+    return formatted ?? normalized;
+  }
+
+  String? _formatToAmPm(String value) {
+    final formatters = <DateFormat>[
+      DateFormat('HH:mm:ss'),
+      DateFormat('HH:mm'),
+      DateFormat('H:mm:ss'),
+      DateFormat('H:mm'),
+      DateFormat('hh:mm a'),
+      DateFormat('h:mm a'),
+    ];
+
+    for (final formatter in formatters) {
+      try {
+        final dateTime = formatter.parseStrict(value);
+        return DateFormat('hh:mm:ss a').format(dateTime);
+      } catch (_) {}
+    }
+
+    return null;
+  }
+
+  Widget _buildAvatar(String profileUrl) {
+    const double size = 36;
+    if (profileUrl.isEmpty) {
+      return const CircleAvatar(
+        radius: 18,
+        backgroundImage: AssetImage('assets/images/teacher.jpg'),
+      );
+    }
+
+    return ClipOval(
+      child: Image.network(
+        profileUrl,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) {
+          return Image.asset(
+            'assets/images/teacher.jpg',
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          );
+        },
       ),
     );
   }

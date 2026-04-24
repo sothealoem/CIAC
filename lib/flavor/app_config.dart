@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:ciac_school/core/core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:swis_school/core/constants/env_key.dart';
-import 'package:swis_school/core/constants/storage_key.dart';
-import 'package:swis_school/core/libraries/shared_preferences.dart';
 
 class AppConfig {
   AppConfig._() {

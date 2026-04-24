@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
-import 'package:swis_school/core/repositories/user.dart';
-import 'package:swis_school/core/resources/locales.g.dart';
-import 'package:swis_school/core/utils/exception_manager.dart';
+import 'package:ciac_school/core/core.dart';
 
 class ImagePickerManager {
   static final ImagePicker _picker = ImagePicker();

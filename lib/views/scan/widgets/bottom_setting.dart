@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swis_school/views/views.dart';
+import 'package:ciac_school/views/views.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BottomSettingWidget extends StatelessWidget {

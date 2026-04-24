@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swis_school/core/configs/app_style.dart';
-import 'package:swis_school/core/constants/ui_constants.dart';
-import 'package:swis_school/core/extensions/int.dart';
+import 'package:ciac_school/core/core.dart';
 
 class CustomDropdown extends StatelessWidget {
   const CustomDropdown({

@@ -11,6 +11,8 @@ class EndPoints {
   static String get updateProfile => 'your-profile';
   static String get scanGetProduct => 'delivery/scan/get-product';
   static String get scanComplete => 'delivery/scan/completed';
+  static String get scanCard => '/api/v1/student/staff/scan-card';
+  static String get attendanceRecord => '/api/v1/attendance-log/list';
   static String get customerDelivery => 'customer/delivery-list';
   static String get sampleBooking => 'customer/booking-listing';
   static String get createBooking => 'customer/booking';
