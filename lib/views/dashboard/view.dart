@@ -13,7 +13,9 @@ class DashboardView extends GetView<DashboardController> {
       drawer: const DrawerWidget(),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator(color: AppColor.red));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColor.red),
+          );
         }
 
         final DashboardModel? dashboard = controller.dashboardModel.value;
@@ -25,7 +27,7 @@ class DashboardView extends GetView<DashboardController> {
         //   return CustomerDashboardView(dashboard: dashboard);
         // }
 
-        return DashboardWidget();
+        return const DashboardWidget();
       }),
     );
   }

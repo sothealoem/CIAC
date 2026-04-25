@@ -14,15 +14,15 @@ class DashboardWidget extends StatefulWidget {
 
 class _DashboardWidgetState extends State<DashboardWidget> {
   final List<String> _catName = [
-    "បង់ថ្លៃសិក្សា", // Payment
-    "ពិនិត្យវត្តមាន", // Attendance Check
-    "ស្នើរសុំច្បាប់", // Request Leave
-    "កាលវិភាគសិក្សា", // Schedule
-    "តារាងពិន្ទុ", // Score Table
-    "កំណត់ត្រាវត្តមាន", // Student Information
-    "របាយការណ៍សិស្ស", // Student Report
-    "សកម្មភាពក្នុងថ្នាក់", // Class Activity
-    "វគ្គសិក្សាអនឡាយ", // Online Course
+    "បង់ថ្លៃសិក្សា",
+    "ពិនិត្យវត្តមាន",
+    "ស្នើរសុំច្បាប់",
+    "កាលវិភាគសិក្សា",
+    "តារាងពិន្ទុ",
+    "កំណត់ត្រាវត្តមាន",
+    "របាយការណ៍សិស្ស",
+    "សកម្មភាពក្នុងថ្នាក់",
+    "វគ្គសិក្សាអនឡាយ",
   ];
 
   final List<Widget> catIcons = [

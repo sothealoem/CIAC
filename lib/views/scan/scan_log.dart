@@ -79,7 +79,7 @@ class CardScanView extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
+        const Positioned(
           top: 100,
           left: 24,
           right: 24,

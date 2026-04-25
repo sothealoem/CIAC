@@ -1,4 +1,3 @@
-import 'package:schoolapp/views/dashboard/view.dart';
 import 'package:schoolapp/views/scan/scan_log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,11 +13,11 @@ class StartController extends GetxController {
   late Rx<Widget> selectedScreen = screens[0].obs;
   static List<Widget> screens = [
     const DashboardView(),
-    NotificationView(),
+    const NotificationView(),
     CardScanView(),
     //ScanView(),
-    PaymentCollectionView(),
-    ContactUsView(),
+    const PaymentCollectionView(),
+    const ContactUsView(),
   ];
 
   @override
