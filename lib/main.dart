@@ -29,9 +29,10 @@ Future<void> main() async {
     } else {
       Logger.root.level = Level.OFF;
     }
-
     runApp(const MyApp());
-  }, (exception, trace) {});
+  }, (exception, trace) {
+    ExceptionHandler.handleException(exception);
+  });
 }
 
 class MyApp extends StatelessWidget {

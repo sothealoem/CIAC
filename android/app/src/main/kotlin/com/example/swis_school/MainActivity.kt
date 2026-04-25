@@ -1,4 +1,4 @@
-package com.example.ciac_school
+package com.kh.ciasschool
 
 import io.flutter.embedding.android.FlutterActivity
 
