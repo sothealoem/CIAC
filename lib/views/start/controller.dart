@@ -1,10 +1,11 @@
-import 'package:ciac_school/views/scan/scan_log.dart';
+import 'package:schoolapp/views/dashboard/view.dart';
+import 'package:schoolapp/views/scan/scan_log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/flavor/flavor.dart';
-import 'package:ciac_school/models/models.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/flavor/flavor.dart';
+import 'package:schoolapp/models/models.dart';
+import 'package:schoolapp/views/views.dart';
 
 class StartController extends GetxController {
   final RxInt selectedIndex = 0.obs;
@@ -71,7 +72,9 @@ class StartController extends GetxController {
 
   void _setLocalProfileFallback() {
     try {
-      profileUrl.value = _normalizeProfileUrl(UserRepository.shared.profile.profile);
+      profileUrl.value = _normalizeProfileUrl(
+        UserRepository.shared.profile.profile,
+      );
       userName.value = UserRepository.shared.profile.name;
     } catch (_) {
       profileUrl.value = '';
@@ -150,7 +153,9 @@ class StartController extends GetxController {
     }
 
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
-    return baseUri.resolve(url.startsWith('/') ? url.substring(1) : url).toString();
+    return baseUri
+        .resolve(url.startsWith('/') ? url.substring(1) : url)
+        .toString();
   }
 
   List<Widget> getItems() {

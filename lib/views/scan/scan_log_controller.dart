@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

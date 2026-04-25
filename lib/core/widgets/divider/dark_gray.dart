@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class DarkGreyDivider extends StatelessWidget {
   const DarkGreyDivider({super.key, this.thickness, this.indent});

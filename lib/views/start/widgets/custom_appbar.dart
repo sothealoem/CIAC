@@ -1,5 +1,5 @@
-import 'package:ciac_school/core/configs/app_style.dart';
-import 'package:ciac_school/flavor/flavor.dart';
+import 'package:schoolapp/core/configs/app_style.dart';
+import 'package:schoolapp/flavor/flavor.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -167,9 +167,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
-    return baseUri.resolve(
-      rawValue.startsWith('/') ? rawValue.substring(1) : rawValue,
-    ).toString();
+    return baseUri
+        .resolve(rawValue.startsWith('/') ? rawValue.substring(1) : rawValue)
+        .toString();
   }
 
   bool _isValidValue(String value) {

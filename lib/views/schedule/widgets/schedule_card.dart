@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class ScheduleCardWidget extends StatefulWidget {
   const ScheduleCardWidget({super.key});
@@ -275,7 +275,7 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
 //------------------- UI Schedule old version Need Later----------------------//
 // import 'package:flutter/material.dart';
 // import 'package:photo_view/photo_view.dart';
-// import 'package:ciac_school/core/core.dart';
+// import 'package:schoolapp/core/core.dart';
 
 // enum SingingCharacter2 { lafayette, jefferson, las }
 

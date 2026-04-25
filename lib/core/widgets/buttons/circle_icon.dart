@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class CircleIcon extends StatelessWidget {
   const CircleIcon({super.key, required this.onTap, required this.icon});

@@ -1,5 +1,5 @@
-import 'package:ciac_school/core/widgets/attendance/custom_card.dart';
-import 'package:ciac_school/core/widgets/attendance/summary_item.dart';
+import 'package:schoolapp/core/widgets/attendance/custom_card.dart';
+import 'package:schoolapp/core/widgets/attendance/summary_item.dart';
 import 'package:flutter/material.dart';
 
 class AttendanceCardWidget extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/configs/app_style.dart';
+import 'package:schoolapp/core/configs/app_style.dart';
 
 enum SingingCharacter { lafayette, jefferson, las }
 

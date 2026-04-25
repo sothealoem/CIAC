@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/views/online_courses/widgets/videosection.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/online_courses/widgets/videosection.dart';
 
 class OnlineCoursesCardWidget extends StatelessWidget {
   const OnlineCoursesCardWidget({super.key});

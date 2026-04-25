@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class PrimarySwitch extends StatelessWidget {
   const PrimarySwitch({

@@ -1,9 +1,9 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/views/start/widgets/custom_appbar.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/start/widgets/custom_appbar.dart';
+import 'package:schoolapp/views/views.dart';
 
 class StartView extends GetView<StartController> {
   const StartView({super.key});

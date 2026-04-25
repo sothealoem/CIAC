@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/models/models.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/models/models.dart';
+import 'package:schoolapp/views/views.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});

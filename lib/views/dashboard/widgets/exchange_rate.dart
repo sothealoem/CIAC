@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class ExchangeRateWidget extends StatelessWidget {
   const ExchangeRateWidget({super.key, required this.exchangeRate});

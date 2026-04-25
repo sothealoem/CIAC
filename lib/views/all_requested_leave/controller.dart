@@ -1,4 +1,4 @@
-import 'package:ciac_school/models/requestleave/leave.dart';
+import 'package:schoolapp/models/requestleave/leave.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:ciac_school/views/scan/scan_log_controller.dart';
-import 'package:ciac_school/views/scan/widgets/overlay.dart';
+import 'package:schoolapp/views/scan/scan_log_controller.dart';
+import 'package:schoolapp/views/scan/widgets/overlay.dart';
 
 class CardScanView extends StatelessWidget {
   CardScanView({super.key});

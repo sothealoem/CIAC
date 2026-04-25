@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/flavor/flavor.dart';
-import 'package:ciac_school/models/models.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/flavor/flavor.dart';
+import 'package:schoolapp/models/models.dart';
+import 'package:schoolapp/views/views.dart';
 import 'package:intl/intl.dart';
 
 class DashboardController extends GetxController {

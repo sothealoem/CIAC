@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ciac_school/views/language/language.dart';
+import 'package:schoolapp/views/language/language.dart';
 
 class LanguageBinding extends Bindings {
   @override

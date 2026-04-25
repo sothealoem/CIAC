@@ -1,8 +1,8 @@
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/flavor/flavor.dart';
-import 'package:ciac_school/core/widgets/attendance/summary_item.dart';
-import 'package:ciac_school/models/staff/model.dart';
-import 'package:ciac_school/views/attendance_record/controller.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/flavor/flavor.dart';
+import 'package:schoolapp/core/widgets/attendance/summary_item.dart';
+import 'package:schoolapp/models/staff/model.dart';
+import 'package:schoolapp/views/attendance_record/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';

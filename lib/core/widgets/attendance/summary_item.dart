@@ -1,4 +1,4 @@
-import 'package:ciac_school/core/configs/app_style.dart';
+import 'package:schoolapp/core/configs/app_style.dart';
 import 'package:flutter/material.dart';
 // import 'package:your_project/core/constants/app_color.dart';
 // import 'package:your_project/core/utils/app_text_style.dart';

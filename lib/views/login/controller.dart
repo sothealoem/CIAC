@@ -1,10 +1,10 @@
-import 'package:ciac_school/core/libraries/shared_preferences.dart';
-import 'package:ciac_school/core/services/end_points.dart';
-import 'package:ciac_school/core/utils/exception_manager.dart';
-import 'package:ciac_school/core/constants/constants.dart';
-import 'package:ciac_school/flavor/app_config.dart';
-import 'package:ciac_school/routes.dart';
-import 'package:ciac_school/views/dashboard/controller.dart';
+import 'package:schoolapp/core/libraries/shared_preferences.dart';
+import 'package:schoolapp/core/services/end_points.dart';
+import 'package:schoolapp/core/utils/exception_manager.dart';
+import 'package:schoolapp/core/constants/constants.dart';
+import 'package:schoolapp/flavor/app_config.dart';
+import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

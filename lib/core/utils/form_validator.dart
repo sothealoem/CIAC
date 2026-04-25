@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class FormValidator {

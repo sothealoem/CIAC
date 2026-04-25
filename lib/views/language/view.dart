@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/views/language/language.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/language/language.dart';
 
 class LanguageView extends GetView<LanguageController> {
   const LanguageView({super.key});

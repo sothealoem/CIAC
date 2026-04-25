@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/configs/configs.dart';
-import 'package:ciac_school/views/attendance/controller.dart'; // Adjust path
+import 'package:schoolapp/core/configs/configs.dart';
+import 'package:schoolapp/views/attendance/controller.dart'; // Adjust path
 
 class MonthFilterWidget extends StatelessWidget {
   final AttendanceController controller;

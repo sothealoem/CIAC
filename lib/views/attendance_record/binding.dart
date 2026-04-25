@@ -1,4 +1,4 @@
-import 'package:ciac_school/views/attendance_record/controller.dart';
+import 'package:schoolapp/views/attendance_record/controller.dart';
 import 'package:get/get.dart';
 
 class AttendanceRecordBinding extends Bindings {

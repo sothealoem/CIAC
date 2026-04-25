@@ -1,7 +1,7 @@
-import 'package:ciac_school/core/configs/app_style.dart';
+import 'package:schoolapp/core/configs/app_style.dart';
 import 'package:flutter/material.dart';
 // Import your custom text styles
-// import 'package:ciac_school/core/utils/app_text_style.dart';
+// import 'package:schoolapp/core/utils/app_text_style.dart';
 
 class CustomCard extends StatelessWidget {
   final String name;

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart' as dio;
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class ConnectivityInterceptor extends dio.Interceptor {
   ConnectivityInterceptor();

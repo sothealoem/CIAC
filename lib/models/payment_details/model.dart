@@ -1,4 +1,4 @@
-import 'package:ciac_school/models/models.dart';
+import 'package:schoolapp/models/models.dart';
 
 class PaymentDetailsModel {
   final SummaryModel? summary;

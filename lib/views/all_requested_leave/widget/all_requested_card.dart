@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/models/requestleave/model.dart';
-import 'package:ciac_school/views/request_leave/controller.dart';
-import 'package:ciac_school/views/request_leave/view.dart';
-import 'package:ciac_school/views/all_requested_leave/widget/custom_tab.dart';
+import 'package:schoolapp/models/requestleave/model.dart';
+import 'package:schoolapp/views/request_leave/controller.dart';
+import 'package:schoolapp/views/request_leave/view.dart';
+import 'package:schoolapp/views/all_requested_leave/widget/custom_tab.dart';
 
 class AllRequestedCard extends StatefulWidget {
   const AllRequestedCard({super.key});

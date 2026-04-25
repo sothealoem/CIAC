@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/constants/asset_path.dart';
+import 'package:schoolapp/core/constants/asset_path.dart';
 
 // Define a function to handle button taps
 void handleFacebookLogin() {

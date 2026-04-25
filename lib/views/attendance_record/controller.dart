@@ -1,5 +1,5 @@
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/models/staff/model.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/models/staff/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

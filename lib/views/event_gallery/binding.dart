@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/views/views.dart';
 
 class EventGalleryBinding extends Bindings {
   @override

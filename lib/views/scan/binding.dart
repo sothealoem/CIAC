@@ -1,6 +1,6 @@
-import 'package:ciac_school/views/scan/scan_log_controller.dart';
+import 'package:schoolapp/views/scan/scan_log_controller.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/views/views.dart';
 
 class ScanBinding extends Bindings {
   @override

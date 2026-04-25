@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/routes.dart';
-import 'package:ciac_school/views/login/widgets/socialButtonCustom.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/login/widgets/socialButtonCustom.dart';
+import 'package:schoolapp/views/views.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({super.key});
@@ -181,14 +181,13 @@ class LoginView extends GetView<LoginController> {
                                                     SizedBox(
                                                       width: 18,
                                                       height: 18,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                            strokeWidth: 2.4,
-                                                            valueColor:
-                                                                AlwaysStoppedAnimation<
-                                                                  Color
-                                                                >(Colors.white),
-                                                          ),
+                                                      child: CircularProgressIndicator(
+                                                        strokeWidth: 2.4,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                              Color
+                                                            >(Colors.white),
+                                                      ),
                                                     ),
                                                     SizedBox(width: 10),
                                                     Text(

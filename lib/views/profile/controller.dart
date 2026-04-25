@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class ProfileController extends GetxController {
   final Rxn<XFile> profile = Rxn<XFile>(XFile(''));

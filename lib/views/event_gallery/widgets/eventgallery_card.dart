@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ciac_school/core/core.dart';
+import 'package:schoolapp/core/core.dart';
 
 class EventGalleryCardWidget extends StatelessWidget {
   const EventGalleryCardWidget({super.key});

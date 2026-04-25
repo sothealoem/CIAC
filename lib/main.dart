@@ -6,33 +6,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/flavor/flavor.dart';
-import 'package:ciac_school/routes.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/flavor/flavor.dart';
+import 'package:schoolapp/routes.dart';
 import 'package:logging/logging.dart';
 import 'package:upgrader/upgrader.dart';
 
 Future<void> main() async {
-  runZonedGuarded<Future<void>>(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    await dotenv.load(fileName: '.env');
-    print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
+      await dotenv.load(fileName: '.env');
+      print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
 
-    await _initEnvironment();
-    await _setAppSystemPreferences();
-    await _initServices();
+      await _initEnvironment();
+      await _setAppSystemPreferences();
+      await _initServices();
 
-    if (kDebugMode) {
-      Logger.root.level = Level.ALL;
-      Logger.root.onRecord.listen(customPrint);
-    } else {
-      Logger.root.level = Level.OFF;
-    }
-    runApp(const MyApp());
-  }, (exception, trace) {
-    ExceptionHandler.handleException(exception);
-  });
+      if (kDebugMode) {
+        Logger.root.level = Level.ALL;
+        Logger.root.onRecord.listen(customPrint);
+      } else {
+        Logger.root.level = Level.OFF;
+      }
+      runApp(const MyApp());
+    },
+    (exception, trace) {
+      ExceptionHandler.handleException(exception);
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/core.dart';
-import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
-import 'package:ciac_school/views/start/widgets/customize_app_bar.dart';
-import 'package:ciac_school/views/views.dart';
+import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
+import 'package:schoolapp/views/start/widgets/customize_app_bar.dart';
+import 'package:schoolapp/views/views.dart';
 
 class EventGalleryView extends GetView<EventGalleryController> {
   const EventGalleryView({super.key});

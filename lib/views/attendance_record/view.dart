@@ -1,10 +1,10 @@
-import 'package:ciac_school/views/attendance_record/controller.dart';
-import 'package:ciac_school/views/attendance_record/widgets/attendence_record_card.dart';
+import 'package:schoolapp/views/attendance_record/controller.dart';
+import 'package:schoolapp/views/attendance_record/widgets/attendence_record_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ciac_school/core/constants/ui_constants.dart';
-import 'package:ciac_school/core/extensions/int.dart';
-import 'package:ciac_school/views/start/widgets/custom_indicator.dart';
+import 'package:schoolapp/core/constants/ui_constants.dart';
+import 'package:schoolapp/core/extensions/int.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 
 import '../start/widgets/customize_app_bar.dart';
 
