@@ -27,7 +27,12 @@ class MonthFilterWidget extends StatelessWidget {
     ];
 
     return Obx(
-      () => Container(
+      () {
+        final selected =
+            khmerMonths.contains(controller.selectedMonth.value)
+                ? controller.selectedMonth.value
+                : khmerMonths.first;
+        return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -37,17 +42,17 @@ class MonthFilterWidget extends StatelessWidget {
         ),
         child: PopupMenuButton<String>(
           padding: EdgeInsets.zero,
-          initialValue: controller.selectedMonth.value,
+          initialValue: selected,
           onSelected: (String month) {
             controller.selectedMonth.value = month;
-            controller.trackings(); // Trigger your API/Data fetch
+            controller.filter(); // Trigger API refresh
           },
           // The design of the button itself
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                controller.selectedMonth.value,
+                selected,
                 style: const TextStyle(
                   color: Color(0xFF00675B),
                   fontWeight: FontWeight.bold,
@@ -72,7 +77,8 @@ class MonthFilterWidget extends StatelessWidget {
             }).toList();
           },
         ),
-      ),
+      );
+      },
     );
   }
 }

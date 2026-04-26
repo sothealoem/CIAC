@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/views/request_leave/controller.dart';
 
 class StudentCard1Widget extends StatelessWidget {
@@ -20,10 +22,10 @@ class StudentCard1Widget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 /// SECTION 1: STUDENT INFO
-                Row(
+                const Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: 10),
                       child: Text(
                         "១.ជ្រើសរើសថ្នាក់រៀនកូនៗដែlលោកអ្នកចង់ស្នើសុំច្បាប់",
                         style: AppTextStyle.mediumPrimaryBoldText,
@@ -50,18 +52,24 @@ class StudentCard1Widget extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
                                 color: Colors.white,
-                                image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/images/studentprofile.jpg",
-                                  ),
-                                  fit: BoxFit.cover,
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Obx(
+                                () => _studentImage(
+                                  controller.studentImageUrl.value,
                                 ),
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Text("សិន ដារ៉ា"),
+                            Obx(
+                              () => Text(
+                                controller.studentNameText.value.isEmpty
+                                    ? 'Student'
+                                    : controller.studentNameText.value,
+                              ),
+                            ),
                             const Text(
-                              "សិស្ស",
+                              'Student',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -79,14 +87,26 @@ class StudentCard1Widget extends StatelessWidget {
                                 style: AppTextStyle.regularPrimaryBoldblack,
                               ),
                               const SizedBox(height: 6),
-                              _buildInput("#235690"),
+                              Obx(
+                                () => _buildInput(
+                                  controller.studentIdText.value.isEmpty
+                                      ? '-'
+                                      : controller.studentIdText.value,
+                                ),
+                              ),
                               const SizedBox(height: 12),
                               const Text(
                                 "ថ្នាក់ទី",
                                 style: AppTextStyle.regularPrimaryBoldblack,
                               ),
                               const SizedBox(height: 6),
-                              _buildDropdown(controller),
+                              Obx(
+                                () => _buildInput(
+                                  controller.studentGradeText.value.isEmpty
+                                      ? '-'
+                                      : controller.studentGradeText.value,
+                                ),
+                              ),
                               const SizedBox(height: 12),
                               Row(
                                 mainAxisAlignment:
@@ -110,10 +130,10 @@ class StudentCard1Widget extends StatelessWidget {
                 ),
 
                 /// SECTION 2: LEAVE DETAILS
-                Row(
+                const Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 10),
+                      padding: EdgeInsets.only(top: 20, left: 10),
                       child: Text(
                         "២.បំពេញព័ត៌មានអំពីសំណើរសុំច្បាប់របស់លោកអ្នក",
                         style: AppTextStyle.mediumPrimaryBoldText,
@@ -131,7 +151,7 @@ class StudentCard1Widget extends StatelessWidget {
                         Obx(
                           () => Row(
                             children: [
-                              Text(
+                              const Text(
                                 'ចំនួនឈប់សម្រាក៖',
                                 style: AppTextStyle.smallPrimaryBoldBlack,
                               ),
@@ -157,7 +177,7 @@ class StudentCard1Widget extends StatelessWidget {
                         10.height,
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'សម្រាកពីថ្ងៃទី៖',
                               style: AppTextStyle.smallPrimaryBoldBlack,
                             ),
@@ -166,16 +186,23 @@ class StudentCard1Widget extends StatelessWidget {
                               child: Obx(
                                 () => Row(
                                   children: [
-                                    _dateBox(controller.startDate.value),
+                                    Expanded(
+                                      child: _dateBox(
+                                        controller.startDate.value,
+                                      ),
+                                    ),
                                     GestureDetector(
                                       onTap: controller.pickStartDate,
-                                      child: const Icon(Icons.date_range),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(left: 4),
+                                        child: Icon(Icons.date_range, size: 20),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            Text(
+                            const Text(
                               'ដល់ថ្ងៃ៖',
                               style: AppTextStyle.smallPrimaryBoldBlack,
                             ),
@@ -184,10 +211,15 @@ class StudentCard1Widget extends StatelessWidget {
                               child: Obx(
                                 () => Row(
                                   children: [
-                                    _dateBox(controller.endDate.value),
+                                    Expanded(
+                                      child: _dateBox(controller.endDate.value),
+                                    ),
                                     GestureDetector(
                                       onTap: controller.pickEndDate,
-                                      child: const Icon(Icons.date_range),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(left: 4),
+                                        child: Icon(Icons.date_range, size: 20),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -198,16 +230,28 @@ class StudentCard1Widget extends StatelessWidget {
                         10.height,
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'មូលហេតុ៖ ',
                               style: AppTextStyle.smallPrimaryBoldBlack,
                             ),
                             10.width,
-                            _buildLeaveType(controller, 'ឈឺ'),
+                            _buildLeaveType(
+                              controller,
+                              label: 'Sick',
+                              value: 'sick',
+                            ),
                             20.width,
-                            _buildLeaveType(controller, 'រវល់'),
+                            _buildLeaveType(
+                              controller,
+                              label: 'Busy',
+                              value: 'busy',
+                            ),
                             20.width,
-                            _buildLeaveType(controller, 'ផ្សេងៗ'),
+                            _buildLeaveType(
+                              controller,
+                              label: 'Other',
+                              value: 'other',
+                            ),
                           ],
                         ),
                         10.height,
@@ -246,8 +290,10 @@ class StudentCard1Widget extends StatelessWidget {
                         controller.isloading.value
                             ? null
                             : () async {
-                              await controller.submitRequest();
-                              Navigator.of(context).pop();
+                              final created = await controller.submitRequest();
+                              if (created != null) {
+                                Get.back(result: created);
+                              }
                               // Get.back();
                               // Get.snackbar(
                               //   "ជោគជ័យ",
@@ -278,10 +324,9 @@ class StudentCard1Widget extends StatelessWidget {
   }
 
   Widget _dateBox(String text) => Container(
-    width: 70,
+    width: double.infinity,
     height: 20,
     alignment: Alignment.center,
-    margin: const EdgeInsets.only(right: 4),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(3),
       border: Border.all(color: Colors.black45),
@@ -360,26 +405,144 @@ class StudentCard1Widget extends StatelessWidget {
         );
       });
 
-  Widget _buildLeaveType(RequestLeaveController controller, String title) =>
-      Obx(() {
-        final isSelected = controller.leaveType.value == title;
-        return GestureDetector(
-          onTap: () => controller.leaveType.value = title,
-          child: Row(
-            children: [
-              Container(
-                width: 15,
-                height: 15,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black45),
-                  color: isSelected ? Colors.teal : Colors.transparent,
-                ),
-              ),
-              5.width,
-              Text(title, style: AppTextStyle.smallPrimaryBoldBlack),
-            ],
+  Widget _buildLeaveType(
+    RequestLeaveController controller, {
+    required String label,
+    required String value,
+  }) => Obx(() {
+    final isSelected = controller.leaveType.value == value;
+    return GestureDetector(
+      onTap: () => controller.leaveType.value = value,
+      child: Row(
+        children: [
+          Container(
+            width: 15,
+            height: 15,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.black45),
+              color: isSelected ? Colors.teal : Colors.transparent,
+            ),
           ),
-        );
-      });
+          5.width,
+          Text(label, style: AppTextStyle.smallPrimaryBoldBlack),
+        ],
+      ),
+    );
+  });
+
+  Widget _studentImage(String rawUrl) {
+    final candidates = _resolveImageUrlCandidates(rawUrl);
+    if (candidates.isEmpty) {
+      return const Icon(Icons.person, color: Colors.grey);
+    }
+    final first = candidates.first;
+    if (first.startsWith('assets/')) {
+      return Image.asset(first, fit: BoxFit.cover);
+    }
+    return _studentImageNetwork(candidates, 0);
+  }
+
+  Widget _studentImageNetwork(List<String> urls, int index) {
+    if (index >= urls.length) {
+      return const Icon(Icons.person, color: Colors.grey);
+    }
+    return CachedNetworkImage(
+      imageUrl: urls[index],
+      fit: BoxFit.cover,
+      width: 90,
+      height: 100,
+      memCacheWidth: 180,
+      memCacheHeight: 200,
+      maxWidthDiskCache: 180,
+      maxHeightDiskCache: 200,
+      httpHeaders: _imageHeaders() ?? const <String, String>{},
+      useOldImageOnUrlChange: true,
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
+      placeholderFadeInDuration: Duration.zero,
+      placeholder:
+          (_, __) => Container(
+            color: const Color(0xFFF1F5F9),
+            alignment: Alignment.center,
+            child: const Icon(Icons.person, color: Color(0xFF6B7280)),
+          ),
+      errorWidget: (_, __, ___) => _studentImageNetwork(urls, index + 1),
+    );
+  }
+
+  Map<String, String>? _imageHeaders() {
+    final token = AppConfig.shared.authorizationToken.trim();
+    if (token.isEmpty) {
+      return null;
+    }
+    return <String, String>{'Authorization': token, 'Accept': 'image/*'};
+  }
+
+  List<String> _resolveImageUrlCandidates(String rawValue) {
+    final value = rawValue.trim();
+    if (value.isEmpty) {
+      return const <String>[];
+    }
+
+    final uri = Uri.tryParse(value);
+    if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+      return _networkUrlVariants(value);
+    }
+    if (value.startsWith('assets/')) {
+      return <String>[value];
+    }
+
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) {
+      return const <String>[];
+    }
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    final path = value.replaceAll('\\', '/');
+    final raw = path.startsWith('/') ? path.substring(1) : path;
+    final candidates = <String>[
+      raw,
+      if (!raw.startsWith('uploads/')) 'uploads/$raw',
+      if (!raw.startsWith('storage/')) 'storage/$raw',
+      if (!raw.startsWith('public/')) 'public/$raw',
+      raw.replaceFirst('uploads/uploads/', 'uploads/'),
+    ];
+    final seen = <String>{};
+    final resolved = <String>[];
+    for (final c in candidates) {
+      final url = baseUri.resolve(c).toString();
+      if (seen.add(url)) {
+        resolved.add(url);
+      }
+    }
+    return resolved;
+  }
+
+  List<String> _networkUrlVariants(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return <String>[url];
+    }
+    final path = uri.path.replaceAll('\\', '/');
+    final fixedUploads = path.replaceFirst('/uploads/uploads/', '/uploads/');
+    final deduped = _dedupePath(path);
+    final variants = <String>[
+      uri.replace(path: fixedUploads).toString(),
+      uri.replace(path: deduped).toString(),
+      url,
+    ];
+    final seen = <String>{};
+    return variants.where((v) => seen.add(v)).toList();
+  }
+
+  String _dedupePath(String path) {
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    final compact = <String>[];
+    for (final p in parts) {
+      if (compact.isEmpty || compact.last.toLowerCase() != p.toLowerCase()) {
+        compact.add(p);
+      }
+    }
+    return '/${compact.join('/')}';
+  }
 }

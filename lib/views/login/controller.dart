@@ -81,6 +81,13 @@ class LoginController extends GetxController {
       final String token = data['token']?.toString() ?? '';
       final String role = (data['role'] ?? '').toString().toLowerCase();
       final String name = data['name']?.toString() ?? '';
+      final String profile = _firstNonEmpty([
+        data['profile'],
+        data['profile_path'],
+        data['avatar'],
+        data['photo'],
+        data['image'],
+      ]);
       final String scannerOwnerId = _resolveScannerOwnerId(
         data: data,
         fallbackUsername: username,
@@ -120,6 +127,7 @@ class LoginController extends GetxController {
       await SharedPreferencesManager.setValue('username', username);
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
+      await SharedPreferencesManager.setValue('profile', profile);
       await SharedPreferencesManager.setValue('user_role', role);
       await SharedPreferencesManager.setValue(
         'scanner_owner_id',
@@ -175,5 +183,17 @@ class LoginController extends GetxController {
       }
     }
     return fallbackUsername;
+  }
+
+  String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final text = (value ?? '').toString().trim();
+      if (text.isNotEmpty &&
+          text.toLowerCase() != 'null' &&
+          text.toLowerCase() != 'n/a') {
+        return text;
+      }
+    }
+    return '';
   }
 }

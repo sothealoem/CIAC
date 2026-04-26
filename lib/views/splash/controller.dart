@@ -42,16 +42,16 @@ class SplashController extends GetxController {
       }
 
       if (!hasValidToken) {
-        Get.offAllNamed(Routes.login);
+        Get.offNamed(Routes.login);
         return;
       }
-      Get.offAllNamed(Routes.start);
+      Get.offNamed(Routes.start);
     } catch (_) {
       if (_didNavigate || isClosed) {
         return;
       }
       _didNavigate = true;
-      Get.offAllNamed(Routes.login);
+      Get.offNamed(Routes.login);
     }
   }
 }

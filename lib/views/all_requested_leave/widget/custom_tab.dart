@@ -45,7 +45,7 @@ class CustomTopTabBar extends StatelessWidget {
                       Text(
                         tabs[index]["title"] as String,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontFamily: 'Battambang',
                           color: isSelected ? Colors.black : Colors.grey,
                           fontWeight:

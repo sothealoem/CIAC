@@ -18,19 +18,22 @@ class SplashView extends GetView<SplashController> {
             final titleSize =
                 (shortestSide * 0.095).clamp(30.0, 46.0).toDouble();
             final subtitleSize =
-                (shortestSide * 0.050).clamp(16.0, 24.0).toDouble();
+                (shortestSide * 0.050).clamp(16.0, 20.0).toDouble();
 
             return Column(
               children: [
                 const Spacer(flex: 2),
-                ClipOval(
-                  child: Image.asset(
-                    'assets/images/app_icon.png',
-                    width: logoSize,
-                    height: logoSize,
-                    fit: BoxFit.cover,
-                    filterQuality: FilterQuality.medium,
-                    gaplessPlayback: true,
+                Hero(
+                  tag: 'app_logo_hero',
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/app_icon.png',
+                      width: logoSize,
+                      height: logoSize,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.medium,
+                      gaplessPlayback: true,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 28),
@@ -52,7 +55,7 @@ class SplashView extends GetView<SplashController> {
                     style: TextStyle(
                       fontSize: subtitleSize,
                       color: const Color(0xFF1E1E1E),
-                      height: 1.28,
+                      height: 1,
                     ),
                   ),
                 ),

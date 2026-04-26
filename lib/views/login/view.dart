@@ -36,7 +36,17 @@ class LoginView extends GetView<LoginController> {
                     children: [
                       UIConstants.spacing.height,
                       const SizedBox(height: 40.0),
-                      const _LogoEntrance(delayMs: 60, child: LogoWidget()),
+                      Hero(
+                        tag: 'app_logo_hero',
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/app_icon.png',
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 10.0),
                       Container(
                         margin: const EdgeInsets.all(10.0),
@@ -229,62 +239,6 @@ class LoginView extends GetView<LoginController> {
           },
         ),
       ),
-    );
-  }
-}
-
-class _LogoEntrance extends StatefulWidget {
-  const _LogoEntrance({required this.child, this.delayMs = 0});
-
-  final Widget child;
-  final int delayMs;
-
-  @override
-  State<_LogoEntrance> createState() => _LogoEntranceState();
-}
-
-class _LogoEntranceState extends State<_LogoEntrance>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _opacity;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1100),
-    );
-    final curve = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    );
-    _opacity = Tween<double>(begin: 0, end: 1).animate(curve);
-    _scale = Tween<double>(begin: 0.92, end: 1).animate(curve);
-
-    if (widget.delayMs <= 0) {
-      _controller.forward();
-    } else {
-      Future.delayed(Duration(milliseconds: widget.delayMs), () {
-        if (mounted) {
-          _controller.forward();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _opacity,
-      child: ScaleTransition(scale: _scale, child: widget.child),
     );
   }
 }

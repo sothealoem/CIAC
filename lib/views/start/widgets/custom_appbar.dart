@@ -55,12 +55,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: Container(
-                padding: const EdgeInsets.all(1),
+                width: _avatarSize + 4,
+                height: _avatarSize + 4,
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: AppColor.primaryColor, width: 2),
                 ),
-                child: CircleAvatar(radius: 18, child: _buildProfileImage()),
+                child: ClipOval(
+                  child: SizedBox.expand(child: _buildProfileImage()),
+                ),
               ),
             ),
           ],
@@ -119,14 +123,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final errorWidgetBuilder = (_, __, ___) => onError();
 
     if (_isNetworkUrl(source)) {
+      final headers = _networkHeaders();
       return ClipOval(
         child: Image.network(
           source,
           width: _avatarSize,
           height: _avatarSize,
           fit: BoxFit.cover,
-          headers: _networkHeaders(),
-          errorBuilder: errorWidgetBuilder,
+          headers: headers,
+          errorBuilder: (_, __, ___) {
+            if (headers == null || headers.isEmpty) {
+              return onError();
+            }
+            // Retry once without auth header for public file endpoints.
+            return Image.network(
+              source,
+              width: _avatarSize,
+              height: _avatarSize,
+              fit: BoxFit.cover,
+              errorBuilder: errorWidgetBuilder,
+            );
+          },
         ),
       );
     }
@@ -143,9 +160,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _avatarPlaceholder() {
-    return CircleAvatar(
-      radius: _avatarSize / 2,
-      backgroundColor: Colors.grey.shade200,
+    return Container(
+      color: Colors.grey.shade200,
+      alignment: Alignment.center,
       child: Icon(
         Icons.person,
         size: _avatarSize * 0.55,

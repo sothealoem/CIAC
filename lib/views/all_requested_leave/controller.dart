@@ -1,6 +1,6 @@
-import 'package:schoolapp/models/requestleave/leave.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/models/requestleave/model.dart';
 
 class AllRequestleaveControlller extends GetxController {
   var selectedClass = "ថ្នាក់ទី ៥".obs;

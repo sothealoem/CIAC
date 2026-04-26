@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/models/models.dart';
+import 'package:schoolapp/models/parent/parent.dart' as parent_model;
 import 'package:schoolapp/views/views.dart';
 
 class StartController extends GetxController {
@@ -19,6 +20,7 @@ class StartController extends GetxController {
     isParentUser.value = UserRepository.shared.isDriver;
     _syncRoleFromStorage();
     _setLocalProfileFallback();
+    _loadLocalProfileFromStorage();
     fetchUserProfileFromApi();
 
     super.onInit();
@@ -108,6 +110,7 @@ class StartController extends GetxController {
     UserRepository.shared.setUserType(savedRole);
     isParentUser.value = UserRepository.shared.isDriver;
     _normalizeSelectionForRole();
+    await _refreshParentAppBarChild();
   }
 
   Widget _buildScreen(int index) {
@@ -134,8 +137,23 @@ class StartController extends GetxController {
       );
       userName.value = UserRepository.shared.profile.name;
     } catch (_) {
-      profileUrl.value = '';
-      userName.value = '';
+      // Keep values empty until storage/API fallback fills them.
+    }
+  }
+
+  Future<void> _loadLocalProfileFromStorage() async {
+    final storedName =
+        (await SharedPreferencesManager.get('name') ?? '').toString().trim();
+    final storedProfile =
+        (await SharedPreferencesManager.get('profile') ?? '')
+            .toString()
+            .trim();
+
+    if (userName.value.trim().isEmpty && storedName.isNotEmpty) {
+      userName.value = storedName;
+    }
+    if (profileUrl.value.trim().isEmpty && storedProfile.isNotEmpty) {
+      profileUrl.value = _normalizeProfileUrl(storedProfile);
     }
   }
 
@@ -173,15 +191,98 @@ class StartController extends GetxController {
             ? (data['user'] as Map<String, dynamic>)['profile']
             : null,
       ]);
-
-      profileUrl.value = _normalizeProfileUrl(
+      final resolvedProfile = _normalizeProfileUrl(
         rawProfileUrl.isNotEmpty ? rawProfileUrl : profile.profile,
       );
-      userName.value = _firstNonEmpty([data['name'], profile.name]);
+      final resolvedName = _firstNonEmpty([data['name'], profile.name]);
 
-      await SharedPreferencesManager.setValue('name', userName.value);
+      if (resolvedProfile.isNotEmpty) {
+        profileUrl.value = resolvedProfile;
+      }
+      if (resolvedName.isNotEmpty) {
+        userName.value = resolvedName;
+      }
+      await _refreshParentAppBarChild();
+
+      if (userName.value.trim().isNotEmpty) {
+        await SharedPreferencesManager.setValue('name', userName.value);
+      }
+      if (profileUrl.value.trim().isNotEmpty) {
+        await SharedPreferencesManager.setValue('profile', profileUrl.value);
+      }
     } catch (_) {
       // Keep local fallback values when API call fails.
+    }
+  }
+
+  Future<void> refreshParentAppBarChild() async {
+    await _refreshParentAppBarChild();
+  }
+
+  Future<void> _refreshParentAppBarChild() async {
+    if (!isParentUser.value) {
+      return;
+    }
+
+    final cachedAvatar =
+        (await SharedPreferencesManager.get('selected_child_avatar') ?? '')
+            .toString()
+            .trim();
+    profileUrl.value = _normalizeProfileUrl(cachedAvatar);
+
+    try {
+      final res = await Get.find<ApiService>().get(
+        '/api/v1/parent/student-info',
+        isShowLoading: false,
+      );
+      if (res.data is! Map) {
+        return;
+      }
+
+      final model = parent_model.ParentWithChild.fromJson(
+        Map<String, dynamic>.from(res.data),
+      );
+      final students = model.data?.student ?? const <parent_model.Student>[];
+      if (students.isEmpty) {
+        return;
+      }
+
+      var selectedId =
+          (await SharedPreferencesManager.get('selected_child_id') ?? '')
+              .toString()
+              .trim();
+      if (selectedId.isEmpty) {
+        selectedId = (students.first.id?.toString() ?? '').trim();
+        if (selectedId.isNotEmpty) {
+          await SharedPreferencesManager.setValue('selected_child_id', selectedId);
+        }
+      }
+
+      parent_model.Student selected = students.first;
+      if (selectedId.isNotEmpty) {
+        for (final child in students) {
+          if ((child.id?.toString() ?? '').trim() == selectedId) {
+            selected = child;
+            break;
+          }
+        }
+      }
+
+      final selectedProfile = _normalizeProfileUrl(selected.profile);
+
+      profileUrl.value = selectedProfile;
+      final selectedName = _firstNonEmpty([
+        selected.nameKh,
+        selected.name,
+        selected.admissionNo,
+      ]);
+      await SharedPreferencesManager.setValue('selected_child_name', selectedName);
+      await SharedPreferencesManager.setValue(
+        'selected_child_avatar',
+        selected.profile ?? '',
+      );
+    } catch (_) {
+      // Keep existing app bar values if child refresh fails.
     }
   }
 
@@ -189,6 +290,9 @@ class StartController extends GetxController {
     final current = profileUrl.value.trim();
     if (current.isNotEmpty) {
       return current;
+    }
+    if (isParentUser.value) {
+      return '';
     }
     try {
       return _normalizeProfileUrl(UserRepository.shared.profile.profile);
@@ -213,12 +317,23 @@ class StartController extends GetxController {
   }
 
   String _normalizeProfileUrl(String? rawUrl) {
-    final url = (rawUrl ?? '').trim();
+    final url = (rawUrl ?? '').trim().replaceAll('\\', '/');
     if (url.isEmpty || url.toLowerCase() == 'n/a') {
       return '';
     }
+    if (url.startsWith('//')) {
+      return 'https:$url';
+    }
     if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
+      final uri = Uri.tryParse(url);
+      if (uri == null) {
+        return url;
+      }
+      final normalizedPath = uri.path
+          .replaceAll('/uploads/uploads/', '/uploads/')
+          .replaceAll('/public/public/', '/public/')
+          .replaceAll('/storage/storage/', '/storage/');
+      return uri.replace(path: normalizedPath).toString();
     }
 
     final base = AppConfig.shared.baseUrl.trim();
@@ -227,8 +342,12 @@ class StartController extends GetxController {
     }
 
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    final normalized = url
+        .replaceAll('/uploads/uploads/', '/uploads/')
+        .replaceAll('/public/public/', '/public/')
+        .replaceAll('/storage/storage/', '/storage/');
     return baseUri
-        .resolve(url.startsWith('/') ? url.substring(1) : url)
+        .resolve(normalized.startsWith('/') ? normalized.substring(1) : normalized)
         .toString();
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/routes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -294,7 +295,6 @@ class CardScanController extends GetxController {
     }
 
     _cacheScanLogRecord(staffData: staff, message: message);
-    _showLogDialog(staff, message: message);
 
     final fullName = _getFullName(staff);
     final alreadyScanned = message.toLowerCase().contains("already");
@@ -311,7 +311,16 @@ class CardScanController extends GetxController {
       colorText: Colors.white,
     );
 
-    Future.delayed(const Duration(seconds: 3), () {
+    if (!alreadyScanned) {
+      Future.delayed(const Duration(milliseconds: 900), () {
+        if (Get.currentRoute != Routes.attendanceRecord) {
+          Get.toNamed(Routes.attendanceRecord);
+        }
+      });
+      return;
+    }
+
+    Future.delayed(const Duration(seconds: 2), () {
       isScanning.value = true;
     });
   }

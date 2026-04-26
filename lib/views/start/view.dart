@@ -22,6 +22,11 @@ class StartView extends GetView<StartController> {
       },
       child: Scaffold(
         extendBody: true,
+        onDrawerChanged: (isOpened) {
+          if (!isOpened && controller.isParentUser.value) {
+            controller.refreshParentAppBarChild();
+          }
+        },
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(130),
           child: Obx(

@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
+import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -12,8 +14,7 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  static const String _childrenPath =
-      '/api/v1/attendance-log/parent/children-log';
+  static const String _childrenPath = '/api/v1/parent/student-info';
 
   bool _isLoadingChildren = false;
   List<_ChildProfile> _children = const <_ChildProfile>[];
@@ -54,8 +55,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         isShowLoading: false,
       );
 
-      final raw = res.data;
-      final list = _extractChildren(raw);
+      final list = _extractChildren(res.data);
 
       if (!mounted) {
         return;
@@ -73,6 +73,23 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
       if (selected.isNotEmpty) {
         await SharedPreferencesManager.setValue('selected_child_id', selected);
+        _ChildProfile? current;
+        for (final child in list) {
+          if (child.id == selected) {
+            current = child;
+            break;
+          }
+        }
+        if (current != null) {
+          await SharedPreferencesManager.setValue(
+            'selected_child_name',
+            current.name,
+          );
+          await SharedPreferencesManager.setValue(
+            'selected_child_avatar',
+            current.avatar,
+          );
+        }
       }
     } catch (_) {
       if (!mounted) {
@@ -92,6 +109,25 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   List<_ChildProfile> _extractChildren(dynamic raw) {
+    if (raw is Map) {
+      final model = ParentWithChild.fromJson(Map<String, dynamic>.from(raw));
+      final students = model.data?.student ?? const <Student>[];
+      if (students.isNotEmpty) {
+        return students
+            .map(
+              (student) => _ChildProfile(
+                id: (student.id?.toString() ?? student.admissionNo ?? '').trim(),
+                name:
+                    (student.nameKh ?? student.name ?? student.admissionNo ?? '')
+                        .trim(),
+                avatar: (student.profile ?? '').trim(),
+              ),
+            )
+            .where((child) => child.id.isNotEmpty || child.name.isNotEmpty)
+            .toList();
+      }
+    }
+
     if (raw is! Map) {
       return const <_ChildProfile>[];
     }
@@ -121,6 +157,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       _selectedChildId = child.id;
     });
     await SharedPreferencesManager.setValue('selected_child_id', child.id);
+    await SharedPreferencesManager.setValue('selected_child_name', child.name);
+    await SharedPreferencesManager.setValue(
+      'selected_child_avatar',
+      child.avatar,
+    );
     Get.back();
     Get.snackbar(
       'Student',
@@ -182,23 +223,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
-              // child: Row(
-              //   children: [
-              //     IconButton(
-              //       onPressed: () => Get.back(),
-              //       icon: const Icon(Icons.close, color: Color(0xFF555555)),
-              //     ),
-              //     const Text(
-              //       'Setting',
-              //       style: TextStyle(fontSize: 30, color: Color(0xFF666666)),
-              //     ),
-              //     const Spacer(),
-              //     //_profileCircle(size: 42),
-              //   ],
-              // ),
-            ),
             ClipOval(
               child: Image.asset(
                 AssetPath.appIcon.path,
@@ -209,7 +233,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             const SizedBox(height: 10),
             Text(
-              profileName.isEmpty ? 'SC Smart School' : profileName,
+              profileName.isEmpty ? 'CIAC School' : profileName,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -249,14 +273,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     children: [
                       Image.asset('assets/images/logo.png', height: 26),
                       const SizedBox(width: 8),
-                      const Text(
-                        'SC International School',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF0D4D45),
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -294,16 +310,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Get.back(),
-                    icon: const Icon(Icons.close, color: Color(0xFF555555)),
-                  ),
-                  const Text(
-                    'Setting',
-                    style: TextStyle(fontSize: 30, color: Color(0xFF666666)),
-                  ),
-                  const Spacer(),
-                  _profileCircle(size: 42),
+                  // IconButton(
+                  //   onPressed: () => Get.back(),
+                  //   icon: const Icon(Icons.close, color: Color(0xFF555555)),
+                  // ),
+                  // const Text(
+                  //   'Setting',
+                  //   style: TextStyle(fontSize: 30, color: Color(0xFF666666)),
+                  // ),
+                  // const Spacer(),
+                  // _profileCircle(size: 42),
                 ],
               ),
             ),
@@ -434,20 +450,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           fontWeight: FontWeight.w500,
         ),
       ),
-      // trailing:
-      //     trailingText == null
-      //         ? const Icon(Icons.chevron_right, color: Color(0xFF0E5D56))
-      //         : Row(
-      //           mainAxisSize: MainAxisSize.min,
-      //           children: [
-      //             Text(
-      //               trailingText,
-      //               style: const TextStyle(color: Color(0xFF777777)),
-      //             ),
-      //             const SizedBox(width: 6),
-      //             const Icon(Icons.chevron_right, color: Color(0xFF0E5D56)),
-      //           ],
-      //         ),
     );
   }
 
@@ -498,14 +500,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   Widget _childAvatar(String avatar) {
-    final resolved = _resolveProfileUrl(avatar);
-    if (resolved.isNotEmpty) {
+    final candidates = _resolveProfileUrlCandidates(avatar);
+    if (candidates.isNotEmpty) {
+      final first = candidates.first;
+      if (_isNetworkUrl(first)) {
+        return _networkAvatar(candidates, 0);
+      }
       return CircleAvatar(
         radius: 18,
-        backgroundImage:
-            _isNetworkUrl(resolved)
-                ? NetworkImage(resolved) as ImageProvider
-                : AssetImage(resolved),
+        backgroundImage: AssetImage(first),
         backgroundColor: const Color(0xFFE8EEF2),
       );
     }
@@ -514,6 +517,61 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       backgroundColor: Color(0xFFE8EEF2),
       child: Icon(Icons.person, color: Color(0xFF6C7A86)),
     );
+  }
+
+  Widget _networkAvatar(List<String> urls, int index) {
+    if (index >= urls.length) {
+      return const CircleAvatar(
+        radius: 18,
+        backgroundColor: Color(0xFFE8EEF2),
+        child: Icon(Icons.person, color: Color(0xFF6C7A86)),
+      );
+    }
+    return CircleAvatar(
+      radius: 18,
+      backgroundColor: const Color(0xFFE8EEF2),
+      child: ClipOval(
+        child: _networkAvatarImage(urls, index),
+      ),
+    );
+  }
+
+  Widget _networkAvatarImage(List<String> urls, int index) {
+    if (index >= urls.length) {
+      return const Icon(Icons.person, color: Color(0xFF6C7A86));
+    }
+    return CachedNetworkImage(
+      imageUrl: urls[index],
+      fit: BoxFit.cover,
+      width: 36,
+      height: 36,
+      memCacheWidth: 72,
+      memCacheHeight: 72,
+      maxWidthDiskCache: 72,
+      maxHeightDiskCache: 72,
+      httpHeaders: _imageHeaders() ?? const <String, String>{},
+      useOldImageOnUrlChange: true,
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
+      placeholderFadeInDuration: Duration.zero,
+      placeholder:
+          (_, __) => Container(
+            width: 36,
+            height: 36,
+            color: const Color(0xFFE8EEF2),
+            alignment: Alignment.center,
+            child: const Icon(Icons.person, color: Color(0xFF6C7A86)),
+          ),
+      errorWidget: (_, __, ___) => _networkAvatarImage(urls, index + 1),
+    );
+  }
+
+  Map<String, String>? _imageHeaders() {
+    final token = AppConfig.shared.authorizationToken.trim();
+    if (token.isEmpty) {
+      return null;
+    }
+    return <String, String>{'Authorization': token, 'Accept': 'image/*'};
   }
 
   Widget _profileCircle({double size = 40}) {
@@ -548,16 +606,52 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   String _resolveProfileUrl(String rawValue) {
-    final value = rawValue.trim();
+    final value = rawValue.trim().replaceAll('\\', '/');
     final lower = value.toLowerCase();
     if (value.isEmpty ||
         lower == 'n/a' ||
         lower == 'null' ||
         lower == 'undefined' ||
-        lower == 'false') {
+        lower == 'false' ||
+        value == '{}') {
       return '';
     }
-    if (_isNetworkUrl(value) || value.startsWith('assets/')) {
+    final unquoted = value.replaceAll('"', '').replaceAll("'", '');
+    if (_isNetworkUrl(unquoted) || unquoted.startsWith('assets/')) {
+      return unquoted;
+    }
+    if (unquoted.startsWith('//')) {
+      return 'https:$unquoted';
+    }
+    if (unquoted.startsWith('/')) {
+      final base = AppConfig.shared.baseUrl.trim();
+      if (base.isEmpty) {
+        return '';
+      }
+      final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+      return baseUri.resolve(unquoted.substring(1)).toString();
+    }
+    if (unquoted.startsWith('storage/') ||
+        unquoted.startsWith('uploads/') ||
+        unquoted.startsWith('images/')) {
+      final base = AppConfig.shared.baseUrl.trim();
+      if (base.isEmpty) {
+        return '';
+      }
+      final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+      return baseUri.resolve(unquoted).toString();
+    }
+    if (RegExp(r'^[A-Za-z0-9_.-]+\.(png|jpg|jpeg|webp|gif)$').hasMatch(
+      unquoted,
+    )) {
+      final base = AppConfig.shared.baseUrl.trim();
+      if (base.isEmpty) {
+        return '';
+      }
+      final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+      return baseUri.resolve('uploads/$unquoted').toString();
+    }
+    if (unquoted.startsWith('data:image/')) {
       return value;
     }
     final base = AppConfig.shared.baseUrl.trim();
@@ -565,9 +659,102 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       return '';
     }
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
-    return baseUri
-        .resolve(value.startsWith('/') ? value.substring(1) : value)
-        .toString();
+    return baseUri.resolve(unquoted).toString();
+  }
+
+  List<String> _resolveProfileUrlCandidates(String rawValue) {
+    final value = rawValue.trim().replaceAll('\\', '/');
+    final lower = value.toLowerCase();
+    if (value.isEmpty ||
+        lower == 'n/a' ||
+        lower == 'null' ||
+        lower == 'undefined' ||
+        lower == 'false' ||
+        value == '{}') {
+      return const <String>[];
+    }
+
+    final unquoted = value.replaceAll('"', '').replaceAll("'", '');
+    if (unquoted.startsWith('assets/')) {
+      return <String>[unquoted];
+    }
+    if (_isNetworkUrl(unquoted)) {
+      return _networkUrlVariants(unquoted);
+    }
+    if (unquoted.startsWith('//')) {
+      return <String>['https:$unquoted'];
+    }
+
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) {
+      return const <String>[];
+    }
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    final path = unquoted.startsWith('/') ? unquoted.substring(1) : unquoted;
+
+    final rawCandidates = <String>[
+      path,
+      if (path.startsWith('storage/')) 'public/$path',
+      if (path.startsWith('uploads/')) 'public/$path',
+      if (path.startsWith('images/')) 'public/$path',
+      if (!path.startsWith('storage/')) 'storage/$path',
+      if (!path.startsWith('uploads/')) 'uploads/$path',
+      if (!path.startsWith('public/')) 'public/$path',
+    ];
+
+    final seen = <String>{};
+    final resolved = <String>[];
+    for (final candidate in rawCandidates) {
+      final normalized = candidate.replaceAll('//', '/');
+      final url = baseUri.resolve(normalized).toString();
+      if (seen.add(url)) {
+        resolved.add(url);
+      }
+    }
+    return resolved;
+  }
+
+  List<String> _networkUrlVariants(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return <String>[url];
+    }
+
+    final normalizedPath = uri.path.replaceAll('\\', '/');
+    final fixedUploads = _dedupeAdjacentPath(
+      normalizedPath.replaceFirst('/uploads/uploads/', '/uploads/'),
+    );
+    final fixedPublic = _dedupeAdjacentPath(
+      normalizedPath.replaceFirst('/public/public/', '/public/'),
+    );
+    final fixedStorage = _dedupeAdjacentPath(
+      normalizedPath.replaceFirst('/storage/storage/', '/storage/'),
+    );
+    final deduped = _dedupeAdjacentPath(normalizedPath);
+    final variants = <String>[
+      uri.replace(path: fixedUploads).toString(),
+      uri.replace(path: fixedPublic).toString(),
+      uri.replace(path: fixedStorage).toString(),
+      uri.replace(path: deduped).toString(),
+      url,
+    ];
+
+    final seen = <String>{};
+    return variants.where((v) => seen.add(v)).toList();
+  }
+
+  String _dedupeAdjacentPath(String path) {
+    final parts = path.split('/').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) {
+      return path;
+    }
+    final compact = <String>[];
+    for (final part in parts) {
+      if (compact.isEmpty || compact.last.toLowerCase() != part.toLowerCase()) {
+        compact.add(part);
+      }
+    }
+    return '/${compact.join('/')}';
   }
 
   bool _isNetworkUrl(String value) {
@@ -619,3 +806,4 @@ class _ChildProfile {
     return const _ChildProfile(id: '', name: '', avatar: '');
   }
 }
+
