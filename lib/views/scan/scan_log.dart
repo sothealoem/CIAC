@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:schoolapp/views/scan/scan_log_controller.dart';
@@ -7,59 +7,76 @@ import 'package:schoolapp/views/scan/widgets/overlay.dart';
 class CardScanView extends StatelessWidget {
   CardScanView({super.key});
 
-  final CardScanController controller = Get.put(CardScanController());
-
   @override
   Widget build(BuildContext context) {
+    final controller =
+        Get.isRegistered<CardScanController>()
+            ? Get.find<CardScanController>()
+            : Get.put(CardScanController());
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          MobileScanner(
-            controller: controller.mobileScannerCtl,
-            onDetect: (capture) {
-              if (!controller.isScanning.value || controller.isLoading.value) {
-                return;
-              }
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final size = constraints.biggest;
+          final scannerBottomOffset =
+              MediaQuery.of(context).padding.bottom + 80;
 
-              for (final barcode in capture.barcodes) {
-                final raw = barcode.rawValue;
+          return Stack(
+            children: [
+              MobileScanner(
+                controller: controller.mobileScannerCtl,
+                onDetect: (capture) {
+                  if (!controller.isScanning.value ||
+                      controller.isLoading.value) {
+                    return;
+                  }
 
-                if (raw != null && raw.isNotEmpty) {
-                  controller.isScanning.value = false;
-                  controller.handleDetectedQr(
-                    raw: raw,
-                    lat: 11.5621,
-                    lng: 104.9243,
-                  );
-                  break;
-                }
-              }
-            },
-            scanWindow: Rect.fromCenter(
-              center: Offset(Get.width / 2, Get.height * 0.45),
-              width: 250,
-              height: 250,
-            ),
-          ),
+                  for (final barcode in capture.barcodes) {
+                    final raw = barcode.rawValue;
 
-          _buildScannerOverlay(),
+                    if (raw != null && raw.isNotEmpty) {
+                      controller.isScanning.value = false;
+                      controller.handleDetectedQr(
+                        raw: raw,
+                        lat: 11.5621,
+                        lng: 104.9243,
+                      );
+                      break;
+                    }
+                  }
+                },
+                scanWindow: Rect.fromCenter(
+                  center: Offset(size.width / 2, size.height * 0.42),
+                  width: 250,
+                  height: 250,
+                ),
+              ),
 
-          Obx(
-            () =>
-                controller.isLoading.value
-                    ? Container(
-                      color: Colors.black54,
-                      child: const Center(child: CircularProgressIndicator()),
-                    )
-                    : const SizedBox.shrink(),
-          ),
-        ],
+              _buildScannerOverlay(controller, scannerBottomOffset),
+
+              Obx(
+                () =>
+                    controller.isLoading.value
+                        ? Container(
+                          color: Colors.black54,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildScannerOverlay() {
+  Widget _buildScannerOverlay(
+    CardScanController controller,
+    double scannerBottomOffset,
+  ) {
     return Stack(
       children: [
         Positioned.fill(
@@ -80,21 +97,21 @@ class CardScanView extends StatelessWidget {
           ),
         ),
         const Positioned(
-          top: 100,
+          top: 40,
           left: 24,
           right: 24,
-          child: const Text(
-            'ដាក់កូដ QR ដើម្បីស្កេនវត្តមាន',
+          child: Text(
+            'Scan QR code to log attendance',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF007A79),
-              fontSize: 23,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
         Positioned(
-          top: Get.height * 0.69,
+          bottom: scannerBottomOffset,
           left: 0,
           right: 0,
           child: Obx(

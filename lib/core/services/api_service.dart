@@ -35,7 +35,7 @@ class ApiService extends GetxService {
     // client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
     //
     client.interceptors.add(
-      AuthenticationInterceptor(accessToken: AppConfig.shared.token),
+      AuthenticationInterceptor(accessToken: AppConfig.shared.authorizationToken),
     );
     //
     // // DO NOT change order of these interceptors

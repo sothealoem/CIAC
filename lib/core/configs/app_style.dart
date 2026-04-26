@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
+  // static const primary = Color.fromARGB(15, 214, 67, 96);
   static const primary = Color(0xFF024139);
   static const primaryText = Color(0xFF001F3F);
   static const primaryBtn = Color(0xFF650386);
@@ -320,6 +321,12 @@ class AppTextStyle {
   //-------------CIAC-APP Below-----------------//
   static const smallPrimarytext = TextStyle(
     fontWeight: FontWeight.w500,
+    fontSize: 10,
+    fontFamily: 'battambang',
+  );
+  static const timeformatText = TextStyle(
+    fontWeight: FontWeight.w500,
+    color: Colors.grey,
     fontSize: 10,
     fontFamily: 'battambang',
   );

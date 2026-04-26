@@ -13,7 +13,7 @@ class ItemView extends StatelessWidget {
     final LanguageController controller = Get.find<LanguageController>();
 
     return InkWell(
-      onTap: () => controller.updateLanguage(),
+      onTap: () => controller.selectLanguage(isCambodia),
       child: Container(
         decoration: BoxDecoration(
           color: AppColor.white,
@@ -44,7 +44,7 @@ class ItemView extends StatelessWidget {
                   value: isCambodia ? true : false,
                   groupValue: controller.isCambodia.value,
                   onChanged: (value) {
-                    controller.updateLanguage();
+                    controller.selectLanguage(value ?? isCambodia);
                   },
                 ),
               ),

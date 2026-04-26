@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
-
 import '../start/widgets/customize_app_bar.dart';
 
 class AttendanceRecordView extends GetView<AttendanceRecordController> {
@@ -23,7 +22,7 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
     return Scaffold(
       body: Column(
         children: [
-          SafeArea(
+          const SafeArea(
             bottom: false,
             child: CustomizeAppBar(
               title: 'កំណត់ត្រាវត្តមាន',
@@ -32,13 +31,10 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
           ),
           UIConstants.spacingSmall.height,
 
-          CustomIndicator(progress: 1 / 4),
+          const CustomIndicator(progress: 1 / 4),
           Expanded(
             child: SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(),
-                child: AttendenceRecordCardWidget(),
-              ),
+              child: Container(child: const AttendenceRecordCardWidget()),
             ),
           ),
         ],

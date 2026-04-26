@@ -50,9 +50,9 @@ class MyApp extends StatelessWidget {
       fallbackLocale: const Locale('KM', 'KH'),
       debugShowCheckedModeBanner: false,
       theme: AppStyle.themeData(),
-      initialRoute: Routes.start,
-      //initialRoute:
-      //  AppConfig.shared.token.isNotEmpty ? Routes.root : Routes.login,
+      //initialRoute: Routes.start,
+      initialRoute:
+          AppConfig.shared.token.isNotEmpty ? Routes.root : Routes.login,
       getPages: Routes.pages,
       builder: (context, child) {
         final mediaQueryData = MediaQuery.of(context);

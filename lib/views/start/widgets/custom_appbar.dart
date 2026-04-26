@@ -125,6 +125,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           width: _avatarSize,
           height: _avatarSize,
           fit: BoxFit.cover,
+          headers: _networkHeaders(),
           errorBuilder: errorWidgetBuilder,
         ),
       );
@@ -173,7 +174,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   bool _isValidValue(String value) {
-    return value.isNotEmpty && value.toLowerCase() != 'n/a';
+    if (value.isEmpty) {
+      return false;
+    }
+    final lower = value.toLowerCase();
+    return lower != 'n/a' &&
+        lower != 'null' &&
+        lower != 'undefined' &&
+        lower != 'false';
   }
 
   bool _isNetworkUrl(String value) {
@@ -182,5 +190,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
     final uri = Uri.tryParse(value);
     return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+  }
+
+  Map<String, String>? _networkHeaders() {
+    final token = AppConfig.shared.authorizationToken.trim();
+    if (token.isEmpty) {
+      return null;
+    }
+    return <String, String>{'Authorization': token};
   }
 }

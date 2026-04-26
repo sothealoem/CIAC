@@ -10,19 +10,14 @@ class StartController extends GetxController {
   final RxInt selectedIndex = 0.obs;
   final RxString profileUrl = ''.obs;
   final RxString userName = ''.obs;
-  late Rx<Widget> selectedScreen = screens[0].obs;
-  static List<Widget> screens = [
-    const DashboardView(),
-    const NotificationView(),
-    CardScanView(),
-    //ScanView(),
-    const PaymentCollectionView(),
-    const ContactUsView(),
-  ];
+  final RxBool isParentUser = false.obs;
+  late Rx<Widget> selectedScreen = _buildScreen(0).obs;
 
   @override
   void onInit() {
     UserRepository.shared;
+    isParentUser.value = UserRepository.shared.isDriver;
+    _syncRoleFromStorage();
     _setLocalProfileFallback();
     fetchUserProfileFromApi();
 
@@ -43,12 +38,20 @@ class StartController extends GetxController {
   }
 
   void changeMenuIndex(int index) {
-    if (index == 2) {
-      _openScanFullScreen();
-      return;
+    if (isParentUser.value) {
+      if (index == 2) {
+        selectedIndex.value = index;
+        selectedScreen.value = _buildScreen(3);
+        return;
+      }
+      if (index == 3) {
+        selectedIndex.value = index;
+        selectedScreen.value = _buildScreen(4);
+        return;
+      }
     }
     selectedIndex.value = index;
-    selectedScreen.value = screens[index];
+    selectedScreen.value = _buildScreen(index);
   }
 
   void changeMenu(
@@ -56,17 +59,72 @@ class StartController extends GetxController {
     bool isFromGrid = false,
     int deliveryStatus = 1,
     String dateFilter = '',
-  }) async {
-    if (index == 2) {
-      _openScanFullScreen();
-      return;
+  }) {
+    if (isParentUser.value) {
+      if (index == 2) {
+        selectedIndex.value = 0;
+        selectedScreen.value = _buildScreen(0);
+        return;
+      }
+      if (index == 3) {
+        selectedIndex.value = 2;
+        selectedScreen.value = _buildScreen(3);
+        return;
+      }
+      if (index == 4) {
+        selectedIndex.value = 3;
+        selectedScreen.value = _buildScreen(4);
+        return;
+      }
     }
     selectedIndex.value = index;
-    selectedScreen.value = screens[selectedIndex.value];
+    selectedScreen.value = _buildScreen(selectedIndex.value);
   }
 
-  Future<void> _openScanFullScreen() async {
-    await Get.to(() => CardScanView());
+  void _normalizeSelectionForRole() {
+    if (!isParentUser.value) {
+      return;
+    }
+    if (selectedIndex.value == 2) {
+      selectedIndex.value = 0;
+      selectedScreen.value = _buildScreen(0);
+      return;
+    }
+    if (selectedIndex.value >= 4) {
+      selectedIndex.value = 3;
+      selectedScreen.value = _buildScreen(4);
+    }
+  }
+
+  Future<void> _syncRoleFromStorage() async {
+    final savedRole =
+        (await SharedPreferencesManager.get('user_role') ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
+    if (savedRole.isEmpty) {
+      return;
+    }
+    UserRepository.shared.setUserType(savedRole);
+    isParentUser.value = UserRepository.shared.isDriver;
+    _normalizeSelectionForRole();
+  }
+
+  Widget _buildScreen(int index) {
+    switch (index) {
+      case 0:
+        return const DashboardView();
+      case 1:
+        return const NotificationView();
+      case 2:
+        return CardScanView();
+      case 3:
+        return const PaymentCollectionView();
+      case 4:
+        return const ContactUsView();
+      default:
+        return const DashboardView();
+    }
   }
 
   void _setLocalProfileFallback() {
@@ -94,6 +152,12 @@ class StartController extends GetxController {
 
       final profile = ProfileModel.fromJson(data);
       UserRepository.shared.setProfile(profile);
+      isParentUser.value = UserRepository.shared.isDriver;
+      await SharedPreferencesManager.setValue(
+        'user_role',
+        profile.type.toLowerCase(),
+      );
+      _normalizeSelectionForRole();
 
       final rawProfileUrl = _firstNonEmpty([
         data['profile_path'],
@@ -102,6 +166,12 @@ class StartController extends GetxController {
         data['photo'],
         data['image'],
         data['profile_url'],
+        (data['user'] is Map<String, dynamic>)
+            ? (data['user'] as Map<String, dynamic>)['profile_path']
+            : null,
+        (data['user'] is Map<String, dynamic>)
+            ? (data['user'] as Map<String, dynamic>)['profile']
+            : null,
       ]);
 
       profileUrl.value = _normalizeProfileUrl(
@@ -130,7 +200,12 @@ class StartController extends GetxController {
   String _firstNonEmpty(List<dynamic> values) {
     for (final value in values) {
       final text = (value ?? '').toString().trim();
-      if (text.isNotEmpty && text.toLowerCase() != 'n/a') {
+      final lower = text.toLowerCase();
+      if (text.isNotEmpty &&
+          lower != 'n/a' &&
+          lower != 'null' &&
+          lower != 'undefined' &&
+          lower != 'false') {
         return text;
       }
     }

@@ -17,7 +17,8 @@ class AppConfig {
   //String get baseUrl => dotenv.env['BASE_URL'] ?? '';
 
   String _token = '';
-  String get token => 'Bearer $_token';
+  String get token => _token;
+  String get authorizationToken => _token.isEmpty ? '' : 'Bearer $_token';
   set token(String value) => _token = value;
   bool isDeliveryTapOpened = false;
 

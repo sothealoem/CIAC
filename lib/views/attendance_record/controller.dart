@@ -7,6 +7,7 @@ class AttendanceRecordController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final RxString selectedDate = ''.obs;
+  final RxString selectedStatus = ''.obs;
   final RxList<StaffAttendanceItem> attendanceList =
       <StaffAttendanceItem>[].obs;
   final RxBool isLoading = false.obs;
@@ -26,9 +27,7 @@ class AttendanceRecordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final now = DateTime.now();
-    selectedDate.value =
-        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    selectedDate.value = '';
     loadAttendanceLogs();
   }
 
@@ -40,9 +39,7 @@ class AttendanceRecordController extends GetxController {
 
   void reset() {
     searchCtl.clear();
-    final now = DateTime.now();
-    selectedDate.value =
-        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    selectedDate.value = '';
     loadAttendanceLogs();
   }
 
@@ -52,7 +49,10 @@ class AttendanceRecordController extends GetxController {
 
       final res = await Get.find<ApiService>().get(
         EndPoints.attendanceRecord,
-        queryParameters: {'date': selectedDate.value},
+        queryParameters:
+            selectedDate.value.trim().isEmpty
+                ? null
+                : {'date': selectedDate.value},
         isShowLoading: false,
       );
       final payload = res.data;
@@ -81,13 +81,43 @@ class AttendanceRecordController extends GetxController {
       _allLogs
         ..clear()
         ..addAll(logs);
-      _applyDateFilter();
+      _applyFilters();
     } catch (e) {
       _clearAll();
       ExceptionHandler.handleException(e, alert: false);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void clearDateFilter() {
+    if (selectedDate.value.trim().isEmpty) {
+      return;
+    }
+    selectedDate.value = '';
+    loadAttendanceLogs();
+  }
+
+  void toggleStatusFilter(String rawStatus) {
+    final normalized = _normalizeStatus(rawStatus);
+    if (selectedStatus.value == normalized) {
+      selectedStatus.value = '';
+    } else {
+      selectedStatus.value = normalized;
+    }
+    _applyFilters();
+  }
+
+  void clearStatusFilter() {
+    if (selectedStatus.value.isEmpty) {
+      return;
+    }
+    selectedStatus.value = '';
+    _applyFilters();
+  }
+
+  bool isStatusSelected(String rawStatus) {
+    return selectedStatus.value == _normalizeStatus(rawStatus);
   }
 
   Future<void> pickDate(BuildContext context) async {
@@ -111,14 +141,25 @@ class AttendanceRecordController extends GetxController {
     }
   }
 
-  void _applyDateFilter() {
+  void _applyFilters() {
     final date = selectedDate.value.trim();
+    final status = selectedStatus.value.trim();
     final filtered =
         _allLogs.where((e) {
           if (date.isEmpty) {
+            if (status.isEmpty) {
+              return true;
+            }
+            return _matchesStatusFilter(_normalizeStatus(e.status), status);
+          }
+          final matchesDate = _normalizeDate(e.attendanceDate) == date;
+          if (!matchesDate) {
+            return false;
+          }
+          if (status.isEmpty) {
             return true;
           }
-          return _normalizeDate(e.attendanceDate) == date;
+          return _matchesStatusFilter(_normalizeStatus(e.status), status);
         }).toList();
 
     filtered.sort((a, b) {
@@ -158,6 +199,28 @@ class AttendanceRecordController extends GetxController {
       return '${parts[2]}-${parts[1]}-${parts[0]}';
     }
     return text;
+  }
+
+  String _normalizeStatus(String rawStatus) {
+    final status = rawStatus.toLowerCase().trim();
+    if (status.contains('permission')) {
+      return 'permission';
+    }
+    if (status.contains('late')) {
+      return 'late';
+    }
+    if (status.contains('absent')) {
+      return 'absent';
+    }
+    return 'present';
+  }
+
+  bool _matchesStatusFilter(String itemStatus, String selected) {
+    if (selected == 'present') {
+      // Business rule: Present tab should include late arrivals too.
+      return itemStatus == 'present' || itemStatus == 'late';
+    }
+    return itemStatus == selected;
   }
 
   String _normalizeTime(String rawTime, String createdAt) {
@@ -206,6 +269,7 @@ class AttendanceRecordController extends GetxController {
   void _clearAll() {
     _allLogs.clear();
     attendanceList.clear();
+    selectedStatus.value = '';
     presentSummary.value = '0';
     lateSummary.value = '0';
     absentSummary.value = '0';

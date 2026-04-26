@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:schoolapp/views/dashboard/widgets/slide_image.dart';
@@ -25,28 +24,20 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     "វគ្គសិក្សាអនឡាយ",
   ];
 
-  final List<Widget> catIcons = [
-    Image.asset('assets/images/icon/payment.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/attendance.png', width: 30, height: 30),
-    Image.asset(
-      'assets/images/icon/attendance_leave.png',
-      width: 30,
-      height: 30,
-    ),
-
-    Image.asset('assets/images/icon/time_table.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/score.png', width: 30, height: 30),
-    Image.asset(
-      'assets/images/icon/list_attendance.png',
-      width: 30,
-      height: 30,
-    ),
-    Image.asset('assets/images/icon/student_report.png', width: 40, height: 40),
-    Image.asset('assets/images/icon/class_activity.png', width: 30, height: 30),
-    Image.asset('assets/images/icon/online_course.png', width: 40, height: 40),
+  final List<String> catIconPaths = [
+    'assets/images/icon/payment.png',
+    'assets/images/icon/attendance.png',
+    'assets/images/icon/attendance_leave.png',
+    'assets/images/icon/time_table.png',
+    'assets/images/icon/score.png',
+    'assets/images/icon/list_attendance.png',
+    'assets/images/icon/student_report.png',
+    'assets/images/icon/class_activity.png',
+    'assets/images/icon/online_course.png',
   ];
 
-  List<Color> catColors = List.filled(9, Color(0xFFEEF7FE));
+  final Color _panelColor = const Color(0xFFFFFFFF);
+  final Color _iconBgColor = const Color(0xFFDDE8EE);
 
   final List<String> bannerImages = [
     'assets/images/sliver_banner.png',
@@ -93,85 +84,173 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final height = constraints.maxHeight;
+        final bottomNavOverlay = MediaQuery.of(context).padding.bottom + 84.0;
+        final usableHeight = (height - bottomNavOverlay).clamp(420.0, 2000.0);
+        final crossAxisCount =
+            width >= 900
+                ? 5
+                : width >= 700
+                ? 4
+                : 3;
+        final rows = (_catName.length / crossAxisCount).ceil();
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 5),
-      child: Column(
-        children: [
-          const SizedBox(height: 5),
+        final sliderHeight =
+            usableHeight < 620
+                ? 132.0
+                : width >= 700
+                ? 196.0
+                : 162.0;
+        const topGap = 10.0;
+        const middleGap = 8.0;
+        const bottomPadding = 10.0;
+        const gridPaddingVertical = 20.0;
+        const mainSpacing = 12.0;
+        final spacingTotal = (rows - 1) * mainSpacing;
+        final remaining =
+            usableHeight -
+            sliderHeight -
+            topGap -
+            middleGap -
+            bottomPadding -
+            gridPaddingVertical -
+            spacingTotal;
+        final tileHeight = (remaining / rows).clamp(102.0, 165.0);
+        final iconSize = (tileHeight * 0.42).clamp(48.0, 62.0);
+        final labelFontSize = (tileHeight * 0.108).clamp(12.0, 15.0);
 
-          PremiumSlider(imagesList: bannerImages),
-          const SizedBox(height: 2),
-
-          // 3x3 Menu Grid
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                    offset: const Offset(0, -3),
+        return Column(
+          children: [
+            SizedBox(height: topGap),
+            SizedBox(
+              height: sliderHeight,
+              child: PremiumSlider(imagesList: bannerImages),
+            ),
+            const SizedBox(height: middleGap),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 0),
+                padding: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  color: _panelColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
-                ],
-              ),
-
-              child: GridView.builder(
-                padding: const EdgeInsets.only(bottom: 100),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _catName.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 1.2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 18,
-                ),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () => click(index),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 62,
-                          width: 62,
-                          decoration: BoxDecoration(
-                            color: catColors[index],
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(child: catIcons[index]),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _catName[index],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Battambang',
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                      offset: const Offset(0, -3),
                     ),
-                  );
-                },
+                  ],
+                ),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(
+                    12,
+                    4,
+                    12,
+                    16 + bottomNavOverlay,
+                  ),
+                  itemCount: _catName.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    mainAxisExtent: tileHeight,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: mainSpacing,
+                  ),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => click(index),
+                      borderRadius: BorderRadius.circular(12),
+                      child: LayoutBuilder(
+                        builder: (context, itemConstraints) {
+                          final itemHeight = itemConstraints.maxHeight;
+                          final itemIconSize = (itemHeight * 0.54).clamp(
+                            58.0,
+                            iconSize + 14,
+                          );
+                          final itemGap = (itemHeight * 0.06).clamp(4.0, 8.0);
+                          final itemFontSize = (itemHeight * 0.108).clamp(
+                            12.0,
+                            labelFontSize,
+                          );
+
+                          return Column(
+                            children: [
+                              Container(
+                                height: itemIconSize,
+                                width: itemIconSize,
+                                decoration: BoxDecoration(
+                                  color: _iconBgColor,
+                                  shape: BoxShape.circle,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color(0x14000000),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: _menuIcon(
+                                    catIconPaths[index],
+                                    (itemIconSize * 0.56).clamp(34.0, 40.0),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: itemGap),
+                              Expanded(
+                                child: Text(
+                                  _catName[index],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: itemFontSize,
+                                    height: 1.15,
+                                    color: const Color(0xFF1F2A37),
+                                    fontFamily: 'Battambang',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
+          ],
+        );
+      },
+    );
+  }
 
-          const SizedBox(height: 30),
-        ],
-      ),
+  Widget _menuIcon(String path, double size) {
+    return Image.asset(
+      path,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      isAntiAlias: true,
+      cacheWidth: 128,
+      cacheHeight: 128,
+      errorBuilder:
+          (_, __, ___) => const Icon(
+            Icons.apps_rounded,
+            size: 30,
+            color: Color(0xFF0B5A57),
+          ),
     );
   }
 }

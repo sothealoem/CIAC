@@ -3,12 +3,13 @@ import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/core/widgets/attendance/summary_item.dart';
 import 'package:schoolapp/models/staff/model.dart';
 import 'package:schoolapp/views/attendance_record/controller.dart';
+import 'package:schoolapp/views/start/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class AttendenceRecordCardWidget extends StatefulWidget {
-  AttendenceRecordCardWidget({super.key});
+  const AttendenceRecordCardWidget({super.key});
 
   @override
   State<AttendenceRecordCardWidget> createState() =>
@@ -22,7 +23,7 @@ class _AttendenceRecordCardWidgetState
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
           Obx(
@@ -32,24 +33,58 @@ class _AttendenceRecordCardWidgetState
                   label: 'Present',
                   count: controller.presentSummary.value,
                   color: Colors.green,
+                  isActive: controller.isStatusSelected('present'),
+                  onTap: () => controller.toggleStatusFilter('present'),
                 ),
                 SummaryItem(
                   label: 'Late',
                   count: controller.lateSummary.value,
                   color: Colors.orange,
+                  isActive: controller.isStatusSelected('late'),
+                  onTap: () => controller.toggleStatusFilter('late'),
                 ),
                 SummaryItem(
                   label: 'Absent',
                   count: controller.absentSummary.value,
                   color: Colors.red,
+                  isActive: controller.isStatusSelected('absent'),
+                  onTap: () => controller.toggleStatusFilter('absent'),
                 ),
                 SummaryItem(
                   label: 'Permission',
                   count: controller.permissionSummary.value,
                   color: Colors.blue,
+                  isActive: controller.isStatusSelected('permission'),
+                  onTap: () => controller.toggleStatusFilter('permission'),
                 ),
               ],
             ),
+          ),
+          Obx(
+            () =>
+                controller.selectedStatus.value.isEmpty
+                    ? const SizedBox.shrink()
+                    : Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Showing: ${_statusText(controller.selectedStatus.value)}',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: controller.clearStatusFilter,
+                            child: const Text('Clear'),
+                          ),
+                        ],
+                      ),
+                    ),
           ),
           10.height,
           Obx(
@@ -67,11 +102,19 @@ class _AttendenceRecordCardWidgetState
                     Expanded(
                       child: Text(
                         controller.selectedDate.value.isEmpty
-                            ? 'Select Date'
+                            ? 'All dates'
                             : controller.selectedDate.value,
                         style: const TextStyle(fontSize: 14),
                       ),
                     ),
+                    if (controller.selectedDate.value.isNotEmpty)
+                      GestureDetector(
+                        onTap: controller.clearDateFilter,
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: Icon(Icons.close, size: 18),
+                        ),
+                      ),
                     const Icon(Icons.calendar_month_rounded, size: 18),
                   ],
                 ),
@@ -91,7 +134,7 @@ class _AttendenceRecordCardWidgetState
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: Text(
-                  'No attendance logs for selected date.',
+                  'No staff attendance logs found.',
                   style: TextStyle(color: Colors.grey),
                 ),
               );
@@ -112,7 +155,7 @@ class _AttendenceRecordCardWidgetState
   Widget _buildCard(StaffAttendanceItem item) {
     final staffId =
         item.staffCode.isNotEmpty ? item.staffCode.trim() : item.id.trim();
-    final profileUrl = item.profile.trim();
+    final profileUrl = _sharedProfileUrl(item.profile);
     return Container(
       margin: const EdgeInsets.only(bottom: 25),
       padding: const EdgeInsets.fromLTRB(12, 18, 12, 12),
@@ -197,6 +240,9 @@ class _AttendenceRecordCardWidgetState
                       horizontal: 12,
                       vertical: 5,
                     ),
+                    height: 30,
+                    width: 70,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: _statusColor(item.status),
                       borderRadius: BorderRadius.circular(10),
@@ -211,9 +257,24 @@ class _AttendenceRecordCardWidgetState
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Text('Morning In: ${_timeText(item.timeIn1)}'),
-                  const Spacer(),
-                  Text('Morning Out | ${_timeText(item.timeOut1)}'),
+                  Expanded(
+                    child: Text(
+                      style: AppTextStyle.timeformatText,
+                      'Morning In: ${_timeText(item.timeIn1)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: Text(
+                      style: AppTextStyle.timeformatText,
+                      'Morning Out | ${_timeText(item.timeOut1)}',
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
@@ -225,9 +286,24 @@ class _AttendenceRecordCardWidgetState
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Text('Afternoon In:  ${_timeText(item.timeIn2)}'),
-                  const Spacer(),
-                  Text('Afternoon Out |  ${_timeText(item.timeOut2)}'),
+                  Expanded(
+                    child: Text(
+                      style: AppTextStyle.timeformatText,
+                      'Afternoon In: ${_timeText(item.timeIn2)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: Text(
+                      style: AppTextStyle.timeformatText,
+                      'Afternoon Out | ${_timeText(item.timeOut2)}',
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -303,6 +379,18 @@ class _AttendenceRecordCardWidgetState
     }
 
     return _buildImageAvatar(resolvedUrl, size);
+  }
+
+  String _sharedProfileUrl(String fallbackProfile) {
+    try {
+      if (Get.isRegistered<StartController>()) {
+        final appBarUrl = Get.find<StartController>().appBarProfileUrl.trim();
+        if (appBarUrl.isNotEmpty) {
+          return appBarUrl;
+        }
+      }
+    } catch (_) {}
+    return fallbackProfile.trim();
   }
 
   Widget _avatarPlaceholder(double size) {

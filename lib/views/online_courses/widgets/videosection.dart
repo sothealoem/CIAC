@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolapp/core/configs/app_style.dart';
 
 class VideoSectionWidget extends StatelessWidget {
   List videoList = [
@@ -16,7 +17,7 @@ class VideoSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: videoList.length,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return Card(
@@ -25,26 +26,15 @@ class VideoSectionWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: ListTile(
               leading: Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color:
-                      index == 0
-                          ? Colors.deepPurple
-                          : Colors.deepPurple.withOpacity(0.6),
+                  color: index == 0 ? AppColor.primary : AppColor.primaryColor,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.play_arrow_rounded,
 
                   color: Colors.white,
@@ -52,7 +42,7 @@ class VideoSectionWidget extends StatelessWidget {
                 ),
               ),
               title: Text(videoList[index]),
-              subtitle: Text("20 min 50sec"),
+              subtitle: const Text("20 min 50sec"),
             ),
           ),
         );

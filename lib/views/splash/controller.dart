@@ -1,67 +1,56 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/models/models.dart';
 import 'package:schoolapp/routes.dart';
 
-class SplashController extends GetxController
-    with GetSingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Animation<double> animation;
+class SplashController extends GetxController {
+  static const Duration _minSplashTime = Duration(milliseconds: 1400);
+  static const Duration _maxSplashTime = Duration(milliseconds: 900);
+  bool _didNavigate = false;
 
   @override
-  void onInit() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    );
-    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
-    controller.repeat();
-
+  void onReady() {
+    super.onReady();
     fetchInit();
-
-    super.onInit();
-  }
-
-  @override
-  void onClose() {
-    controller.dispose();
-    super.onClose();
   }
 
   Future<void> fetchInit() async {
-    final String token =
-        await SharedPreferencesManager.get(Credential.token.name) ?? '';
-    if (token.isEmpty) {
-      Future.delayed(const Duration(seconds: 2)).then((value) {
-        controller.stop();
-        Get.offAllNamed(Routes.login);
-      });
-      return;
-    }
-
+    final startedAt = DateTime.now();
     try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.profile,
-        isShowLoading: false,
-      );
-
-      final data = getPropertyFromJson(res.data, 'data');
-      if (data != null) {
-        final ProfileModel profile = ProfileModel.fromJson(data);
-        UserRepository.shared.setProfile(profile);
-        controller.stop();
-        Get.offAllNamed(Routes.start);
+      final rawToken =
+          await SharedPreferencesManager.get(Credential.token.name)
+              .timeout(_maxSplashTime, onTimeout: () => '') ??
+          '';
+      if (_didNavigate || isClosed) {
         return;
       }
 
-      controller.stop();
-      Get.offAllNamed(Routes.login);
-    } catch (e) {
+      _didNavigate = true;
+      final token = rawToken.toString().trim();
+      final hasValidToken =
+          token.isNotEmpty &&
+          token.toLowerCase() != 'null' &&
+          token.toLowerCase() != 'undefined' &&
+          token.toLowerCase() != 'false';
+
+      final elapsed = DateTime.now().difference(startedAt);
+      final wait = _minSplashTime - elapsed;
+      if (wait > Duration.zero) {
+        await Future.delayed(wait);
+      }
       if (isClosed) {
         return;
       }
-      controller.stop();
+
+      if (!hasValidToken) {
+        Get.offAllNamed(Routes.login);
+        return;
+      }
+      Get.offAllNamed(Routes.start);
+    } catch (_) {
+      if (_didNavigate || isClosed) {
+        return;
+      }
+      _didNavigate = true;
       Get.offAllNamed(Routes.login);
     }
   }

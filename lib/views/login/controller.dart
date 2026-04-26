@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/dialog_manager.dart';
+import '../../../core/repositories/user.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -104,6 +105,9 @@ class LoginController extends GetxController {
         return;
       }
 
+      // Keep role locally so start screen can build correct tabs immediately.
+      UserRepository.shared.setUserType(role);
+
       ///  SET NAME (clean & safe)
       final dashboardController = Get.find<DashboardController>();
       dashboardController.userName.value = name;
@@ -116,6 +120,7 @@ class LoginController extends GetxController {
       await SharedPreferencesManager.setValue('username', username);
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
+      await SharedPreferencesManager.setValue('user_role', role);
       await SharedPreferencesManager.setValue(
         'scanner_owner_id',
         scannerOwnerId,

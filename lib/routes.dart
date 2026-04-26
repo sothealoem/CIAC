@@ -3,7 +3,6 @@ import 'package:schoolapp/views/attendance/binding.dart';
 import 'package:schoolapp/views/attendance/view.dart';
 import 'package:schoolapp/views/attendance_record/binding.dart';
 import 'package:schoolapp/views/attendance_record/view.dart';
-import 'package:schoolapp/views/attendance_record/widgets/attendence_record_card.dart';
 import 'package:schoolapp/views/change_password/binding.dart';
 import 'package:schoolapp/views/change_password/view.dart';
 import 'package:schoolapp/views/contact_us/binding.dart';

@@ -62,64 +62,77 @@ class _PremiumSliderState extends State<PremiumSlider> {
           );
         }).toList();
 
-    return Column(
-      children: [
-        /// TITLE
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxHeight =
+            constraints.maxHeight.isFinite ? constraints.maxHeight : 180.0;
+        const indicatorHeight = 15.0;
+        const indicatorGap = 2.0;
+        final sliderHeight = (maxHeight - indicatorHeight - indicatorGap).clamp(
+          90.0,
+          260.0,
+        );
 
-        /// CAROUSEL SLIDER IMAGES
-        SizedBox(
-          // height: 180,
-          child: ClipRRect(
-            child: CarouselSlider(
-              items: imageSliders,
-              carouselController: _sliderRef,
-              options: CarouselOptions(
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 10),
-                initialPage: 0,
-                autoPlayCurve: Curves.fastOutSlowIn,
-                enlargeCenterPage: true,
-                aspectRatio: 16 / 9,
-                pauseAutoPlayOnTouch: true,
-                height: 150,
-                // height: 180,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _current = index;
-                  });
-                },
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: sliderHeight,
+              child: ClipRRect(
+                child: CarouselSlider(
+                  items: imageSliders,
+                  carouselController: _sliderRef,
+                  options: CarouselOptions(
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 10),
+                    initialPage: 0,
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    aspectRatio: 16 / 9,
+                    pauseAutoPlayOnTouch: true,
+                    height: sliderHeight,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _current = index;
+                      });
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        SizedBox(height: 2),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:
-              widget.imagesList.asMap().entries.map((entry) {
-                int curSlide = entry.key;
-                return GestureDetector(
-                  onTap: () => _sliderRef.animateToPage(curSlide),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    width: _current == curSlide ? 30 : 12,
-                    height: 11.0,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 2.0,
-                      horizontal: 2.0,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColor.primary.withValues(
-                        alpha: _current == curSlide ? 0.9 : 0.2,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-        ),
-      ],
+            const SizedBox(height: indicatorGap),
+            SizedBox(
+              height: indicatorHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                    widget.imagesList.asMap().entries.map((entry) {
+                      int curSlide = entry.key;
+                      return GestureDetector(
+                        onTap: () => _sliderRef.animateToPage(curSlide),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                          width: _current == curSlide ? 30 : 12,
+                          height: .0,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 2.0,
+                            horizontal: 2.0,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: AppColor.primary.withValues(
+                              alpha: _current == curSlide ? 0.9 : 0.2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

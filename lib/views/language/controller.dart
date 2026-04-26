@@ -13,10 +13,14 @@ class LanguageController extends GetxController {
     super.onInit();
   }
 
-  void updateLanguage() {
-    isCambodia.value = !isCambodia.value;
+  void selectLanguage(bool useCambodia) {
+    if (isCambodia.value == useCambodia) {
+      return;
+    }
+
+    isCambodia.value = useCambodia;
     AppConfig.shared.updateLanguage(
-      isCambodia.value ? Language.kh.key : Language.en.key,
+      useCambodia ? Language.kh.key : Language.en.key,
     );
   }
 }
