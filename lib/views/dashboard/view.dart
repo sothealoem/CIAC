@@ -17,7 +17,6 @@ class DashboardView extends GetView<DashboardController> {
             child: CircularProgressIndicator(color: AppColor.red),
           );
         }
-
         final DashboardModel? dashboard = controller.dashboardModel.value;
         // if (dashboard == null) {
         //   return DashboardWidget();
