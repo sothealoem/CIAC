@@ -70,22 +70,67 @@ class LoginView extends GetView<LoginController> {
                                 style: AppTextStyle.normalGreenBold,
                               ),
                               UIConstants.spacing.height,
-                              Obx(
-                                () => CustomTextField(
-                                  prefixIcon: const Icon(
-                                    Icons.person,
+                              Obx(() {
+                                final selected =
+                                    controller.selectedLoginRole.value;
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _RoleSwitchLabel(
+                                      label: "Teacher",
+                                      isSelected: selected == UserType.teacher,
+                                      onTap:
+                                          () => controller.setLoginRole(
+                                            UserType.teacher,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _RoleSwitchLabel(
+                                      label: "Parent",
+                                      isSelected: selected == UserType.parent,
+                                      onTap:
+                                          () => controller.setLoginRole(
+                                            UserType.parent,
+                                          ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                              const SizedBox(height: 10),
+                              Obx(() {
+                                final isParent =
+                                    controller.selectedLoginRole.value ==
+                                    UserType.parent;
+                                return CustomTextField(
+                                  key: ValueKey(
+                                    'login_identity_${controller.selectedLoginRole.value.key}',
+                                  ),
+                                  prefixIcon: Icon(
+                                    isParent ? Icons.phone : Icons.person,
                                     color: AppColor.primary,
                                   ),
                                   controller: controller.emailCtl,
-                                  hintText: "Username or Email",
+                                  hintText:
+                                      isParent
+                                          ? "Phone number"
+                                          : "Phone, or email",
                                   errorText: controller.emailError.value,
                                   onChanged:
                                       (val) =>
                                           controller.emailError.value = null,
-                                  validator:
-                                      (text) => FormValidator.empty(text),
-                                ),
-                              ),
+                                  keyboardType:
+                                      isParent
+                                          ? TextInputType.phone
+                                          : TextInputType.text,
+                                  inputFormatters:
+                                      isParent
+                                          ? [
+                                            FormValidator.maskInputPhoneNumber(),
+                                          ]
+                                          : null,
+                                  validator: controller.validateIdentity,
+                                );
+                              }),
                               UIConstants.spacing.height,
                               Obx(
                                 () => CustomTextField(
@@ -98,16 +143,13 @@ class LoginView extends GetView<LoginController> {
                                   errorText: controller.passwordError.value,
                                   onChanged:
                                       (val) =>
-                                          controller.passwordError.value =
-                                              null,
+                                          controller.passwordError.value = null,
                                   obscureText: controller.isPassVisible.value,
                                   suffixIcon: InkWell(
                                     onTap:
                                         () =>
                                             controller.isPassVisible.value =
-                                                !controller
-                                                    .isPassVisible
-                                                    .value,
+                                                !controller.isPassVisible.value,
                                     child: Icon(
                                       controller.isPassVisible.value
                                           ? Icons.visibility
@@ -157,7 +199,9 @@ class LoginView extends GetView<LoginController> {
                                       ),
                                     ),
                                     child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 500),
+                                      duration: const Duration(
+                                        milliseconds: 500,
+                                      ),
                                       child:
                                           isLoading
                                               ? const Row(
@@ -192,7 +236,8 @@ class LoginView extends GetView<LoginController> {
                                                 LocaleKeys.login.tr,
                                                 key: const ValueKey('idle'),
                                                 style:
-                                                    AppTextStyle.normalWhiteBold,
+                                                    AppTextStyle
+                                                        .normalWhiteBold,
                                               ),
                                     ),
                                   ),
@@ -237,6 +282,44 @@ class LoginView extends GetView<LoginController> {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleSwitchLabel extends StatelessWidget {
+  const _RoleSwitchLabel({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          color: isSelected ? AppColor.primary.withOpacity(0.12) : Colors.white,
+          border: Border.all(
+            color: isSelected ? AppColor.primary : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? AppColor.primary : Colors.black54,
+          ),
         ),
       ),
     );

@@ -104,7 +104,7 @@ class CardScanView extends StatelessWidget {
             'Scan QR code to log attendance',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF007A79),
+              color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),

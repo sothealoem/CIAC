@@ -1,12 +1,14 @@
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/services/end_points.dart';
 import 'package:schoolapp/core/utils/exception_manager.dart';
+import 'package:schoolapp/core/utils/form_validator.dart';
 import 'package:schoolapp/core/constants/constants.dart';
 import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as d;
 
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/dialog_manager.dart';
@@ -23,6 +25,7 @@ class LoginController extends GetxController {
 
   var emailError = RxnString();
   var passwordError = RxnString();
+  final selectedLoginRole = UserType.parent.obs;
 
   @override
   void onClose() {
@@ -36,18 +39,16 @@ class LoginController extends GetxController {
 
     if (isLoading.value) return;
 
-    final String username = emailCtl.text.trim();
+    final String loginIdentity = emailCtl.text.trim();
     final String password = passCtl.text.trim();
 
     try {
       isLoading.value = true;
 
-      final res = await Get.find<ApiService>().post(EndPoints.login, {
-        "username": username,
-        "password": password,
-      }, isShowLoading: true);
-
-      final response = res.data;
+      final response = await _loginByRole(
+        loginIdentity: loginIdentity,
+        password: password,
+      );
       print("LOGIN RESPONSE: $response");
 
       if (response == null) {
@@ -90,7 +91,7 @@ class LoginController extends GetxController {
       ]);
       final String scannerOwnerId = _resolveScannerOwnerId(
         data: data,
-        fallbackUsername: username,
+        fallbackUsername: loginIdentity,
       );
 
       if (token.isEmpty) {
@@ -112,6 +113,15 @@ class LoginController extends GetxController {
         return;
       }
 
+      if (role != selectedLoginRole.value.key) {
+        DialogManager.showDialog(
+          title: "Login Failed",
+          subTitle:
+              "Selected role is ${selectedLoginRole.value.key}. Please switch role and try again.",
+        );
+        return;
+      }
+
       // Keep role locally so start screen can build correct tabs immediately.
       UserRepository.shared.setUserType(role);
 
@@ -124,7 +134,7 @@ class LoginController extends GetxController {
       AppConfig.shared.token = token;
 
       await SharedPreferencesManager.setValue('token', token);
-      await SharedPreferencesManager.setValue('username', username);
+      await SharedPreferencesManager.setValue('username', loginIdentity);
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
       await SharedPreferencesManager.setValue('profile', profile);
@@ -183,6 +193,205 @@ class LoginController extends GetxController {
       }
     }
     return fallbackUsername;
+  }
+
+  void setLoginRole(UserType role) {
+    if (selectedLoginRole.value == role) return;
+    selectedLoginRole.value = role;
+    emailCtl.clear();
+    passCtl.clear();
+    emailError.value = null;
+    passwordError.value = null;
+  }
+
+  Future<dynamic> _loginByRole({
+    required String loginIdentity,
+    required String password,
+  }) async {
+    if (selectedLoginRole.value == UserType.parent) {
+      return _loginWithPhone(loginIdentity: loginIdentity, password: password);
+    }
+    return _loginTeacher(loginIdentity: loginIdentity, password: password);
+  }
+
+  Future<dynamic> _loginWithPhone({
+    required String loginIdentity,
+    required String password,
+  }) async {
+    final api = Get.find<ApiService>();
+    final rawPhone = loginIdentity.trim();
+    final normalizedPhone = _normalizePhone(loginIdentity);
+
+    if (!_isLikelyPhone(loginIdentity)) {
+      return {
+        "success": false,
+        "message": "Please enter a valid phone number",
+      };
+    }
+
+    final attempts = <Map<String, dynamic>>[
+      {
+        "phone": rawPhone,
+        "password": password,
+      },
+      {
+        "phone": normalizedPhone,
+        "password": password,
+      },
+      {
+        "phone_number": rawPhone,
+        "password": password,
+      },
+      {
+        "phone_number": normalizedPhone,
+        "password": password,
+      },
+      {
+        "phone": rawPhone,
+        "phone_number": rawPhone,
+        "password": password,
+      },
+      {
+        "phone": normalizedPhone,
+        "phone_number": normalizedPhone,
+        "password": password,
+      },
+      {
+        "username": rawPhone,
+        "password": password,
+      },
+      {
+        "username": normalizedPhone,
+        "password": password,
+      },
+    ];
+
+    dynamic latestResponse = {
+      "success": false,
+      "message": "Login failed",
+    };
+
+    for (final payload in attempts) {
+      try {
+        final res = await api.post(
+          EndPoints.login,
+          payload,
+          isShowLoading: true,
+        );
+        latestResponse = res.data;
+        if (latestResponse is Map && latestResponse['success'] == true) {
+          return latestResponse;
+        }
+      } on d.DioException catch (e) {
+        latestResponse = e.response?.data ??
+            {
+              "success": false,
+              "message": e.message ?? "Login failed",
+            };
+      }
+    }
+
+    return latestResponse;
+  }
+
+  Future<dynamic> _loginTeacher({
+    required String loginIdentity,
+    required String password,
+  }) async {
+    final api = Get.find<ApiService>();
+    final attempts = <Map<String, dynamic>>[];
+    final rawIdentity = loginIdentity.trim();
+    final normalizedPhone = _normalizePhone(loginIdentity);
+
+    if (_isLikelyPhone(loginIdentity)) {
+      attempts.add({
+        "phone": rawIdentity,
+        "password": password,
+      });
+      attempts.add({
+        "phone": normalizedPhone,
+        "password": password,
+      });
+      attempts.add({
+        "phone_number": rawIdentity,
+        "password": password,
+      });
+      attempts.add({
+        "phone_number": normalizedPhone,
+        "password": password,
+      });
+    }
+
+    if (_isLikelyEmail(loginIdentity)) {
+      attempts.add({
+        "email": loginIdentity.toLowerCase(),
+        "password": password,
+      });
+    }
+
+    // Teacher accounts may still authenticate with username/staff code.
+    attempts.add({
+      "username": rawIdentity,
+      "password": password,
+    });
+
+    if (attempts.isEmpty) {
+      return {
+        "success": false,
+        "message": "Please enter username, phone number, or email",
+      };
+    }
+
+    dynamic latestResponse;
+    for (final payload in attempts) {
+      try {
+        final res = await api.post(
+          EndPoints.login,
+          payload,
+          isShowLoading: true,
+        );
+        latestResponse = res.data;
+        if (latestResponse is Map && latestResponse['success'] == true) {
+          return latestResponse;
+        }
+      } on d.DioException catch (e) {
+        latestResponse = e.response?.data ??
+            {
+              "success": false,
+              "message": e.message ?? "Login failed",
+            };
+      }
+    }
+    return latestResponse;
+  }
+
+  bool _isLikelyPhone(String text) {
+    return RegExp(r'^\+?\d{6,15}$').hasMatch(_normalizePhone(text));
+  }
+
+  bool _isLikelyEmail(String text) {
+    return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', caseSensitive: false).hasMatch(
+      text.trim(),
+    );
+  }
+
+  String? validateIdentity(String? text) {
+    final identity = (text ?? '').trim();
+    if (selectedLoginRole.value == UserType.parent) {
+      return FormValidator.phoneNumber(identity);
+    }
+
+    final emptyCheck = FormValidator.empty(identity);
+    if (emptyCheck != null) return emptyCheck;
+
+    if (_isLikelyPhone(identity) || _isLikelyEmail(identity)) {
+      return null;
+    }
+    return null;
+  }
+
+  String _normalizePhone(String text) {
+    return text.replaceAll(RegExp(r'[\s\-\(\)]'), '');
   }
 
   String _firstNonEmpty(List<dynamic> values) {

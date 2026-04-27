@@ -16,9 +16,9 @@ class SplashView extends GetView<SplashController> {
             final logoSize =
                 (shortestSide * 0.34).clamp(120.0, 170.0).toDouble();
             final titleSize =
-                (shortestSide * 0.095).clamp(30.0, 46.0).toDouble();
+                (shortestSide * 0.072).clamp(24.0, 34.0).toDouble();
             final subtitleSize =
-                (shortestSide * 0.050).clamp(16.0, 20.0).toDouble();
+                (shortestSide * 0.038).clamp(12.0, 16.0).toDouble();
 
             return Column(
               children: [

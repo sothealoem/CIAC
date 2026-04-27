@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:schoolapp/views/dashboard/widgets/slide_image.dart';
@@ -12,6 +13,9 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
+  // Original dashboard menu order:
+  // 0 Payment, 1 Attendance, 2 Request Leave, 3 Schedule, 4 Standings,
+  // 5 Attendance Log, 6 Student Report, 7 Class Activity, 8 Online Course.
   final List<String> _catName = [
     "បង់ថ្លៃសិក្សា",
     "ពិនិត្យវត្តមាន",
@@ -47,6 +51,15 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   ];
 
   DashboardController controller = Get.find<DashboardController>();
+
+  List<int> _visibleMenuIndices() {
+    final isParent = UserRepository.shared.isDriver;
+    if (isParent) {
+      return List<int>.generate(_catName.length, (i) => i);
+    }
+    // Teacher view order requested by user.
+    return const [5, 2, 3, 4, 7, 8];
+  }
 
   void click(int index) {
     switch (index) {
@@ -86,6 +99,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final visibleMenuIndices = _visibleMenuIndices();
+        final visibleCount = visibleMenuIndices.length;
         final width = constraints.maxWidth;
         final height = constraints.maxHeight;
         final bottomNavOverlay = MediaQuery.of(context).padding.bottom + 84.0;
@@ -96,6 +111,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 : width >= 700
                 ? 4
                 : 3;
+        // Keep visual size consistent with original 9-tile dashboard,
+        // even when role-based filtering shows fewer items.
         final rows = (_catName.length / crossAxisCount).ceil();
 
         final sliderHeight =
@@ -157,7 +174,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     12,
                     16 + bottomNavOverlay,
                   ),
-                  itemCount: _catName.length,
+                  itemCount: visibleCount,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     mainAxisExtent: tileHeight,
@@ -165,8 +182,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     mainAxisSpacing: mainSpacing,
                   ),
                   itemBuilder: (context, index) {
+                    final itemIndex = visibleMenuIndices[index];
                     return InkWell(
-                      onTap: () => click(index),
+                      onTap: () => click(itemIndex),
                       borderRadius: BorderRadius.circular(12),
                       child: LayoutBuilder(
                         builder: (context, itemConstraints) {
@@ -199,7 +217,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                 ),
                                 child: Center(
                                   child: _menuIcon(
-                                    catIconPaths[index],
+                                    catIconPaths[itemIndex],
                                     (itemIconSize * 0.56).clamp(34.0, 40.0),
                                   ),
                                 ),
@@ -207,7 +225,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                               SizedBox(height: itemGap),
                               Expanded(
                                 child: Text(
-                                  _catName[index],
+                                  _catName[itemIndex],
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: itemFontSize,

@@ -15,66 +15,74 @@ class StartView extends GetView<StartController> {
     final navFontSize =
         screenWidth < 350 ? 10.0 : (screenWidth < 390 ? 10.8 : 11.5);
 
-    return PopScope(
-      canPop: controller.selectedIndex.value == 0 ? true : false,
-      onPopInvoked: (didPop) {
-        controller.handleClickBack();
-      },
-      child: Scaffold(
-        extendBody: true,
-        onDrawerChanged: (isOpened) {
-          if (!isOpened && controller.isParentUser.value) {
-            controller.refreshParentAppBarChild();
-          }
-        },
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(130),
-          child: Obx(
-            () => CustomAppBar(
-              profileUrl: controller.appBarProfileUrl,
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: 'Welcome, ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    TextSpan(
-                      text:
-                          controller.userName.value.trim().isEmpty
-                              ? dashboardController.displayName
-                              : controller.userName.value,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        color: AppColor.yellow,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const TextSpan(
-                      text: ' !',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              subTitle: 'here is your dashboard.',
-              imagePath: 'assets/images/sliver_banner1.png',
-            ),
-          ),
-        ),
-        drawer: const DrawerWidget(),
-        body: Center(child: Obx(() => controller.selectedScreen.value)),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniCenterDocked,
+    return Obx(() {
+      final selectedIndex = controller.selectedIndex.value;
+      final isParent = controller.isParentUser.value;
+      final showCustomAppBar = selectedIndex == 0;
+      final roleWelcomePrefix = isParent ? 'Welcome Parent, ' : 'Welcome Teacher, ';
+      final roleSubTitle =
+          isParent
+              ? 'here is your parent dashboard.'
+              : 'here is your teacher dashboard.';
 
-        bottomNavigationBar: Obx(() {
-          final isParent = controller.isParentUser.value;
-          return Container(
+      return PopScope(
+        canPop: selectedIndex == 0,
+        onPopInvoked: (didPop) {
+          controller.handleClickBack();
+        },
+        child: Scaffold(
+          extendBody: false,
+          onDrawerChanged: (isOpened) {
+            if (!isOpened && controller.isParentUser.value) {
+              controller.refreshParentAppBarChild();
+            }
+          },
+          appBar:
+              showCustomAppBar
+                  ? PreferredSize(
+                    preferredSize: const Size.fromHeight(130),
+                    child: CustomAppBar(
+                      profileUrl: controller.appBarProfileUrl,
+                      title: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: roleWelcomePrefix,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  controller.userName.value.trim().isEmpty
+                                      ? dashboardController.displayName
+                                      : controller.userName.value,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontStyle: FontStyle.italic,
+                                color: AppColor.yellow,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ' !',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                      subTitle: roleSubTitle,
+                      imagePath: 'assets/images/sliver_banner1.png',
+                    ),
+                  )
+                  : null,
+          drawer: const DrawerWidget(),
+          body: Center(child: controller.selectedScreen.value),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniCenterDocked,
+          bottomNavigationBar: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
@@ -90,7 +98,7 @@ class StartView extends GetView<StartController> {
                 activeColor: AppColor.primary,
                 height: 66,
                 style: TabStyle.reactCircle,
-                initialActiveIndex: controller.selectedIndex.value,
+                initialActiveIndex: selectedIndex,
                 onTap: controller.changeMenuIndex,
                 shadowColor: const Color.fromARGB(255, 179, 211, 207),
                 items: [
@@ -107,7 +115,6 @@ class StartView extends GetView<StartController> {
                   if (!isParent)
                     const TabItem(
                       icon: Icons.qr_code_scanner_sharp,
-
                       fontFamily: 'Battambang',
                     ),
                   TabItem(
@@ -123,10 +130,10 @@ class StartView extends GetView<StartController> {
                 ],
               ),
             ),
-          );
-        }),
-      ),
-    );
+          ),
+        ),
+      );
+    });
   }
 }
 

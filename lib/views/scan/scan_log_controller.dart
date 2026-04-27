@@ -19,6 +19,7 @@ class CardScanController extends GetxController {
   static const Duration _duplicateWindow = Duration(seconds: 30);
   DateTime? _lastScanAt;
   String? _lastScanKey;
+  bool _teacherDirectFlow = false;
 
   @override
   void onInit() {
@@ -74,6 +75,24 @@ class CardScanController extends GetxController {
     required double lat,
     required double lng,
   }) async {
+    final userRole =
+        (await SharedPreferencesManager.get('user_role') ?? '')
+            .toString()
+            .trim()
+            .toLowerCase();
+    if (userRole == UserType.teacher.key) {
+      _teacherDirectFlow = true;
+      await postScanCard(
+        scanPoint: parsed.code,
+        qrType: parsed.type,
+        rawPayload: parsed.rawPayload,
+        lat: lat,
+        lng: lng,
+      );
+      return;
+    }
+    _teacherDirectFlow = false;
+
     final scannerUsername =
         await SharedPreferencesManager.get(Credential.username.name) ?? '';
     final scannerName = await SharedPreferencesManager.get('name') ?? '';
@@ -310,6 +329,15 @@ class CardScanController extends GetxController {
       backgroundColor: alreadyScanned ? Colors.orange : Colors.green,
       colorText: Colors.white,
     );
+
+    if (_teacherDirectFlow) {
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (Get.currentRoute != Routes.attendanceRecord) {
+          Get.toNamed(Routes.attendanceRecord);
+        }
+      });
+      return;
+    }
 
     if (!alreadyScanned) {
       Future.delayed(const Duration(milliseconds: 900), () {

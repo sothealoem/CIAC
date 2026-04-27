@@ -116,9 +116,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         return students
             .map(
               (student) => _ChildProfile(
-                id: (student.id?.toString() ?? student.admissionNo ?? '').trim(),
+                id:
+                    (student.id?.toString() ?? student.admissionNo ?? '')
+                        .trim(),
                 name:
-                    (student.nameKh ?? student.name ?? student.admissionNo ?? '')
+                    (student.nameKh ??
+                            student.name ??
+                            student.admissionNo ??
+                            '')
                         .trim(),
                 avatar: (student.profile ?? '').trim(),
               ),
@@ -271,7 +276,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/logo.png', height: 26),
+                      Image.asset('assets/images/logo.png', height: 35),
                       const SizedBox(width: 8),
                     ],
                   ),
@@ -306,8 +311,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(14, 8, 14, 6),
               child: Row(
                 children: [
                   // IconButton(
@@ -403,7 +408,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/logo.png', height: 26),
+                      Image.asset('assets/images/logo.png', height: 36),
                       const SizedBox(width: 8),
                     ],
                   ),
@@ -527,12 +532,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         child: Icon(Icons.person, color: Color(0xFF6C7A86)),
       );
     }
+
     return CircleAvatar(
       radius: 18,
       backgroundColor: const Color(0xFFE8EEF2),
-      child: ClipOval(
-        child: _networkAvatarImage(urls, index),
-      ),
+      child: ClipOval(child: _networkAvatarImage(urls, index)),
     );
   }
 
@@ -641,9 +645,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
       return baseUri.resolve(unquoted).toString();
     }
-    if (RegExp(r'^[A-Za-z0-9_.-]+\.(png|jpg|jpeg|webp|gif)$').hasMatch(
-      unquoted,
-    )) {
+    if (RegExp(
+      r'^[A-Za-z0-9_.-]+\.(png|jpg|jpeg|webp|gif)$',
+    ).hasMatch(unquoted)) {
       final base = AppConfig.shared.baseUrl.trim();
       if (base.isEmpty) {
         return '';
@@ -806,4 +810,3 @@ class _ChildProfile {
     return const _ChildProfile(id: '', name: '', avatar: '');
   }
 }
-

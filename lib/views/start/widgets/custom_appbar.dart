@@ -49,7 +49,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           centerTitle: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Image.asset('assets/images/logo.png', height: 40)],
+            children: [Image.asset('assets/images/logo.png', height: 50)],
           ),
           actions: [
             Padding(
@@ -74,7 +74,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             fit: StackFit.expand,
             children: [
               Image.asset(imagePath, fit: BoxFit.cover),
-              Container(color: Colors.black.withOpacity(0.3)),
+              Container(color: Colors.white.withOpacity(0.22)),
               Positioned(
                 left: 16,
                 bottom: 8,
@@ -87,8 +87,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Text(
                       subTitle ?? '',
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: Colors.white,
                         fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

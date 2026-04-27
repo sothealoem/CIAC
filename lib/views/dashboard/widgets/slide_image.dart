@@ -66,8 +66,8 @@ class _PremiumSliderState extends State<PremiumSlider> {
       builder: (context, constraints) {
         final maxHeight =
             constraints.maxHeight.isFinite ? constraints.maxHeight : 180.0;
-        const indicatorHeight = 15.0;
-        const indicatorGap = 2.0;
+        const indicatorHeight = 12.0;
+        const indicatorGap = 6.0;
         final sliderHeight = (maxHeight - indicatorHeight - indicatorGap).clamp(
           90.0,
           260.0,
@@ -113,11 +113,11 @@ class _PremiumSliderState extends State<PremiumSlider> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeOut,
-                          width: _current == curSlide ? 30 : 12,
-                          height: .0,
+                          width: _current == curSlide ? 22 : 10,
+                          height: 8,
                           margin: const EdgeInsets.symmetric(
                             vertical: 2.0,
-                            horizontal: 2.0,
+                            horizontal: 3.0,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),

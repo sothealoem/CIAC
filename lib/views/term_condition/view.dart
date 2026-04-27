@@ -7,82 +7,49 @@ class TermConditionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final policyUrl = _getPolicyUrl();
+
     return Scaffold(
       appBar: AppBar(title: Text(LocaleKeys.termAndCondition.tr)),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: Image.network(UserRepository.shared.profile.policy),
-      ),
-
-      // body: SingleChildScrollView(
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       (UIConstants.spacing + 8).height,
-
-      //       // Normal service fee
-      //       const TermConditionsItemWidget(
-      //         title: '1. តម្លៃសេវាកម្មធម្មតា',
-      //         subTitle: ['- 5000 រៀល (ទាំងក្នុងក្រុង នឹងជាយក្រុង)'],
-      //       ),
-      //       (UIConstants.spacing + 8).height,
-
-      //       // VIP service feee
-      //       const TermConditionsItemWidget(
-      //         title: '2. តម្លៃសេវាកម្មរហ័ស ឬVIP',
-      //         subTitle: [
-      //           '- (S grIME EMME)(8:00-4:00)',
-      //           '- 8000 រៀល (ទាំងក្នុងក្រុង នឹងជាយក្រុង)',
-      //         ],
-      //       ),
-      //       (UIConstants.spacing + 8).height,
-
-      //       // Car service fee
-      //       const TermConditionsItemWidget(
-      //         title: '3. តម្លៃសេវាកម្មផ្ញើរឡាន',
-      //         subTitle: [
-      //           '- 4000 រៀល+សេវាឡាន',
-      //           '- វីរះបុនថាំ',
-      //           '- ការពីតូ',
-      //           '- J&T',
-      //           '- តាក់សី',
-      //         ],
-      //       ),
-      //       (UIConstants.spacing + 8).height,
-
-      //       // Noted
-      //       Padding(
-      //         padding: UIConstants.spacing.padHorizontal,
-      //         child: const Text(
-      //           '* បញ្ចាក់ : សម្រាប់ឥវ៉ានក្រោម 3គីឡូ ផ្ញៀវVIP (កក់1ដង=ចាប់ពី10កញ្ចប់ នឹង ទទួលបានតម្លៃVIP)',
-      //           style: AppTextStyle.midRedBold,
-      //         ),
-      //       ),
-      //       (UIConstants.spacing + 8).height,
-
-      //       // Normal service fee
-      //       const TermConditionsItemWidget(
-      //         title: '1. តម្លៃសេវាកម្មធម្មតា',
-      //         subTitle: [
-      //           '- (ទទួលព្រឹក ដឹកថ្ងៃ)(8:00-11:00)',
-      //           '- 4000 រៀល (ទាំងក្នុងក្រុង នឹងជាយក្រុង)',
-      //         ],
-      //       ),
-      //       (UIConstants.spacing + 8).height,
-
-      //       // VIP service fee
-      //       const TermConditionsItemWidget(
-      //         title: '2. តម្លៃសេវាកម្មរហ័ស ឬVIP',
-      //         subTitle: [
-      //           '- (ទទួលភ្លាម ដឹកភ្លាម)(8:00-4:00)',
-      //           '- 8000 រៀល (ទាំងក្នុងក្រុង នឹងជាយក្រុង)',
-      //         ],
-      //       ),
-
-      //       (UIConstants.spacing * 2).height,
-      //     ],
-      //   ),
-      // ),
+      body:
+          policyUrl == null
+              ? const Center(
+                child: Text(
+                  'Terms & conditions are unavailable right now.',
+                  textAlign: TextAlign.center,
+                ),
+              )
+              : Center(
+                child: InteractiveViewer(
+                  child: Image.network(
+                    policyUrl,
+                    fit: BoxFit.contain,
+                    errorBuilder:
+                        (_, __, ___) => const Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Unable to load terms & conditions image.',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                  ),
+                ),
+              ),
     );
+  }
+
+  String? _getPolicyUrl() {
+    try {
+      final raw = UserRepository.shared.profile.policy.trim();
+      if (raw.isEmpty || raw.toLowerCase() == 'n/a') {
+        return null;
+      }
+      if (raw.startsWith('http://') || raw.startsWith('https://')) {
+        return raw;
+      }
+      return 'https://$raw';
+    } catch (_) {
+      return null;
+    }
   }
 }
