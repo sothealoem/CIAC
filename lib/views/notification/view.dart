@@ -28,90 +28,77 @@ class NotificationView extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(title: Text(LocaleKeys.notification.tr)),
+
+      // backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        LocaleKeys.notification.tr,
-                        style: const TextStyle(
-                          color: AppColor.primary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
+        child: DefaultTextStyle.merge(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    const Text(
+                      'អ្នកអាចតាមដានដំណឹងសំខាន់ៗថ្មីៗ និងសកម្មភាពសាលារៀន',
+                      style: TextStyle(
+                        color: Color(0xFF1F2937),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'battambang',
                       ),
-                      const Spacer(),
-                      const Text(
-                        'ថ្មីៗ',
-                        style: TextStyle(
-                          color: AppColor.primary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'អ្នកអាចតាមដានដំណឹងសំខាន់ៗថ្មីៗ និងសកម្មភាពសាលារៀន',
-                    style: TextStyle(
-                      color: Color(0xFF1F2937),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Stack(
-                    children: [
-                      Container(height: 2, color: const Color(0xFFD1D5DB)),
-                      Container(height: 3, width: 82, color: AppColor.primary),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.only(
-                  left: UIConstants.spacing.toDouble(),
-                  right: UIConstants.spacing.toDouble(),
-                  top: 2,
-                  bottom: UIConstants.midSpacing.toDouble(),
+                    const SizedBox(height: 8),
+                    Stack(
+                      children: [
+                        Container(height: 2, color: const Color(0xFFD1D5DB)),
+                        Container(
+                          height: 3,
+                          width: 82,
+                          color: AppColor.primary,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: Image.asset(
-                      'assets/images/playground.jpg',
-                      height: 170,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.only(
+                    left: UIConstants.spacing.toDouble(),
+                    right: UIConstants.spacing.toDouble(),
+                    top: 2,
+                    bottom: UIConstants.midSpacing.toDouble(),
                   ),
-                  const SizedBox(height: 12),
-                  ...notifications.map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: NotificationItemWidget(
-                        title: item.title,
-                        imagePath: item.image,
-                        dateText: '9/27/2024',
-                        timeText: '9:13 AM',
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.asset(
+                        'assets/images/playground.jpg',
+                        height: 170,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    ...notifications.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: NotificationItemWidget(
+                          title: item.title,
+                          imagePath: item.image,
+                          dateText: '9/27/2024',
+                          timeText: '9:13 AM',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

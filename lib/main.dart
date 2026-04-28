@@ -98,7 +98,7 @@ Future<void> _setAppSystemPreferences() async {
 }
 
 Future<void> _initEnvironment() async {
-  AppConfig.shared.setLanguage(Language.kh.key);
+  await AppConfig.shared.setLanguage(Language.kh.key);
 }
 
 Future<void> _initServices() async {

@@ -21,7 +21,7 @@ class ContactUsView extends GetView<ContactUsController> {
         final data = ctl.contactUs.value;
         final enName = _clean(
           data?.englishName,
-          fallback: 'លោកអ្នក អាចទាក់ទងមកកាន់ពួកយើងតាមរយៈទីតាំងខាងក្រោមនេះ',
+          fallback: 'លោកអ្នក អាចទាក់ទងមកកាន់ពួកយើងតាមរយៈទីតាំងខាងក្រោម',
         );
         final address = _clean(data?.address, fallback: 'Phnom Penh, Cambodia');
         final phone = _clean(data?.phone, fallback: '096342730');
@@ -39,9 +39,13 @@ class ContactUsView extends GetView<ContactUsController> {
             children: [
               Text(
                 enName,
-                style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13),
+                style: const TextStyle(
+                  color: Color(0xFF1F2937),
+                  fontSize: 13,
+                  fontFamily: 'battambang',
+                ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _buildProgressLine(),
               const SizedBox(height: 18),
               _locationCard(address: address, mapUrl: mapUrl),

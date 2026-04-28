@@ -30,7 +30,7 @@ class AppConfig {
   String get language => _language;
 
   // set as default language
-  void setLanguage(String value) async {
+  Future<void> setLanguage(String value) async {
     dynamic localLng = await SharedPreferencesManager.get(
       LanguageKey.language.name,
     );
@@ -38,10 +38,10 @@ class AppConfig {
   }
 
   // update later
-  void updateLanguage(String value) {
+  Future<void> updateLanguage(String value) async {
     _language = value;
     Get.updateLocale(AppConfig.shared.languageLocale);
-    SharedPreferencesManager.setValue(LanguageKey.language.name, _language);
+    await SharedPreferencesManager.setValue(LanguageKey.language.name, _language);
   }
 
   Locale get languageLocale {

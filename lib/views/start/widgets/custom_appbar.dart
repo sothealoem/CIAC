@@ -1,6 +1,9 @@
 import 'package:schoolapp/core/configs/app_style.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:schoolapp/routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double _avatarSize = 36;
@@ -54,16 +57,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12),
-              child: Container(
-                width: _avatarSize + 4,
-                height: _avatarSize + 4,
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColor.primaryColor, width: 2),
-                ),
-                child: ClipOval(
-                  child: SizedBox.expand(child: _buildProfileImage()),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(999),
+                onTap: _handleProfileTap,
+                child: Container(
+                  width: _avatarSize + 4,
+                  height: _avatarSize + 4,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColor.primaryColor, width: 2),
+                  ),
+                  child: ClipOval(
+                    child: SizedBox.expand(child: _buildProfileImage()),
+                  ),
                 ),
               ),
             ),
@@ -216,5 +223,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       return null;
     }
     return <String, String>{'Authorization': token};
+  }
+
+  void _handleProfileTap() {
+    // Parent app-bar avatar should open selected child information.
+    if (UserRepository.shared.isDriver) {
+      if (Get.currentRoute != Routes.studentInforation) {
+        Get.toNamed(Routes.studentInforation);
+      }
+      return;
+    }
   }
 }

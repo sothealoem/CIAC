@@ -332,6 +332,9 @@ class CardScanController extends GetxController {
 
     if (_teacherDirectFlow) {
       Future.delayed(const Duration(milliseconds: 400), () {
+        // Teacher flow navigates away immediately; keep scanner armed for
+        // when user comes back to scan again.
+        isScanning.value = true;
         if (Get.currentRoute != Routes.attendanceRecord) {
           Get.toNamed(Routes.attendanceRecord);
         }

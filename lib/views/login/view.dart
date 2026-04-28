@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
@@ -41,8 +42,8 @@ class LoginView extends GetView<LoginController> {
                         child: ClipOval(
                           child: Image.asset(
                             'assets/images/app_icon.png',
-                            height: 150,
-                            width: 150,
+                            height: 120,
+                            width: 120,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -60,14 +61,14 @@ class LoginView extends GetView<LoginController> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const SizedBox(height: 10.0),
-                              const Text(
-                                "Log In Now",
+                              Text(
+                                LocaleKeys.loginNow.tr,
                                 style: AppTextStyle.hugePrimaryMediumBold,
                               ),
-                              UIConstants.spacing.height,
-                              const Text(
-                                "Please login to countinue using our app",
-                                style: AppTextStyle.normalGreenBold,
+                              UIConstants.midSpacing.height,
+                              Text(
+                                LocaleKeys.loginContinueMessage.tr,
+                                style: AppTextStyle.normalGreenRegular,
                               ),
                               UIConstants.spacing.height,
                               Obx(() {
@@ -77,7 +78,7 @@ class LoginView extends GetView<LoginController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     _RoleSwitchLabel(
-                                      label: "Teacher",
+                                      label: LocaleKeys.teacher.tr,
                                       isSelected: selected == UserType.teacher,
                                       onTap:
                                           () => controller.setLoginRole(
@@ -86,7 +87,7 @@ class LoginView extends GetView<LoginController> {
                                     ),
                                     const SizedBox(width: 8),
                                     _RoleSwitchLabel(
-                                      label: "Parent",
+                                      label: LocaleKeys.parent.tr,
                                       isSelected: selected == UserType.parent,
                                       onTap:
                                           () => controller.setLoginRole(
@@ -96,7 +97,7 @@ class LoginView extends GetView<LoginController> {
                                   ],
                                 );
                               }),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
                               Obx(() {
                                 final isParent =
                                     controller.selectedLoginRole.value ==
@@ -112,8 +113,8 @@ class LoginView extends GetView<LoginController> {
                                   controller: controller.emailCtl,
                                   hintText:
                                       isParent
-                                          ? "Phone number"
-                                          : "Phone, or email",
+                                          ? LocaleKeys.phoneNumber.tr
+                                          : LocaleKeys.phoneOrEmail.tr,
                                   errorText: controller.emailError.value,
                                   onChanged:
                                       (val) =>
@@ -125,7 +126,11 @@ class LoginView extends GetView<LoginController> {
                                   inputFormatters:
                                       isParent
                                           ? [
-                                            FormValidator.maskInputPhoneNumber(),
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                              12,
+                                            ),
                                           ]
                                           : null,
                                   validator: controller.validateIdentity,
@@ -139,7 +144,7 @@ class LoginView extends GetView<LoginController> {
                                     color: AppColor.primary,
                                   ),
                                   controller: controller.passCtl,
-                                  hintText: "Password",
+                                  hintText: LocaleKeys.password.tr,
                                   errorText: controller.passwordError.value,
                                   onChanged:
                                       (val) =>
@@ -163,12 +168,13 @@ class LoginView extends GetView<LoginController> {
                               ),
                               UIConstants.spacing.height,
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   InkWell(
-                                    child: const Text(
-                                      "Forgot Password?",
-                                      style: TextStyle(
+                                    child: Text(
+                                      '${LocaleKeys.forgotPassword.tr}?',
+                                      style: const TextStyle(
                                         color: AppColor.primary,
                                         fontSize: 14,
                                         decoration: TextDecoration.underline,
@@ -204,12 +210,12 @@ class LoginView extends GetView<LoginController> {
                                       ),
                                       child:
                                           isLoading
-                                              ? const Row(
-                                                key: ValueKey('loading'),
+                                              ? Row(
+                                                key: const ValueKey('loading'),
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 18,
                                                     height: 18,
                                                     child: CircularProgressIndicator(
@@ -220,10 +226,10 @@ class LoginView extends GetView<LoginController> {
                                                           >(Colors.white),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 10),
+                                                  const SizedBox(width: 10),
                                                   Text(
-                                                    "Signing in...",
-                                                    style: TextStyle(
+                                                    LocaleKeys.signingIn.tr,
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -248,16 +254,16 @@ class LoginView extends GetView<LoginController> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      "Don't Have Account?",
+                                    Text(
+                                      LocaleKeys.doNotHaveAnAccount.tr,
                                       style: AppTextStyle.normalGreenRegular,
                                     ),
                                     const SizedBox(width: 10),
                                     InkWell(
                                       onTap: () => Get.toNamed(Routes.register),
-                                      child: const Text(
-                                        "Sign Up",
-                                        style: TextStyle(
+                                      child: Text(
+                                        LocaleKeys.signUp.tr,
+                                        style: const TextStyle(
                                           color: AppColor.primary,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,

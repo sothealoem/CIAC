@@ -2,6 +2,8 @@
 
 // ignore_for_file: lines_longer_than_80_chars, constant_identifier_names
 // ignore: avoid_classes_with_only_static_members
+import 'package:flutter/material.dart';
+
 class AppTranslation {
   static Map<String, Map<String, String>> translations = {
     'EN_US': Locales.EN_US,
@@ -40,6 +42,24 @@ class LocaleKeys {
   static const passwordDoNotMatch = 'passwordDoNotMatch';
   static const newPassword = 'newPassword';
   static const dashboard = 'dashboard';
+  static const dashboardMenuTuitionFee = 'dashboardMenuTuitionFee';
+  static const dashboardMenuAttendance = 'dashboardMenuAttendance';
+  static const dashboardMenuRequestLeave = 'dashboardMenuRequestLeave';
+  static const dashboardMenuSchedule = 'dashboardMenuSchedule';
+  static const dashboardMenuStandings = 'dashboardMenuStandings';
+  static const dashboardMenuAttendanceLog = 'dashboardMenuAttendanceLog';
+  static const dashboardMenuAttendanceLogTeacher =
+      'dashboardMenuAttendanceLogTeacher';
+  static const dashboardMenuStudentReport = 'dashboardMenuStudentReport';
+  static const dashboardMenuClassActivity = 'dashboardMenuClassActivity';
+  static const dashboardMenuOnlineCourse = 'dashboardMenuOnlineCourse';
+  static const welcomeParentPrefix = 'welcomeParentPrefix';
+  static const welcomeTeacherPrefix = 'welcomeTeacherPrefix';
+  static const welcomeParentSubtitle = 'welcomeParentSubtitle';
+  static const welcomeTeacherSubtitle = 'welcomeTeacherSubtitle';
+  static const activity = 'activity';
+  static const activitySubTitle = 'activitySubTitle';
+
   static const payments = 'payments';
   static const scanner = 'scanner';
   static const delivery = 'delivery';
@@ -193,6 +213,9 @@ class LocaleKeys {
   static const avialableCredit = 'avialableCredit';
   static const enterLocation = 'enterLocation';
   static const bank = 'bank';
+  static const attendance = 'attendance';
+  static const attendanceSubTitle = 'attendanceSubTitle';
+
   static const accountName = 'accountName';
   static const accountNumber = 'accountNumber';
   static const productCategory = 'productCategory';
@@ -228,6 +251,13 @@ class LocaleKeys {
   static const paymentDes = 'paymentDes';
   static const completeDate = 'completeDate';
   static const login = 'login';
+  static const loginNow = 'loginNow';
+  static const loginContinueMessage = 'loginContinueMessage';
+  static const teacher = 'teacher';
+  static const parent = 'parent';
+  static const phoneOrEmail = 'phoneOrEmail';
+  static const signingIn = 'signingIn';
+  static const signUp = 'signUp';
   static const send = 'send';
   static const next = 'next';
   static const change = 'change';
@@ -278,6 +308,20 @@ class Locales {
     'passwordDoNotMatch': 'Password do not match',
     'newPassword': 'New password',
     'dashboard': 'Dashboard',
+    'dashboardMenuTuitionFee': 'Payment',
+    'dashboardMenuAttendance': 'Attendance',
+    'dashboardMenuRequestLeave': 'Request Leave',
+    'dashboardMenuSchedule': 'Schedule',
+    'dashboardMenuStandings': 'Standings',
+    'dashboardMenuAttendanceLog': 'Attendance List',
+    'dashboardMenuAttendanceLogTeacher': 'Attendance log',
+    'dashboardMenuStudentReport': 'Student Report',
+    'dashboardMenuClassActivity': 'Class Activity',
+    'dashboardMenuOnlineCourse': 'Online Course',
+    'welcomeParentPrefix': 'Welcome Parent, ',
+    'welcomeTeacherPrefix': 'Welcome Teacher, ',
+    'welcomeParentSubtitle': 'here is your parent dashboard.',
+    'welcomeTeacherSubtitle': 'here is your teacher dashboard.',
     'payments': 'Payments',
     'scanner': 'Scanner',
     'delivery': 'Delivery',
@@ -391,6 +435,8 @@ class Locales {
     'customer': 'Customer',
     'bonus': 'Bonus',
     'total': 'Total',
+    'activity': 'Activity',
+    'activitySubTitle': 'Here is your activity dashboard.',
     'moneyAtStaff': 'Money at staff',
     'moneyAtCompany': 'Money at company',
     'moneyAtSell': 'Money at sell',
@@ -467,7 +513,17 @@ class Locales {
     'paymentDes':
         'Any friagile valnerable and illegal item are prohibited from shipment and are sender\'s responsibily',
     'completeDate': 'Complete date',
-    'login': 'LOGIN',
+    'login': 'Log In',
+    'loginNow': 'Log In Now',
+    'loginContinueMessage': 'Please log in to continue using the app.',
+    'teacher': 'Teacher',
+    'parent': 'Parent',
+    //attendance
+    'attendance': 'Attendance',
+    'attendanceSubTitle': 'Here is your attendance dashboard.',
+    'phoneOrEmail': 'Phone, or email',
+    'signingIn': 'Signing in...',
+    'signUp': 'Sign Up',
     'next': 'NEXT',
     'change': 'CHANGE',
     'cancel': 'Cancel',
@@ -500,7 +556,9 @@ class Locales {
     'youHavesuccessfullyCreatedTheBooking': 'អ្នកបានបង្កើតការកក់ដោយជោគជ័យ',
     'forgotPassword': 'ភ្លេច​លេខសំងាត់​',
     'password': 'ពាក្យសម្ងាត់',
+    'loginNow': 'ចូលឥឡូវនេះ',
     'cannotBeEmpty': 'មិនអាចទទេបានទេ',
+    'attendance': 'វត្តមាន',
     'invalidPhoneNumber': 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ',
     'login': 'ចូល',
     'loginWithUsernameEmail': 'ចូលដោយប្រើឈ្មោះអ្នកប្រើ / អ៊ីមែល',
@@ -510,6 +568,21 @@ class Locales {
     'passwordDoNotMatch': 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
     'newPassword': 'ពាក្យសម្ងាត់​ថ្មី',
     'dashboard': 'ផ្ទាំងគ្រប់គ្រង',
+    'loginContinueMessage': 'សូមចូលដើម្បីបន្តប្រើកម្មវិធីរបស់អ្នក',
+    'dashboardMenuTuitionFee': 'ការបង់ប្រាក់',
+    'dashboardMenuAttendance': 'ពិនិត្យវត្តមាន',
+    'dashboardMenuRequestLeave': 'ស្នើសុំច្បាប់',
+    'dashboardMenuSchedule': 'កាលវិភាគសិក្សា',
+    'dashboardMenuStandings': 'ចំណាត់ថ្នាក់',
+    'dashboardMenuAttendanceLog': 'បញ្ជីវត្តមាន',
+    'dashboardMenuAttendanceLogTeacher': 'កំណត់ត្រាវត្តមាន',
+    'dashboardMenuStudentReport': 'របាយការណ៍សិស្ស',
+    'dashboardMenuClassActivity': 'សកម្មភាពក្នុងថ្នាក់',
+    'dashboardMenuOnlineCourse': 'វគ្គសិក្សាអនឡាញ',
+    'welcomeParentPrefix': 'សូមស្វាគមន៍ អាណាព្យាបាល, ',
+    'welcomeTeacherPrefix': 'សូមស្វាគមន៍ លោកគ្រូអ្នកគ្រូ, ',
+    'welcomeParentSubtitle': 'នេះគឺផ្ទាំងគ្រប់គ្រងរបស់អាណាព្យាបាល។',
+    'welcomeTeacherSubtitle': 'នេះគឺផ្ទាំងគ្រប់គ្រងរបស់លោកគ្រូអ្នកគ្រូ។',
     'payments': 'ការទូទាត់',
     'scanner': 'ម៉ាស៊ីនស្កេន',
     'delivery': 'ការដឹកជញ្ជូន',
@@ -554,6 +627,8 @@ class Locales {
     'transferTo': 'ផ្ទេរ​ទៅ​ឱ្យ',
     'version': 'កំណែ',
     'ok': 'OK',
+    'activitySubTitle': 'នេះគឺផ្ទាំងសកម្មភាពរបស់អ្នក។',
+
     'noData': 'គ្មាន​ទិន្នន័យ',
     'deliveryScanHasBeenCompleted': 'ការស្កេនការដឹកជញ្ជូនត្រូវបានបញ្ចប់',
     'driverGetProduct': 'អ្នកបើកបរទទួលបានផលិតផល',
@@ -590,6 +665,7 @@ class Locales {
     'anyExtraServiceCharge': 'គិតថ្លៃសេវាកម្មបន្ថៃម?',
     'typeOfCO': 'ប្រភេទនៃ CO',
     'yes': 'បាទ/ចាស៎',
+    'activity': 'សកម្មភាព',
     'no': 'មិនមាន',
     'taxi': 'តាក់ស៊ី',
     'other': 'ផ្សេងទៀត',
@@ -634,6 +710,8 @@ class Locales {
     'inprogress': 'កំពុងដំណើរការ',
     'finish': 'បញ្ចប់',
     'codFee': 'តម្លៃ COD',
+    'attendanceSubTitle': 'ចូលពិនិត្យវត្តមានរបស់កូនៗអ្នកនៅទីនេះ',
+
     'returned': 'ត្រឡប់',
     'choose': 'ជ្រើសរើស',
     'detailOfPayments': 'ព័ត៌មានលម្អិតនៃការទូទាត់',
@@ -697,6 +775,14 @@ class Locales {
     'paymentDes':
         'រាល់បញ្ញើទំនិញខុសច្បាប់ គឺត្រូវបានហាមឃាត់ និងជាទំនួលខុសត្រូវ\nរបស់អ្នកផ្ញើ',
     'completeDate': 'ថ្ងៃ​បញ្ចប់',
+    // 'login': 'ចូល',
+    // 'loginNow': 'ចូលឥឡូវនេះ',
+    // 'loginContinueMessage': 'សូមចូល ដើម្បីបន្តប្រើប្រាស់កម្មវិធី',
+    'teacher': 'លោកគ្រូអ្នកគ្រូ',
+    'parent': 'អាណាព្យាបាល',
+    'phoneOrEmail': 'លេខទូរស័ព្ទ ឬ អ៊ីមែល',
+    'signingIn': 'កំពុងចូល...',
+    'signUp': 'ចុះឈ្មោះ',
     'next': 'បន្ទាប់',
     'change': 'ផ្លាស់ប្តូរ',
     'transfer': 'ផ្ទេរ',

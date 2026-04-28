@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
 
-class StandingsCardWidget extends StatelessWidget {
+class StandingsCardWidget extends StatefulWidget {
   const StandingsCardWidget({super.key});
+
+  @override
+  State<StandingsCardWidget> createState() => _StandingsCardWidgetState();
+}
+
+class _StandingsCardWidgetState extends State<StandingsCardWidget> {
+  static const String _khmerFont = 'Battambang';
+
+  static const List<String> _months = <String>[
+    'មករា',
+    'កុម្ភៈ',
+    'មីនា',
+    'មេសា',
+    'ឧសភា',
+    'មិថុនា',
+    'កក្កដា',
+    'សីហា',
+    'កញ្ញា',
+    'តុលា',
+    'វិច្ឆិកា',
+    'ធ្នូ',
+  ];
+
+  static const List<String> _terms = <String>[
+    'ឆមាស ១',
+    'ឆមាស ២',
+  ];
+
+  static const List<String> _years = <String>[
+    '២០២៥',
+    '២០២៦',
+    '២០២៧',
+  ];
+
+  String _selectedMonth = _months.first;
+  String _selectedTerm = _terms.last;
+  String _selectedYear = _years[1];
 
   @override
   Widget build(BuildContext context) {
@@ -9,23 +46,39 @@ class StandingsCardWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          // 1. Student Info Header Box
-          _buildStudentHeader('សុខ សាន្ត – ថ្នាក់ ៧ "ក"'),
+          _buildStudentHeader('សុខ សាន្ត - ថ្នាក់ ៧ "ក"'),
           const SizedBox(height: 16),
-
-          // 2. Dropdown Filters Row
           Row(
             children: [
-              _buildSmallDropdown('មករា'),
+              _buildSmallDropdown(
+                value: _selectedMonth,
+                items: _months,
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _selectedMonth = value);
+                },
+              ),
               const SizedBox(width: 8),
-              _buildSmallDropdown('ឆមាស ២'),
+              _buildSmallDropdown(
+                value: _selectedTerm,
+                items: _terms,
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _selectedTerm = value);
+                },
+              ),
               const SizedBox(width: 8),
-              _buildSmallDropdown('២០២៦'),
+              _buildSmallDropdown(
+                value: _selectedYear,
+                items: _years,
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _selectedYear = value);
+                },
+              ),
             ],
           ),
           const SizedBox(height: 16),
-
-          // 3. Score Table
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -34,13 +87,10 @@ class StandingsCardWidget extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Table Header
                 _buildTableHeader(),
-
-                // Table Rows
                 _buildScoreRow('អក្សរសាស្ត្រខ្មែរ', '៨០', 'ល្អ', Colors.green),
                 _buildScoreRow('គណិតវិទ្យា', '៧០', 'ល្អ', Colors.green),
-                _buildScoreRow('សិក្សាសង្គម', '៣០', 'គួរកែម្អ', Colors.red),
+                _buildScoreRow('សិក្សាសង្គម', '៣០', 'គួរកែលម្អ', Colors.red),
                 _buildScoreRow(
                   'វិទ្យាសាស្ត្រ',
                   '៥០',
@@ -48,8 +98,6 @@ class StandingsCardWidget extends StatelessWidget {
                   Colors.orange,
                 ),
                 _buildScoreRow('ភាសាអង់គ្លេស', '៩០', 'ល្អណាស់', Colors.teal),
-
-                // Table Footer (Total)
                 _buildTableFooter('សរុប', '៣២០', '១២'),
               ],
             ),
@@ -58,8 +106,6 @@ class StandingsCardWidget extends StatelessWidget {
       ),
     );
   }
-
-  // --- Helper Widgets ---
 
   Widget _buildStudentHeader(String label) {
     return Container(
@@ -75,25 +121,52 @@ class StandingsCardWidget extends StatelessWidget {
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
+          fontFamily: _khmerFont,
         ),
       ),
     );
   }
 
-  Widget _buildSmallDropdown(String value) {
+  Widget _buildSmallDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(value, style: const TextStyle(fontSize: 12)),
-            const Icon(Icons.arrow_drop_down, color: Colors.grey),
-          ],
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: value,
+            isExpanded: true,
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF1F2937),
+              fontFamily: _khmerFont,
+              fontWeight: FontWeight.w600,
+            ),
+            items:
+                items
+                    .map(
+                      (item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontFamily: _khmerFont),
+                        ),
+                      ),
+                    )
+                    .toList(),
+            onChanged: onChanged,
+          ),
         ),
       ),
     );
@@ -118,6 +191,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -127,6 +201,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
               textAlign: TextAlign.center,
             ),
@@ -138,6 +213,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
               textAlign: TextAlign.right,
             ),
@@ -164,14 +240,20 @@ class StandingsCardWidget extends StatelessWidget {
             flex: 3,
             child: Text(
               subject,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontFamily: _khmerFont,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               score,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
+              ),
             ),
           ),
           Expanded(
@@ -183,6 +265,7 @@ class StandingsCardWidget extends StatelessWidget {
                 color: gradeColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
+                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -210,6 +293,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -220,6 +304,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -231,6 +316,7 @@ class StandingsCardWidget extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontFamily: _khmerFont,
               ),
             ),
           ),

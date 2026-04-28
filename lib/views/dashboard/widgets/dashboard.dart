@@ -4,6 +4,7 @@ import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:schoolapp/views/dashboard/widgets/slide_image.dart';
+import 'package:schoolapp/views/start/controller.dart';
 
 class DashboardWidget extends StatefulWidget {
   const DashboardWidget({super.key});
@@ -16,16 +17,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   // Original dashboard menu order:
   // 0 Payment, 1 Attendance, 2 Request Leave, 3 Schedule, 4 Standings,
   // 5 Attendance Log, 6 Student Report, 7 Class Activity, 8 Online Course.
-  final List<String> _catName = [
-    "បង់ថ្លៃសិក្សា",
-    "ពិនិត្យវត្តមាន",
-    "ស្នើរសុំច្បាប់",
-    "កាលវិភាគសិក្សា",
-    "តារាងពិន្ទុ",
-    "កំណត់ត្រាវត្តមាន",
-    "របាយការណ៍សិស្ស",
-    "សកម្មភាពក្នុងថ្នាក់",
-    "វគ្គសិក្សាអនឡាយ",
+  List<String> get _catName => [
+    LocaleKeys.dashboardMenuTuitionFee.tr,
+    LocaleKeys.dashboardMenuAttendance.tr,
+    LocaleKeys.dashboardMenuRequestLeave.tr,
+    LocaleKeys.dashboardMenuSchedule.tr,
+    LocaleKeys.dashboardMenuStandings.tr,
+    LocaleKeys.dashboardMenuAttendanceLog.tr,
+    LocaleKeys.dashboardMenuStudentReport.tr,
+    LocaleKeys.dashboardMenuClassActivity.tr,
+    LocaleKeys.dashboardMenuOnlineCourse.tr,
   ];
 
   final List<String> catIconPaths = [
@@ -51,13 +52,22 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   ];
 
   DashboardController controller = Get.find<DashboardController>();
+  StartController? get _startController =>
+      Get.isRegistered<StartController>() ? Get.find<StartController>() : null;
+
+  bool _isParentRole() {
+    final startCtl = _startController;
+    if (startCtl != null) {
+      return startCtl.isParentUser.value;
+    }
+    return UserRepository.shared.isDriver;
+  }
 
   List<int> _visibleMenuIndices() {
-    final isParent = UserRepository.shared.isDriver;
+    final isParent = _isParentRole();
     if (isParent) {
-      return List<int>.generate(_catName.length, (i) => i);
+      return const [0, 1, 2, 3, 4, 5, 6, 7, 8];
     }
-    // Teacher view order requested by user.
     return const [5, 2, 3, 4, 7, 8];
   }
 
@@ -97,23 +107,32 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final visibleMenuIndices = _visibleMenuIndices();
-        final visibleCount = visibleMenuIndices.length;
-        final width = constraints.maxWidth;
-        final height = constraints.maxHeight;
-        final bottomNavOverlay = MediaQuery.of(context).padding.bottom + 84.0;
-        final usableHeight = (height - bottomNavOverlay).clamp(420.0, 2000.0);
-        final crossAxisCount =
-            width >= 900
-                ? 5
-                : width >= 700
-                ? 4
-                : 3;
-        // Keep visual size consistent with original 9-tile dashboard,
-        // even when role-based filtering shows fewer items.
-        final rows = (_catName.length / crossAxisCount).ceil();
+    return Obx(
+      () {
+        // Subscribe to role changes so parent dashboard updates to 9 items
+        // once user role is loaded/refreshed.
+        _startController?.isParentUser.value;
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final visibleMenuIndices = _visibleMenuIndices();
+            final visibleCount = visibleMenuIndices.length;
+            final width = constraints.maxWidth;
+            final height = constraints.maxHeight;
+            final bottomNavOverlay =
+                MediaQuery.of(context).padding.bottom + 84.0;
+            final usableHeight = (height - bottomNavOverlay).clamp(
+              420.0,
+              2000.0,
+            );
+            final crossAxisCount =
+                width >= 900
+                    ? 5
+                    : width >= 700
+                    ? 4
+                    : 3;
+            // Keep visual size consistent with original 9-tile dashboard,
+            // even when role-based filtering shows fewer items.
+            final rows = (_catName.length / crossAxisCount).ceil();
 
         final sliderHeight =
             usableHeight < 620
@@ -139,67 +158,78 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         final iconSize = (tileHeight * 0.42).clamp(48.0, 62.0);
         final labelFontSize = (tileHeight * 0.108).clamp(12.0, 15.0);
 
-        return Column(
-          children: [
-            SizedBox(height: topGap),
-            SizedBox(
-              height: sliderHeight,
-              child: PremiumSlider(imagesList: bannerImages),
-            ),
-            const SizedBox(height: middleGap),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 0),
-                padding: const EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(
-                  color: _panelColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 15,
-                      spreadRadius: 2,
-                      offset: const Offset(0, -3),
-                    ),
-                  ],
+            return Column(
+              children: [
+                SizedBox(height: topGap),
+                SizedBox(
+                  height: sliderHeight,
+                  child: PremiumSlider(imagesList: bannerImages),
                 ),
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    12,
-                    4,
-                    12,
-                    16 + bottomNavOverlay,
-                  ),
-                  itemCount: visibleCount,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    mainAxisExtent: tileHeight,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: mainSpacing,
-                  ),
-                  itemBuilder: (context, index) {
-                    final itemIndex = visibleMenuIndices[index];
-                    return InkWell(
-                      onTap: () => click(itemIndex),
-                      borderRadius: BorderRadius.circular(12),
-                      child: LayoutBuilder(
-                        builder: (context, itemConstraints) {
-                          final itemHeight = itemConstraints.maxHeight;
-                          final itemIconSize = (itemHeight * 0.54).clamp(
-                            58.0,
-                            iconSize + 14,
-                          );
-                          final itemGap = (itemHeight * 0.06).clamp(4.0, 8.0);
-                          final itemFontSize = (itemHeight * 0.108).clamp(
-                            12.0,
-                            labelFontSize,
-                          );
+                const SizedBox(height: middleGap),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 0),
+                    padding: const EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                      color: _panelColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 15,
+                          spreadRadius: 2,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
+                    ),
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(
+                        12,
+                        4,
+                        12,
+                        16 + bottomNavOverlay,
+                      ),
+                      itemCount: visibleCount,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisExtent: tileHeight,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: mainSpacing,
+                      ),
+                      itemBuilder: (context, index) {
+                        final itemIndex = visibleMenuIndices[index];
+                        return InkWell(
+                          onTap: () => click(itemIndex),
+                          borderRadius: BorderRadius.circular(12),
+                          child: LayoutBuilder(
+                            builder: (context, itemConstraints) {
+                              final itemHeight = itemConstraints.maxHeight;
+                              final itemIconSize = (itemHeight * 0.54).clamp(
+                                58.0,
+                                iconSize + 14,
+                              );
+                              final itemGap = (itemHeight * 0.06).clamp(
+                                4.0,
+                                8.0,
+                              );
+                              final itemFontSize = (itemHeight * 0.108).clamp(
+                                12.0,
+                                labelFontSize,
+                              );
 
-                          return Column(
+                          final isTeacherView = !_isParentRole();
+                          final menuLabel =
+                              isTeacherView && itemIndex == 5
+                                  ? LocaleKeys
+                                      .dashboardMenuAttendanceLogTeacher
+                                      .tr
+                                  : _catName[itemIndex];
+
+                              return Column(
                             children: [
                               Container(
                                 height: itemIconSize,
@@ -225,7 +255,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                               SizedBox(height: itemGap),
                               Expanded(
                                 child: Text(
-                                  _catName[itemIndex],
+                                  menuLabel,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: itemFontSize,
@@ -239,15 +269,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                 ),
                               ),
                             ],
-                          );
-                        },
-                      ),
-                    );
-                  },
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );

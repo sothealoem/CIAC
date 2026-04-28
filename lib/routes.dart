@@ -36,6 +36,7 @@ import 'package:schoolapp/views/start/binding.dart';
 import 'package:schoolapp/views/start/view.dart';
 import 'package:schoolapp/views/student_document/view.dart';
 import 'package:schoolapp/views/student_information/binding.dart';
+import 'package:schoolapp/views/student_information/view.dart';
 import 'package:schoolapp/views/term_condition/view.dart';
 import 'package:get/get.dart';
 
@@ -146,6 +147,11 @@ class Routes {
       name: attendanceRecord,
       page: () => const AttendanceRecordView(),
       binding: AttendanceRecordBinding(),
+    ),
+    GetPage(
+      name: studentInforation,
+      page: () => const StudentInformationView(),
+      binding: StudentInformationBinding(),
     ),
     GetPage(
       name: studentDocument,

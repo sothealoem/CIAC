@@ -144,6 +144,9 @@ class LoginController extends GetxController {
         scannerOwnerId,
       );
 
+      // Ensure locale is refreshed for the authenticated area as well.
+      Get.updateLocale(AppConfig.shared.languageLocale);
+
       /// navigate
       Get.offAllNamed(Routes.start);
     } catch (e) {

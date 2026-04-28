@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
+import 'package:schoolapp/core/resources/locales.g.dart';
 import 'package:schoolapp/views/attendance/controller.dart';
 import 'package:schoolapp/views/attendance/widgets/month_filter.dart';
 import 'package:schoolapp/views/attendance/widgets/widgets.dart';
@@ -27,19 +28,19 @@ class AttendanceView extends GetView<AttendanceController> {
           SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'ពិនិត្យវត្តមានកូនៗ',
-              subTitle: 'សូមពិនិត្យវត្តមានកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
+              title: LocaleKeys.attendance.tr,
+              subTitle: LocaleKeys.attendanceSubTitle.tr,
               trailing: MonthFilterWidget(controller: controller),
             ),
           ),
           UIConstants.spacingSmall.height,
 
-          CustomIndicator(progress: 1 / 4),
+          const CustomIndicator(progress: 1 / 4),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                decoration: BoxDecoration(),
-                child: AttendanceCardWidget(),
+                decoration: const BoxDecoration(),
+                child: const AttendanceCardWidget(),
               ),
             ),
           ),

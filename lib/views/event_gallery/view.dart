@@ -2,7 +2,6 @@
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/event_gallery/controller.dart';
-import 'package:schoolapp/views/start/widgets/custom_appbar.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:schoolapp/views/start/widgets/customize_app_bar.dart';
 
@@ -48,9 +47,8 @@ class EventGalleryView extends GetView<EventGalleryController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const CustomizeAppBar(
-                title: 'កំណត់ត្រាវត្តមាន',
-                subTitle:
-                    'លោកអ្នកអាចដឹងពីវត្តមាន កូនៗរបស់លោកអ្នកពេលកំពុងសិក្សា',
+                title: LocaleKeys.activity,
+                subTitle: LocaleKeys.activitySubTitle,
               ),
               UIConstants.spacingSmall.height,
 

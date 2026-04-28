@@ -19,11 +19,14 @@ class StartView extends GetView<StartController> {
       final selectedIndex = controller.selectedIndex.value;
       final isParent = controller.isParentUser.value;
       final showCustomAppBar = selectedIndex == 0;
-      final roleWelcomePrefix = isParent ? 'Welcome Parent, ' : 'Welcome Teacher, ';
+      final roleWelcomePrefix =
+          isParent
+              ? LocaleKeys.welcomeParentPrefix.tr
+              : LocaleKeys.welcomeTeacherPrefix.tr;
       final roleSubTitle =
           isParent
-              ? 'here is your parent dashboard.'
-              : 'here is your teacher dashboard.';
+              ? LocaleKeys.welcomeParentSubtitle.tr
+              : LocaleKeys.welcomeTeacherSubtitle.tr;
 
       return PopScope(
         canPop: selectedIndex == 0,
