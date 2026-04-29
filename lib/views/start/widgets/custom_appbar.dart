@@ -226,12 +226,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void _handleProfileTap() {
-    // Parent app-bar avatar should open selected child information.
-    if (UserRepository.shared.isDriver) {
-      if (Get.currentRoute != Routes.studentInforation) {
-        Get.toNamed(Routes.studentInforation);
-      }
-      return;
+    // Open profile/information screen for both parent and teacher modes.
+    if (Get.currentRoute != Routes.studentInforation) {
+      Get.toNamed(Routes.studentInforation);
     }
   }
 }

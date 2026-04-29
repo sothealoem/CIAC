@@ -8,10 +8,10 @@ class SocialLoginWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Container(
           alignment: Alignment.center,
-          child: Text(
+          child: const Text(
             "ជ្រើសរើសភាសារបស់អ្នក",
             style: AppTextStyle.normalPrimaryRegular,
           ),
@@ -30,9 +30,9 @@ class SocialLoginWidget extends StatelessWidget {
                 scale: 20,
               ),
               8.width,
-              Text('ខ្មែរ', style: AppTextStyle.midPrimarySemiBold),
+              const Text('ខ្មែរ', style: AppTextStyle.midPrimarySemiBold),
               8.width,
-              Text('|', style: AppTextStyle.midPrimarySemiBold),
+              const Text('|', style: AppTextStyle.midPrimarySemiBold),
               8.width,
               Image.asset(
                 AssetPath.englishFlag.path,
@@ -42,7 +42,7 @@ class SocialLoginWidget extends StatelessWidget {
                 scale: 20,
               ),
               8.width,
-              Text('Eng', style: AppTextStyle.midPrimarySemiBold),
+              const Text('Eng', style: AppTextStyle.midPrimarySemiBold),
             ],
           ),
         ),

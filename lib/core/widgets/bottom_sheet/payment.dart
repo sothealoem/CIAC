@@ -25,7 +25,7 @@ class PaymentSheet extends StatelessWidget {
               ),
               14.width,
               Text(
-                payment.deliveryName,
+                payment.name,
                 style: AppTextStyle.normalPrimarySemiBold,
               ),
             ],

@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:schoolapp/core/constants/asset_path.dart';
 
-// Define a function to handle button taps
-void handleFacebookLogin() {
-  // Handle Facebook login logic here
-}
+void handleFacebookLogin() {}
 
-void handleGoogleLogin() {
-  // Handle Google login logic here
-}
+void handleGoogleLogin() {}
 
-void handleTwitterLogin() {
-  // Handle Twitter login logic here
-}
+void handleTwitterLogin() {}
 
 class SocialButtonCustom extends StatelessWidget {
   final String buttonText;
@@ -34,8 +27,8 @@ class SocialButtonCustom extends StatelessWidget {
       child: Container(
         height: 30,
         width: 30,
-        padding: EdgeInsets.all(0),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(0),
+        decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
           //borderRadius: BorderRadius.circular(50),
@@ -77,18 +70,16 @@ class SocialButtonCustomWidget extends StatelessWidget {
               imagePath: AssetPath.fb.path,
               onPressed: handleFacebookLogin,
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             SocialButtonCustom(
               buttonText: '',
               imagePath: AssetPath.twitter.path,
               onPressed: handleGoogleLogin,
             ),
-            SizedBox(
-              width: 6,
-            ), // Adjust horizontal spacing between buttons if needed
+            const SizedBox(width: 6),
             SocialButtonCustom(
               buttonText: '',
-              imagePath: AssetPath.linked.path, // Replace with your image path
+              imagePath: AssetPath.linked.path,
               onPressed: handleTwitterLogin,
             ),
           ],

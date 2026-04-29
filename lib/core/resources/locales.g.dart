@@ -1,9 +1,3 @@
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
-
-// ignore_for_file: lines_longer_than_80_chars, constant_identifier_names
-// ignore: avoid_classes_with_only_static_members
-import 'package:flutter/material.dart';
-
 class AppTranslation {
   static Map<String, Map<String, String>> translations = {
     'EN_US': Locales.EN_US,
@@ -28,6 +22,8 @@ class LocaleKeys {
   static const youHaveSuccessfullyCreated = 'youHaveSuccessfullyCreated';
   static const unableToPickImagePleaseTryAgain =
       'unableToPickImagePleaseTryAgain';
+  static const studentprofileinformation = "studentProfileInformation";
+  static const studentprofileinformationSub = "studentProfileInformationSub";
   static const successfully = 'successfully';
   static const youHavesuccessfullyCreatedTheBooking =
       'youHavesuccessfullyCreatedTheBooking';
@@ -296,8 +292,10 @@ class Locales {
     'unableToPickImagePleaseTryAgain':
         'Unable to pick image. Please try again.',
     'successfully': 'ជោកជ័យ',
-    'youHavesuccessfullyCreatedTheBooking': 'អ្នកបានបង្កើតការកក់ដោយជោគជ័យ',
     'forgotPassword': 'Forgot password',
+    'studentProfileInformation': 'Student profile information',
+    'studentProfileInformationSub':
+        'Please check your Child profile information.',
     'password': 'Password',
     'cannotBeEmpty': 'Can\'t be empty',
     'invalidPhoneNumber': 'Invalid phone number',
@@ -550,8 +548,7 @@ class Locales {
     'areYouSureYourWantToLogout': 'តើ​អ្នក​ប្រាកដ​ជា​ចង់​ចេញ?',
     'areYouSureYourWantToDelete': 'តើអ្នកប្រាកដទេថាអ្នកចង់លុបការកក់នេះ?',
     'youHaveSuccessfullyCreated': 'អ្នកបានបង្កើតដោយជោគជ័យ',
-    'unableToPickImagePleaseTryAgain':
-        'មិនអាចជ្រើសរើសរូបភាពបានទេ សូម​ព្យាយាម​ម្តង​ទៀត',
+    "studentProfileInformation": "ព័ត៌មានប្រវត្តិរូបសិស្ស",
     'successfully': 'ជោកជ័យ',
     'youHavesuccessfullyCreatedTheBooking': 'អ្នកបានបង្កើតការកក់ដោយជោគជ័យ',
     'forgotPassword': 'ភ្លេច​លេខសំងាត់​',
@@ -588,10 +585,7 @@ class Locales {
     'delivery': 'ការដឹកជញ្ជូន',
     'deliveries': 'ការដឹកជញ្ជូន',
     'more': 'ច្រើនទៀត',
-    'totalPackage': 'កញ្ចប់សរុប',
-    'total': 'សរុប',
-    'deliveryTransfer': 'ការផ្ទេរការដឹកជញ្ជូន',
-    'chooseANewDelivery': 'ជ្រើសរើសការដឹកជញ្ជូនថ្មី',
+
     'language': 'ភាសា',
     'logout': 'ចាកចេញ',
     'cancel': 'ហេតុផល',
@@ -613,6 +607,7 @@ class Locales {
     'thisTransactionSuccess': 'This transaction success',
     'transaction': 'Transaction',
     'deliveryName': 'ឈ្មោះអ្នកដឹកជញ្ជូន',
+    'studentProfileInformationSub': 'សូមពិនិត្យព័ត៌មានប្រវត្តិរូបកូនរបស់អ្នក',
     'amount': 'ចំនួន',
     'date': 'កាលបរិច្ឆេទ',
     'checkedBy': 'ផ្ទៀងផ្ទាត់ដោយ',
@@ -697,54 +692,22 @@ class Locales {
     'area': 'តំបន់',
     'getDate': 'ទទួលអីវ៉ាន់',
     'releaseDate': 'ថ្ងៃវាយបុង',
-    'customer': 'អតិថិជន',
     'bonus': 'ប្រាក់បន្ថែម',
-    'moneyAtStaff': 'ប្រាក់នៅបុគ្គលិក',
-    'moneyAtCompany': 'ប្រាក់នៅក្រុមហ៊ុន',
-    'moneyAtSell': 'ប្រាក់នៅអ្នកលក់',
-    'payment': 'ប្រាក់ដែលត្រូវទូទាត់',
-    'totalDelivery': 'សរុបចំនួនជើង',
-    'extraMoneyAndCarFee': 'ប្រាក់បន្ថៃម នឹង ថ្លៃឡាន',
-    'searchDelivery': 'ស្វែករកការដឹក',
-    'deliveryActivity': 'សកម្មភាពនៃការដឹក',
-    'inprogress': 'កំពុងដំណើរការ',
     'finish': 'បញ្ចប់',
-    'codFee': 'តម្លៃ COD',
     'attendanceSubTitle': 'ចូលពិនិត្យវត្តមានរបស់កូនៗអ្នកនៅទីនេះ',
-
     'returned': 'ត្រឡប់',
     'choose': 'ជ្រើសរើស',
     'detailOfPayments': 'ព័ត៌មានលម្អិតនៃការទូទាត់',
     'qrCode': 'ការប្រើប្រាស់ QR Code',
-    'enterProductCode': 'បញ្ចូលលេខ Code អីវ៉ាន់',
-    'getProduct': 'ទទួលអីវ៉ាន់',
-    'finishDelivery': 'បញ្ចប់ការដឹក',
-    'exchangeRateToday': 'អត្រាប្ដូរប្រាក់ថ្ងៃនេះ',
-    'customerReject': 'ដឹកដល់ទីតាំងតែភ្ងៀវអត់យក',
     'viewDetails': 'មើលលំអិត',
     'clear': 'សម្អាត',
     'notification': 'ការជូនដំណឹង',
     'successfulGetProduct': 'ការទទួលយកអីវ៉ាន់បានជោគជ័យ',
     'successfulFinishDelivery': 'ការបញ្ចប់ការដឹកបានជោគជ័យ',
     'paymentMethods': 'មធ្យោបាយបង់ប្រាក់',
-    'dateVerity': 'ផ្ទៀងផ្ទាត់កាលបរិច្ឆេទ',
     'status': 'ស្ថានភាព',
-    'packagesBooking': 'ការកក់ជាកញ្ចប់',
-    'sampleBooking': 'ការកក់ធម្មតា',
-    'createdDate': 'ថ្ងៃបង្កើតការកក់',
-    'enterDestination': 'បញ្ចូលគោលដៅ',
     'chooseDate': 'ជ្រើសរើសកាលបរិច្ឆេទ',
     'uploadImage': 'បញ្ចូលរូបភាព',
-    'numberOfPackages': 'ចំនួនកញ្ចប់',
-    'enterNumberOfPackages': 'បញ្ចូលចំនួនកញ្ចប់',
-    'totalShipping': 'ការដឹកជញ្ជូនសរុប',
-    'fee': 'ថ្លៃឈ្នួល',
-    'avialableCredit': 'ឥណទានដែលមាន',
-    'bank': 'ធនាគារ',
-    'accountName': 'ឈ្មោះ​គណនី',
-    'accountNumber': 'លេខ​គណនី',
-    'productCategory': 'ប្រភេទ​ផលិតផល',
-    'chooseBank': 'ជ្រើសរើសធនាគារ',
     'successfullyRegister': 'ការចុះឈ្មោះជោគជ័យ',
     'permission': 'ការអនុញ្ញាត',
     'noPermission': 'អ្នកគ្មានសិទ្ធិចូលប្រើកម្មវិធីនេះទេ',
@@ -752,7 +715,6 @@ class Locales {
     'youHaveSuccessfullyChangedThePassword':
         'អ្នកបានផ្លាស់ប្តូរពាក្យសម្ងាត់ដោយជោគជ័យ',
     'cannotNavigationToDetailsScreen': 'មិនអាចបើលទៅអេក្រង់លម្អិតបានទេ',
-    'invoiceNumber': 'លេខបុង',
     'pending': 'កំពុងដំណើរការ',
     'problem': 'បញ្ហា',
     'companyPhoneNumber': 'លេខទំនាក់ទំនងក្រុមហ៊ុន',
@@ -772,12 +734,9 @@ class Locales {
     'endBillFinish': 'ពេលបញ្ចប់',
     'filterDelivery': 'កំណត់ការដឹកជញ្ជូន',
     'chooseDeliveyStatus': 'ជ្រើសរើសស្ថានភាពដឹកជញ្ជូន',
-    'paymentDes':
-        'រាល់បញ្ញើទំនិញខុសច្បាប់ គឺត្រូវបានហាមឃាត់ និងជាទំនួលខុសត្រូវ\nរបស់អ្នកផ្ញើ',
+
     'completeDate': 'ថ្ងៃ​បញ្ចប់',
-    // 'login': 'ចូល',
-    // 'loginNow': 'ចូលឥឡូវនេះ',
-    // 'loginContinueMessage': 'សូមចូល ដើម្បីបន្តប្រើប្រាស់កម្មវិធី',
+
     'teacher': 'លោកគ្រូអ្នកគ្រូ',
     'parent': 'អាណាព្យាបាល',
     'phoneOrEmail': 'លេខទូរស័ព្ទ ឬ អ៊ីមែល',

@@ -59,7 +59,6 @@ class StartController extends GetxController {
   void changeMenu(
     int index, {
     bool isFromGrid = false,
-    int deliveryStatus = 1,
     String dateFilter = '',
   }) {
     if (isParentUser.value) {

@@ -1,3 +1,5 @@
+import 'package:schoolapp/core/constants/constants.dart';
+
 class CustomerPaymentModel {
   final String paymentMethods;
   final String phone;
@@ -30,6 +32,23 @@ class CustomerPaymentModel {
       total: json['total'] ?? 'N/A',
       status: json['status'] ?? 'N/A',
     );
+  }
+
+  PaymentStatus get paymentStatus {
+    final normalized = status.toLowerCase().trim();
+    if (normalized == PaymentStatus.successfully.key.toLowerCase()) {
+      return PaymentStatus.successfully;
+    }
+    if (normalized == PaymentStatus.pending.key.toLowerCase()) {
+      return PaymentStatus.pending;
+    }
+    if (normalized == PaymentStatus.failed.key.toLowerCase()) {
+      return PaymentStatus.failed;
+    }
+    if (normalized == PaymentStatus.returned.key.toLowerCase()) {
+      return PaymentStatus.returned;
+    }
+    return PaymentStatus.pending;
   }
 }
 

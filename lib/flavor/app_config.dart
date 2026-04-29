@@ -14,13 +14,11 @@ class AppConfig {
   static AppConfig get shared => _instance;
 
   String get baseUrl => dotenv.env[EnvKey.baseUrl.value] ?? '';
-  //String get baseUrl => dotenv.env['BASE_URL'] ?? '';
 
   String _token = '';
   String get token => _token;
   String get authorizationToken => _token.isEmpty ? '' : 'Bearer $_token';
   set token(String value) => _token = value;
-  bool isDeliveryTapOpened = false;
 
   Future<void> _getToken() async {
     _token = await SharedPreferencesManager.get(Credential.token.name) ?? '';
@@ -29,7 +27,6 @@ class AppConfig {
   String _language = Language.kh.key;
   String get language => _language;
 
-  // set as default language
   Future<void> setLanguage(String value) async {
     dynamic localLng = await SharedPreferencesManager.get(
       LanguageKey.language.name,
@@ -41,7 +38,10 @@ class AppConfig {
   Future<void> updateLanguage(String value) async {
     _language = value;
     Get.updateLocale(AppConfig.shared.languageLocale);
-    await SharedPreferencesManager.setValue(LanguageKey.language.name, _language);
+    await SharedPreferencesManager.setValue(
+      LanguageKey.language.name,
+      _language,
+    );
   }
 
   Locale get languageLocale {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/core/widgets/attendance/summary_item.dart';
 import 'package:schoolapp/models/attendance_summery/attendance_summery.dart'
@@ -62,9 +63,7 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
 
             return Column(
               children:
-                  controller.summaries
-                      .map((item) => _buildCard(item))
-                      .toList(),
+                  controller.summaries.map((item) => _buildCard(item)).toList(),
             );
           }),
         ],
@@ -75,59 +74,77 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
   Widget _buildCard(attendance_summary.Data item) {
     final className = (item.classroom ?? '').trim();
     final section = (item.section ?? '').trim();
+    final dateText = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    final studentName =
+        (item.firstnamekh ?? item.firstname ?? 'Student').trim();
+    final classSection =
+        className.isEmpty && section.isEmpty
+            ? '-'
+            : section.isEmpty
+            ? className
+            : '$className "$section"';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 25),
-      padding: const EdgeInsets.fromLTRB(12, 18, 12, 12),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
+        color: const Color(0xFFF3F3F3),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFD6D6D6)),
       ),
       child: Row(
+        //crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildAvatar(),
-          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  (item.firstnamekh ?? item.firstname ?? 'Student').trim(),
+                  '$studentName   ថ្នាក់ទី $classSection',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    fontFamily: 'Battambang',
                   ),
                 ),
-                Text(
-                  'Class: ${className.isEmpty ? '-' : className}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
-                ),
-                Text(
-                  'Section: ${section.isEmpty ? '-' : section}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_month, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      dateText,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'Battambang',
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 10),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            height: 30,
-            width: 82,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            height: 34,
+            width: 88.w,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _statusColor(item),
-              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFF006E6D),
+              borderRadius: BorderRadius.circular(9),
             ),
             child: Text(
-              _statusText(item),
-              style: const TextStyle(color: Colors.white, fontSize: 11),
+              _statusTextKh(item),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontFamily: 'Battambang',
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -169,10 +186,17 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
     return 'Present';
   }
 
-  Widget _buildAvatar() {
-    return const CircleAvatar(
-      radius: 21,
-      child: Icon(Icons.person, size: 22),
-    );
+  String _statusTextKh(attendance_summary.Data item) {
+    final status = _statusText(item);
+    switch (status) {
+      case 'Late':
+        return 'យឺត';
+      case 'Absent':
+        return 'អវត្តមាន';
+      case 'Permission':
+        return 'សុំច្បាប់';
+      default:
+        return 'វត្តមាន';
+    }
   }
 }

@@ -51,7 +51,6 @@ class Routes {
   static const String login = '/login';
   static const String loginVaiEmail = '/login-via-email';
   static const String register = '/register';
-  static const String finishDelivery = '/finish-delivery';
   static const String notification = '/notification';
   static const String createSampleBooking = '/create-sample-booking';
   static const String createPackagesBooking = '/create-packages-booking';

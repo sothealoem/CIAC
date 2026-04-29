@@ -60,19 +60,9 @@ class AttendanceController extends GetxController {
     isLoadingSummary.value = true;
     summaryError.value = '';
     try {
-      final selectedChildId =
-          (await SharedPreferencesManager.get('selected_child_id') ?? '')
-              .toString()
-              .trim();
-
-      final queryParameters =
-          selectedChildId.isEmpty
-              ? null
-              : <String, dynamic>{'student_id': selectedChildId};
-
       final res = await Get.find<ApiService>().get(
         _attendanceSummaryPath,
-        queryParameters: queryParameters,
+        queryParameters: null,
         isShowLoading: false,
       );
 

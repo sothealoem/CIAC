@@ -46,9 +46,9 @@ class EventGalleryView extends GetView<EventGalleryController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomizeAppBar(
-                title: LocaleKeys.activity,
-                subTitle: LocaleKeys.activitySubTitle,
+              CustomizeAppBar(
+                title: LocaleKeys.activity.tr,
+                subTitle: LocaleKeys.activitySubTitle.tr,
               ),
               UIConstants.spacingSmall.height,
 

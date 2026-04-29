@@ -43,24 +43,6 @@ class EnterProductCodeDialog extends StatelessWidget {
                       validator: (text) => FormValidator.empty(text),
                       textInputAction: TextInputAction.next,
                     ),
-                    15.height,
-
-                    // Finish delivery
-                    Text(
-                      LocaleKeys.finishDelivery.tr,
-                      style: AppTextStyle.midPrimarySemiBold,
-                    ),
-                    6.height,
-
-                    CustomTextField(
-                      controller: scanCtl.finishDeliveryCtl,
-                      hintText: LocaleKeys.enterProductCode.tr,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      validator: (text) => FormValidator.empty(text),
-                      textInputAction: TextInputAction.done,
-                    ),
                     30.height,
 
                     // Apply
@@ -68,21 +50,13 @@ class EnterProductCodeDialog extends StatelessWidget {
                       text: 'APPLY',
                       onPressed: () async {
                         final String getProduct = scanCtl.getProdCtl.text;
-                        final String finishDelivery =
-                            scanCtl.finishDeliveryCtl.text;
-                        if (getProduct.isEmpty && finishDelivery.isEmpty) {
+                        if (getProduct.isEmpty) {
                           return;
                         }
                         Get.back();
                         if (getProduct.isNotEmpty) {
-                          await scanCtl.scanGetProduct(id: getProduct);
+                          await scanCtl.scanCard(getProduct);
                           scanCtl.getProdCtl.text = '';
-                          return;
-                        }
-
-                        if (finishDelivery.isNotEmpty) {
-                          await scanCtl.scanComplete(id: finishDelivery);
-                          scanCtl.finishDeliveryCtl.text = '';
                           return;
                         }
                       },

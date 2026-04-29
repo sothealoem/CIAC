@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:schoolapp/core/constants/asset_path.dart';
 
 // Define a function to handle button taps
-void handleFacebookLogin() {
-  // Handle Facebook login logic here
-}
+void handleFacebookLogin() {}
 
-void handleGoogleLogin() {
-  // Handle Google login logic here
-}
+void handleGoogleLogin() {}
 
-void handleTwitterLogin() {
-  // Handle Twitter login logic here
-}
+void handleTwitterLogin() {}
 
 class SocialButton extends StatelessWidget {
   final String buttonText;
@@ -32,11 +26,11 @@ class SocialButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         height: 30,
-        padding: EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(50),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               offset: Offset(0, 2),
@@ -51,7 +45,7 @@ class SocialButton extends StatelessWidget {
 
             Text(
               buttonText,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -73,23 +67,19 @@ class SocialButtonsWidget extends StatelessWidget {
           children: [
             SocialButton(
               buttonText: '',
-              imagePath: AssetPath.fb.path, // Replace with your image path
+              imagePath: AssetPath.fb.path,
               onPressed: handleFacebookLogin,
             ),
-            SizedBox(
-              width: 10,
-            ), // Adjust horizontal spacing between buttons if needed
+            const SizedBox(width: 10),
             SocialButton(
               buttonText: '',
-              imagePath: AssetPath.youtube.path, // Replace with your image path
+              imagePath: AssetPath.youtube.path,
               onPressed: handleGoogleLogin,
             ),
-            SizedBox(
-              width: 12,
-            ), // Adjust horizontal spacing between buttons if needed
+            const SizedBox(width: 12),
             SocialButton(
               buttonText: '',
-              imagePath: AssetPath.twitter.path, // Replace with your image path
+              imagePath: AssetPath.twitter.path,
               onPressed: handleTwitterLogin,
             ),
           ],

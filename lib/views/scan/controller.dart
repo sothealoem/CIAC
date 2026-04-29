@@ -3,14 +3,11 @@ import 'package:schoolapp/models/student/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/models/models.dart';
-import 'package:schoolapp/routes.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController getProdCtl = TextEditingController();
-  final TextEditingController finishDeliveryCtl = TextEditingController();
 
   late MobileScannerController mobileScannerCtl;
   late StreamSubscription<Object?> subscription;
@@ -52,7 +49,6 @@ class ScanController extends GetxController {
     mobileScannerCtl.dispose();
     subscription.cancel();
     getProdCtl.dispose();
-    finishDeliveryCtl.dispose();
     super.onClose();
   }
 
@@ -70,20 +66,14 @@ class ScanController extends GetxController {
 
   void clear() {
     getProdCtl.text = '';
-    finishDeliveryCtl.text = '';
   }
 
   Future<void> onDetected(String value) async {
     try {
-      final String id = value.split('-')[0];
-      if (value.contains(QrCodeResult.complete.key)) {
-        await scanComplete(id: id, isFromScanner: true);
-        return;
-      }
-      await scanGetProduct(id: id, isFromScanner: true);
+      await scanCard(value);
     } catch (e) {
       ExceptionHandler.handleException(
-        'Scan complete failed. Please try again.',
+        'Scan failed. Please try again.',
       );
     }
   }
@@ -123,76 +113,4 @@ class ScanController extends GetxController {
     }
   }
 
-  Future<void> scanComplete({
-    required String id,
-    bool isFromScanner = false,
-  }) async {
-    try {
-      if (isFromScanner) {
-        mobileScannerCtl.stop();
-      }
-
-      final String endPoint = '${EndPoints.scanComplete}/$id';
-      final res = await Get.find<ApiService>().get(
-        endPoint,
-        isShowLoading: true,
-      );
-
-      final data = getPropertyFromJson(res.data, 'data');
-      final ScanCompleteModel model = ScanCompleteModel.fromJson(data);
-
-      final Map<String, dynamic> arg = {
-        'deliveryId': model.id,
-        'totalAmount': model.totalAmount,
-      };
-
-      DialogManager.hideLoading();
-
-      Get.toNamed(Routes.finishDelivery, arguments: arg)?.then((value) {
-        mobileScannerCtl.start();
-      });
-    } catch (e) {
-      ExceptionHandler.handleException(
-        e,
-        onValue: (p0) {
-          mobileScannerCtl.start();
-        },
-      );
-    }
-  }
-
-  Future<void> scanGetProduct({
-    required String id,
-    bool isFromScanner = false,
-  }) async {
-    try {
-      if (isFromScanner) {
-        mobileScannerCtl.stop();
-      }
-
-      final String endPoint = '${EndPoints.scanGetProduct}/$id';
-      final res = await Get.find<ApiService>().get(
-        endPoint,
-        isShowLoading: true,
-      );
-      final message = getPropertyFromJson(res.data, 'message');
-
-      DialogManager.showCustom(
-        PrimaryDialog(
-          title: LocaleKeys.getProduct.tr,
-          subTitle: message,
-          onPressed: () => Get.back(),
-        ),
-      ).then((value) {
-        mobileScannerCtl.start();
-      });
-    } catch (e) {
-      ExceptionHandler.handleException(
-        e,
-        onValue: (p0) {
-          mobileScannerCtl.start();
-        },
-      );
-    }
-  }
 }

@@ -145,6 +145,8 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
             value: value,
             isExpanded: true,
             icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+            dropdownColor: Colors.white,
+            menuMaxHeight: 220,
             borderRadius: BorderRadius.circular(10),
             style: const TextStyle(
               fontSize: 12,

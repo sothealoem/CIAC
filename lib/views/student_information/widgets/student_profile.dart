@@ -1,127 +1,230 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
+import 'package:schoolapp/flavor/app_config.dart';
+import 'package:schoolapp/models/parent/parent.dart' as parent_model;
+import 'package:schoolapp/views/student_information/controller.dart';
 
-class StudentProfileWidget extends StatelessWidget {
+class StudentProfileWidget extends GetView<StudentInformationController> {
   const StudentProfileWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50.0),
-            child: Image.network(
-              'assets/images/profile.PNG',
-              errorBuilder: (context, error, stackTrace) {
-                return Image.asset(
-                  'assets/images/profiles.png',
-                  width: 150, // Adjust width as needed
-                  height: 150,
-                );
-              },
-              width: 50,
-              height: 50,
+      child: Obx(() {
+        final student = controller.selectedStudent.value;
+        if (controller.isLoading.value && student == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (student == null) {
+          return const Center(
+            child: Text(
+              'No student information found.',
+              style: TextStyle(fontFamily: 'Battambang'),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          children: [
+            Center(child: _avatar(student)),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFD8D8D8)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  _infoRow('Student ID', controller.displayCode(student)),
+                  _infoRow('Student Name', controller.displayName(student)),
+                  _infoRow('DOB', controller.displayDob(student)),
+                  _infoRow('POB', controller.displayPob(student)),
+                  _infoRow('Sex', controller.displaySex(student)),
+                  _infoRow('Class/Section', controller.displayClass(student)),
+                  _infoRow('Parent/Teacher', controller.displayParent(student)),
+                  _infoRow('Phone', controller.displayPhone(student)),
+                ],
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _avatar(parent_model.Student student) {
+    return Container(
+      width: 184,
+      height: 184,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: const Color(0xFF006E6D), width: 6),
+      ),
+      child: ClipOval(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _openProfilePreview(student),
+            child: _buildStudentImage(student),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStudentImage(parent_model.Student student) {
+    final url = _resolveProfileUrl((student.profile ?? '').trim());
+    if (url.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.cover,
+        httpHeaders: _networkHeaders(),
+        placeholder:
+            (_, __) => Container(
+              color: Colors.grey.shade100,
+              alignment: Alignment.center,
+              child: const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+        errorWidget:
+            (_, __, ___) => Image.asset(
+              'assets/images/studentprofile.jpg',
               fit: BoxFit.cover,
             ),
-          ),
-          Container(
-            margin: EdgeInsets.zero, // Remove all margins
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
+      );
+    }
+    return Image.asset('assets/images/studentprofile.jpg', fit: BoxFit.cover);
+  }
 
-            child: DataTable(
-              columnSpacing: 10,
-              horizontalMargin: 12.0,
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      '',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
+  Widget _infoRow(String label, String value) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFE6E6E6))),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                child: Text(
+                  '$label:',
+                  style: const TextStyle(
+                    fontFamily: 'Battambang',
+                    fontSize: 13.5,
+                    color: Color(0xFF4B4B4B),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      '',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-              ],
-              rows: const <DataRow>[
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('លេខសម្គាល់សិស្ស៖')),
-                    DataCell(Text('2023005')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('ឈ្មោះពេញ៖')),
-                    DataCell(Text('កែវ ពុធលក្ខិណា')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('ថ្ងៃខែឆ្នាំកំណើត')),
-                    DataCell(Text('២០ មិថុនា ២០០៤')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('ទីកន្លែងកំណើត៖')),
-                    DataCell(Text('ភ្នំពេញ')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('ភេទ៖')),
-                    DataCell(Text('ស្រី')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('រៀនថ្នាក់៖')),
-                    DataCell(Text('ទី១ក')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('គ្រូបន្ទុកថ្នាក់៖')),
-                    DataCell(Text('ចំរើន')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('អាស័យដ្ធានអាណាព្យាបាយ៖')),
-                    DataCell(Text('ភ្នំពេញ')),
-                  ],
-                ),
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text('ទីកន្លែងបច្ចុប្បន្ន៖')),
-                    DataCell(Text('ភ្នំពេញ')),
-                  ],
-                ),
-              ],
-              dividerThickness: 0, // Removes the divider between rows
+              ),
             ),
-          ),
-        ],
+            const VerticalDivider(
+              width: 1,
+              thickness: 1,
+              color: Color(0xFFE6E6E6),
+            ),
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontFamily: 'Battambang',
+                    fontSize: 14,
+                    color: Color(0xFF1E1E1E),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _safe(String? text) {
+    final value = (text ?? '').trim();
+    return value.isEmpty ? '-' : value;
+  }
+
+  String _resolveProfileUrl(String rawValue) {
+    final value = rawValue.trim().replaceAll('\\', '/');
+    if (value.isEmpty) return '';
+
+    String normalizePath(String path) {
+      return path
+          .replaceAll('/uploads/uploads/', '/uploads/')
+          .replaceAll('/public/public/', '/public/')
+          .replaceAll('/storage/storage/', '/storage/');
+    }
+
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      final uri = Uri.tryParse(value);
+      if (uri == null) return value;
+      return uri.replace(path: normalizePath(uri.path)).toString();
+    }
+    final base = AppConfig.shared.baseUrl.trim();
+    if (base.isEmpty) return '';
+    final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
+    final normalized = normalizePath(value);
+    return baseUri
+        .resolve(normalized.startsWith('/') ? normalized.substring(1) : normalized)
+        .toString();
+  }
+
+  Map<String, String>? _networkHeaders() {
+    final token = AppConfig.shared.authorizationToken.trim();
+    if (token.isEmpty) return null;
+    return <String, String>{'Authorization': token};
+  }
+
+  void _openProfilePreview(parent_model.Student student) {
+    final url = _resolveProfileUrl((student.profile ?? '').trim());
+    Get.dialog(
+      Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child:
+              url.isNotEmpty
+                  ? CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.cover,
+                    httpHeaders: _networkHeaders(),
+                    placeholder:
+                        (_, __) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                    errorWidget:
+                        (_, __, ___) => Image.asset(
+                          'assets/images/studentprofile.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                  )
+                  : Image.asset(
+                    'assets/images/studentprofile.jpg',
+                    fit: BoxFit.cover,
+                  ),
+        ),
       ),
     );
   }

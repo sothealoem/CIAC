@@ -6,4 +6,3 @@ export 'ui_constants.dart';
 export 'qr_code_result.dart';
 export 'payment_status.dart';
 export 'rule.dart';
-export 'delivery_status.dart';

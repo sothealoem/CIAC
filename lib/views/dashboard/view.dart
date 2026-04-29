@@ -18,13 +18,6 @@ class DashboardView extends GetView<DashboardController> {
           );
         }
         final DashboardModel? dashboard = controller.dashboardModel.value;
-        // if (dashboard == null) {
-        //   return DashboardWidget();
-        // }
-
-        // if (!UserRepository.shared.isDriver) {
-        //   return CustomerDashboardView(dashboard: dashboard);
-        // }
 
         return const DashboardWidget();
       }),

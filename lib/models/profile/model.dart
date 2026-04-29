@@ -18,6 +18,7 @@ class ProfileModel {
   final String updatedAt;
   final String profilePath;
   final String policy;
+  final String profession;
 
   ProfileModel({
     required this.id,
@@ -39,6 +40,7 @@ class ProfileModel {
     required this.updatedAt,
     required this.profilePath,
     required this.policy,
+    required this.profession,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -71,6 +73,12 @@ class ProfileModel {
       updatedAt: _asText(json['updated_at'], fallback: 'N/A'),
       profilePath: profileValue.isEmpty ? 'N/A' : profileValue,
       policy: _asText(json['policy'], fallback: 'N/A'),
+      profession: _firstNonEmpty([
+        json['profession'],
+        json['occupation'],
+        json['job'],
+        json['company'],
+      ]),
     );
   }
 

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/login/widgets/inline_language_dropdown.dart';
+import 'package:schoolapp/views/login/widgets/role_switch_label.dart';
 import 'package:schoolapp/views/login/widgets/socialButtonCustom.dart';
 import 'package:schoolapp/views/views.dart';
 
@@ -77,7 +79,7 @@ class LoginView extends GetView<LoginController> {
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    _RoleSwitchLabel(
+                                    RoleSwitchLabel(
                                       label: LocaleKeys.teacher.tr,
                                       isSelected: selected == UserType.teacher,
                                       onTap:
@@ -86,7 +88,7 @@ class LoginView extends GetView<LoginController> {
                                           ),
                                     ),
                                     const SizedBox(width: 8),
-                                    _RoleSwitchLabel(
+                                    RoleSwitchLabel(
                                       label: LocaleKeys.parent.tr,
                                       isSelected: selected == UserType.parent,
                                       onTap:
@@ -171,6 +173,8 @@ class LoginView extends GetView<LoginController> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
+                                  const InlineLanguageDropdown(),
+
                                   InkWell(
                                     child: Text(
                                       '${LocaleKeys.forgotPassword.tr}?',
@@ -288,44 +292,6 @@ class LoginView extends GetView<LoginController> {
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _RoleSwitchLabel extends StatelessWidget {
-  const _RoleSwitchLabel({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(999),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          color: isSelected ? AppColor.primary.withOpacity(0.12) : Colors.white,
-          border: Border.all(
-            color: isSelected ? AppColor.primary : Colors.grey.shade300,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? AppColor.primary : Colors.black54,
-          ),
         ),
       ),
     );

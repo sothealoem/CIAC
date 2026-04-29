@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/models/models.dart';
 import 'package:schoolapp/routes.dart';
 
@@ -25,7 +24,6 @@ class UserRepository {
 
   Future<void> logout() async {
     SharedPreferencesManager.remove(Credential.token.name);
-    AppConfig.shared.isDeliveryTapOpened = false;
     Get.offAllNamed(Routes.login);
   }
 

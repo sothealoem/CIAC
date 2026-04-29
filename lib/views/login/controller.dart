@@ -89,6 +89,10 @@ class LoginController extends GetxController {
         data['photo'],
         data['image'],
       ]);
+      final String staffCode =
+          (data['staff_code'] ?? data['code'] ?? data['id'] ?? '')
+              .toString()
+              .trim();
       final String scannerOwnerId = _resolveScannerOwnerId(
         data: data,
         fallbackUsername: loginIdentity,
@@ -138,6 +142,7 @@ class LoginController extends GetxController {
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
       await SharedPreferencesManager.setValue('profile', profile);
+      await SharedPreferencesManager.setValue('staff_code', staffCode);
       await SharedPreferencesManager.setValue('user_role', role);
       await SharedPreferencesManager.setValue(
         'scanner_owner_id',

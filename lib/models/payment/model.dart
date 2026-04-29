@@ -1,5 +1,5 @@
 class PaymentModel {
-  final String deliveryName;
+  final String name;
   final String phone;
   final String tranId;
   final num total;
@@ -9,7 +9,7 @@ class PaymentModel {
   final String codDate;
 
   PaymentModel({
-    required this.deliveryName,
+    required this.name,
     required this.phone,
     required this.tranId,
     required this.total,
@@ -21,7 +21,7 @@ class PaymentModel {
 
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      deliveryName: json['delivery_name'] ?? 'N/A',
+      name: json['name'] ?? json['delivery_name'] ?? 'N/A',
       phone: json['phone'] ?? 'N/A',
       tranId: json['tran_id'] ?? 'N/A',
       total: json['total'] ?? 0.0,

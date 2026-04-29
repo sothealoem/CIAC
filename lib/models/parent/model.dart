@@ -120,6 +120,11 @@ class Student {
   String? className;
   String? section;
   String? feeCategory;
+  String? dob;
+  String? pob;
+  String? sex;
+  String? profession;
+  String? parentName;
 
   Student({
     this.id,
@@ -131,13 +136,24 @@ class Student {
     this.className,
     this.section,
     this.feeCategory,
+    this.dob,
+    this.pob,
+    this.sex,
+    this.profession,
+    this.parentName,
   });
 
   Student.fromJson(Map<String, dynamic> json) {
     id = _toInt(json['id']);
     admissionNo = _readString(json, const <String>['admission_no']);
-    name = _readString(json, const <String>['name', 'student_name']);
-    nameKh = _readString(json, const <String>['name_kh', 'fullname_kh']);
+    name = _readString(
+      json,
+      const <String>['name', 'student_name', 'fullname_english'],
+    );
+    nameKh = _readString(
+      json,
+      const <String>['name_kh', 'fullname_kh', 'fullname_khmer'],
+    );
     phone = _readString(json, const <String>['phone']);
     profile = _readString(json, const <String>[
       'profile',
@@ -154,6 +170,26 @@ class Student {
     className = _readString(json, const <String>['class']);
     section = _readString(json, const <String>['section']);
     feeCategory = _readString(json, const <String>['fee_category']);
+    dob = _readString(json, const <String>['dob', 'date_of_birth', 'birth_date']);
+    pob = _readString(
+      json,
+      const <String>['pob', 'pod', 'place_of_birth', 'birth_place'],
+    );
+    sex = _readString(json, const <String>['sex', 'gender']);
+    profession = _readString(
+      json,
+      const <String>['profession', 'occupation', 'job', 'parent_occupation'],
+    );
+    parentName = _readString(
+      json,
+      const <String>[
+        'parent_name',
+        'guardian_name',
+        'father_name',
+        'mother_name',
+        'teacher',
+      ],
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -167,6 +203,11 @@ class Student {
     data['class'] = className;
     data['section'] = section;
     data['fee_category'] = feeCategory;
+    data['dob'] = dob;
+    data['pob'] = pob;
+    data['sex'] = sex;
+    data['profession'] = profession;
+    data['parent_name'] = parentName;
     return data;
   }
 }
@@ -208,10 +249,13 @@ String? _stringFromDynamic(dynamic value) {
   }
   if (value is Map) {
     final map = Map<String, dynamic>.from(value);
-    return _readString(
-      map,
-      const <String>['url', 'path', 'src', 'original_url', 'full_path'],
-    );
+    return _readString(map, const <String>[
+      'url',
+      'path',
+      'src',
+      'original_url',
+      'full_path',
+    ]);
   }
   return null;
 }

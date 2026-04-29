@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/models/models.dart';
 import 'package:schoolapp/views/views.dart';
 import 'package:intl/intl.dart';
@@ -12,8 +11,6 @@ class DashboardController extends GetxController {
   final Rxn<DashboardModel> dashboardModel = Rxn<DashboardModel>();
   final RxBool isLoading = false.obs;
 
-  //final StartController startCtl = Get.find<StartController>();
-  StartController get startCtl => Get.find<StartController>();
   final RxList<BookingModel> bookings = <BookingModel>[].obs;
 
   final PageController pageController = PageController();
@@ -65,33 +62,6 @@ class DashboardController extends GetxController {
   void onClose() {
     dateCtl.dispose();
     super.onClose();
-  }
-
-  void gridHandleTap(DeliveryStatus status) {
-    // To prevent onInit execute
-    if (!AppConfig.shared.isDeliveryTapOpened) {
-      AppConfig.shared.isDeliveryTapOpened = true;
-    }
-
-    int deliveryStatus = 0;
-    switch (status) {
-      case DeliveryStatus.success:
-        deliveryStatus = 3;
-        break;
-      case DeliveryStatus.inProgress:
-        deliveryStatus = 1;
-        break;
-      case DeliveryStatus.problem:
-        deliveryStatus = 5;
-        break;
-    }
-
-    startCtl.changeMenu(
-      3,
-      isFromGrid: true,
-      dateFilter: dateCtl.text,
-      deliveryStatus: deliveryStatus,
-    );
   }
 
   Future<void> loadUserName() async {
