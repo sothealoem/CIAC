@@ -43,14 +43,14 @@ class LoginView extends GetView<LoginController> {
                         tag: 'app_logo_hero',
                         child: ClipOval(
                           child: Image.asset(
-                            'assets/images/app_icon.png',
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
+                            AssetPath.appLogo.path,
+                            height: 110,
+                            width: 110,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10.0),
+                      10.height,
                       Container(
                         margin: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
@@ -76,8 +76,10 @@ class LoginView extends GetView<LoginController> {
                               Obx(() {
                                 final selected =
                                     controller.selectedLoginRole.value;
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                return Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 8,
+                                  runSpacing: 8,
                                   children: [
                                     RoleSwitchLabel(
                                       label: LocaleKeys.teacher.tr,
@@ -87,7 +89,6 @@ class LoginView extends GetView<LoginController> {
                                             UserType.teacher,
                                           ),
                                     ),
-                                    const SizedBox(width: 8),
                                     RoleSwitchLabel(
                                       label: LocaleKeys.parent.tr,
                                       isSelected: selected == UserType.parent,
@@ -169,9 +170,10 @@ class LoginView extends GetView<LoginController> {
                                 ),
                               ),
                               UIConstants.spacing.height,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                runSpacing: 8,
+                                spacing: 8,
                                 children: [
                                   const InlineLanguageDropdown(),
 
@@ -186,7 +188,7 @@ class LoginView extends GetView<LoginController> {
                                     ),
                                     onTap:
                                         () =>
-                                            Get.toNamed(Routes.changePassword),
+                                            Get.toNamed(Routes.forgotPassword),
                                   ),
                                 ],
                               ),
@@ -255,14 +257,15 @@ class LoginView extends GetView<LoginController> {
                               }),
                               UIConstants.spacing.height,
                               Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 10,
+                                  runSpacing: 4,
                                   children: [
                                     Text(
                                       LocaleKeys.doNotHaveAnAccount.tr,
                                       style: AppTextStyle.normalGreenRegular,
                                     ),
-                                    const SizedBox(width: 10),
                                     InkWell(
                                       onTap: () => Get.toNamed(Routes.register),
                                       child: Text(

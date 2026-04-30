@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
+import 'package:schoolapp/views/login/controller.dart';
 
 class InlineLanguageDropdown extends StatelessWidget {
   const InlineLanguageDropdown({super.key});
@@ -10,7 +12,7 @@ class InlineLanguageDropdown extends StatelessWidget {
     final isEnglish = AppConfig.shared.language == Language.en.key;
     final flagPath =
         isEnglish ? AssetPath.englishFlag.path : AssetPath.cambodiaFlag.path;
-    final label = isEnglish ? 'ENG' : 'KH';
+    final label = isEnglish ? 'EN' : 'KH';
 
     return PopupMenuButton<String>(
       tooltip: '',
@@ -19,9 +21,12 @@ class InlineLanguageDropdown extends StatelessWidget {
       onSelected: (value) {
         if (value == Language.en.key) {
           AppConfig.shared.updateLanguage(Language.en.key);
-          return;
+        } else {
+          AppConfig.shared.updateLanguage(Language.kh.key);
         }
-        AppConfig.shared.updateLanguage(Language.kh.key);
+        if (Get.isRegistered<LoginController>()) {
+          Get.find<LoginController>().refreshValidationMessages();
+        }
       },
       itemBuilder:
           (context) => [
@@ -30,6 +35,7 @@ class InlineLanguageDropdown extends StatelessWidget {
               flagPath: AssetPath.englishFlag.path,
               label: 'EN',
             ),
+
             _languageItem(
               value: Language.kh.key,
               flagPath: AssetPath.cambodiaFlag.path,

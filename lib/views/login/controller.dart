@@ -206,10 +206,17 @@ class LoginController extends GetxController {
   void setLoginRole(UserType role) {
     if (selectedLoginRole.value == role) return;
     selectedLoginRole.value = role;
+    formKey.currentState?.reset();
     emailCtl.clear();
     passCtl.clear();
     emailError.value = null;
     passwordError.value = null;
+  }
+
+  void refreshValidationMessages() {
+    emailError.value = null;
+    passwordError.value = null;
+    formKey.currentState?.validate();
   }
 
   Future<dynamic> _loginByRole({
@@ -231,53 +238,25 @@ class LoginController extends GetxController {
     final normalizedPhone = _normalizePhone(loginIdentity);
 
     if (!_isLikelyPhone(loginIdentity)) {
-      return {
-        "success": false,
-        "message": "Please enter a valid phone number",
-      };
+      return {"success": false, "message": "Please enter a valid phone number"};
     }
 
     final attempts = <Map<String, dynamic>>[
-      {
-        "phone": rawPhone,
-        "password": password,
-      },
-      {
-        "phone": normalizedPhone,
-        "password": password,
-      },
-      {
-        "phone_number": rawPhone,
-        "password": password,
-      },
-      {
-        "phone_number": normalizedPhone,
-        "password": password,
-      },
-      {
-        "phone": rawPhone,
-        "phone_number": rawPhone,
-        "password": password,
-      },
+      {"phone": rawPhone, "password": password},
+      {"phone": normalizedPhone, "password": password},
+      {"phone_number": rawPhone, "password": password},
+      {"phone_number": normalizedPhone, "password": password},
+      {"phone": rawPhone, "phone_number": rawPhone, "password": password},
       {
         "phone": normalizedPhone,
         "phone_number": normalizedPhone,
         "password": password,
       },
-      {
-        "username": rawPhone,
-        "password": password,
-      },
-      {
-        "username": normalizedPhone,
-        "password": password,
-      },
+      {"username": rawPhone, "password": password},
+      {"username": normalizedPhone, "password": password},
     ];
 
-    dynamic latestResponse = {
-      "success": false,
-      "message": "Login failed",
-    };
+    dynamic latestResponse = {"success": false, "message": "Login failed"};
 
     for (final payload in attempts) {
       try {
@@ -291,11 +270,9 @@ class LoginController extends GetxController {
           return latestResponse;
         }
       } on d.DioException catch (e) {
-        latestResponse = e.response?.data ??
-            {
-              "success": false,
-              "message": e.message ?? "Login failed",
-            };
+        latestResponse =
+            e.response?.data ??
+            {"success": false, "message": e.message ?? "Login failed"};
       }
     }
 
@@ -312,22 +289,10 @@ class LoginController extends GetxController {
     final normalizedPhone = _normalizePhone(loginIdentity);
 
     if (_isLikelyPhone(loginIdentity)) {
-      attempts.add({
-        "phone": rawIdentity,
-        "password": password,
-      });
-      attempts.add({
-        "phone": normalizedPhone,
-        "password": password,
-      });
-      attempts.add({
-        "phone_number": rawIdentity,
-        "password": password,
-      });
-      attempts.add({
-        "phone_number": normalizedPhone,
-        "password": password,
-      });
+      attempts.add({"phone": rawIdentity, "password": password});
+      attempts.add({"phone": normalizedPhone, "password": password});
+      attempts.add({"phone_number": rawIdentity, "password": password});
+      attempts.add({"phone_number": normalizedPhone, "password": password});
     }
 
     if (_isLikelyEmail(loginIdentity)) {
@@ -337,11 +302,7 @@ class LoginController extends GetxController {
       });
     }
 
-    // Teacher accounts may still authenticate with username/staff code.
-    attempts.add({
-      "username": rawIdentity,
-      "password": password,
-    });
+    attempts.add({"username": rawIdentity, "password": password});
 
     if (attempts.isEmpty) {
       return {
@@ -363,11 +324,9 @@ class LoginController extends GetxController {
           return latestResponse;
         }
       } on d.DioException catch (e) {
-        latestResponse = e.response?.data ??
-            {
-              "success": false,
-              "message": e.message ?? "Login failed",
-            };
+        latestResponse =
+            e.response?.data ??
+            {"success": false, "message": e.message ?? "Login failed"};
       }
     }
     return latestResponse;
@@ -378,9 +337,10 @@ class LoginController extends GetxController {
   }
 
   bool _isLikelyEmail(String text) {
-    return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', caseSensitive: false).hasMatch(
-      text.trim(),
-    );
+    return RegExp(
+      r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+      caseSensitive: false,
+    ).hasMatch(text.trim());
   }
 
   String? validateIdentity(String? text) {

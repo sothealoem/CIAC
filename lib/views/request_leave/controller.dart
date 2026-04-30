@@ -11,7 +11,6 @@ import 'package:schoolapp/models/requestleave/model.dart';
 class RequestLeaveController extends GetxController {
   static const String _pendingCachePrefix = 'pending_leave_requests_';
   static const String _lastLeaveStudentKey = 'last_leave_student_id';
-  static const String _allRequestScope = 'all';
   static const String _allRequestsPath = '/api/v1/parent/leave-requests';
 
   final TextEditingController searchCtl = TextEditingController();
@@ -134,18 +133,37 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<void> fetchRequests() async {
-    const scope = _allRequestScope;
+    final selectedRaw = await _selectedStudentId();
+    final selectedResolved = await _resolveStudentIdForRequest(selectedRaw);
+    final scope =
+        selectedRaw.isEmpty
+            ? (selectedResolved.isEmpty ? 'all' : selectedResolved)
+            : selectedRaw;
+
     var cachedPending = <RequestLeaveModel>[];
     isLoadingRequests.value = true;
     try {
       cachedPending = await _loadCachedPending(scope);
 
+      final query = <String, dynamic>{};
+      if (selectedResolved.isNotEmpty) {
+        query['student_id'] = selectedResolved;
+      } else if (selectedRaw.isNotEmpty) {
+        query['student_id'] = selectedRaw;
+      }
+
       final res = await Get.find<ApiService>().get(
         _allRequestsPath,
+        queryParameters: query.isEmpty ? null : query,
         isShowLoading: false,
       );
 
-      final rows = _extractRows(res.data);
+      var rows = _extractRows(res.data);
+      rows = _filterRowsBySelectedStudent(
+        rows: rows,
+        selectedRaw: selectedRaw,
+        selectedResolved: selectedResolved,
+      );
       final backend = rows.map(RequestLeaveModel.fromJson).toList();
       final merged = _mergeRequests(backend, cachedPending);
       requests.assignAll(merged);
@@ -181,7 +199,9 @@ class RequestLeaveController extends GetxController {
       if (res.data is! Map) {
         return;
       }
-      final model = ParentWithChild.fromJson(Map<String, dynamic>.from(res.data));
+      final model = ParentWithChild.fromJson(
+        Map<String, dynamic>.from(res.data),
+      );
       final students = model.data?.student ?? const <Student>[];
       if (students.isEmpty) {
         return;
@@ -213,7 +233,9 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<RequestLeaveModel?> submitRequest() async {
-    if (startDate.value.isEmpty || endDate.value.isEmpty || leaveType.value.isEmpty) {
+    if (startDate.value.isEmpty ||
+        endDate.value.isEmpty ||
+        leaveType.value.isEmpty) {
       Get.snackbar(
         'Error',
         'Please complete all required fields.',
@@ -281,12 +303,8 @@ class RequestLeaveController extends GetxController {
         reason: reasonController.text.trim(),
         status: 'pending',
       );
-      requests.insert(
-        0,
-        pendingRequest,
-      );
+      requests.insert(0, pendingRequest);
       await _appendCachedPending(studentId, pendingRequest);
-      await _appendCachedPending(_allRequestScope, pendingRequest);
 
       reasonController.clear();
       startDate.value = '';
@@ -509,6 +527,42 @@ class RequestLeaveController extends GetxController {
 
   String _cacheKey(String studentId) => '$_pendingCachePrefix$studentId';
 
+  List<Map<String, dynamic>> _filterRowsBySelectedStudent({
+    required List<Map<String, dynamic>> rows,
+    required String selectedRaw,
+    required String selectedResolved,
+  }) {
+    final raw = selectedRaw.trim();
+    final resolved = selectedResolved.trim();
+    if (raw.isEmpty && resolved.isEmpty) {
+      return rows;
+    }
+
+    bool matches(Map<String, dynamic> row) {
+      final candidates = <String>[
+        (row['student_id'] ?? '').toString().trim(),
+        (row['studentId'] ?? '').toString().trim(),
+        (row['student'] is Map ? row['student']['id'] : '').toString().trim(),
+        (row['admission_no'] ?? '').toString().trim(),
+        (row['student_code'] ?? '').toString().trim(),
+      ]..removeWhere((e) => e.isEmpty || e.toLowerCase() == 'null');
+
+      if (resolved.isNotEmpty && candidates.contains(resolved)) {
+        return true;
+      }
+      if (raw.isNotEmpty && candidates.contains(raw)) {
+        return true;
+      }
+      return false;
+    }
+
+    final filtered = rows.where(matches).toList();
+    if (filtered.isEmpty && rows.isNotEmpty) {
+      return rows;
+    }
+    return filtered;
+  }
+
   Future<String> _resolveStudentIdForRequest(String selected) async {
     final raw = selected.trim();
     if (raw.isEmpty) {
@@ -526,7 +580,9 @@ class RequestLeaveController extends GetxController {
       if (res.data is! Map) {
         return '';
       }
-      final model = ParentWithChild.fromJson(Map<String, dynamic>.from(res.data));
+      final model = ParentWithChild.fromJson(
+        Map<String, dynamic>.from(res.data),
+      );
       final students = model.data?.student ?? const <Student>[];
       for (final s in students) {
         final id = (s.id?.toString() ?? '').trim();

@@ -6,9 +6,6 @@ import 'package:schoolapp/models/attendance_summery/attendance_summery.dart'
 import 'package:schoolapp/models/models.dart';
 
 class AttendanceController extends GetxController {
-  static const String _attendanceSummaryPath =
-      '/api/v1/parent/attendance-summary';
-
   final TextEditingController searchCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final RxList<TrackingModel> trackings = <TrackingModel>[].obs;
@@ -16,6 +13,7 @@ class AttendanceController extends GetxController {
       <attendance_summary.Data>[].obs;
   final RxBool isLoadingSummary = true.obs;
   final RxString summaryError = ''.obs;
+  final RxnString selectedStatusFilter = RxnString();
 
   bool isDone = false;
   var selectedMonth = 'Jan'.obs;
@@ -53,16 +51,33 @@ class AttendanceController extends GetxController {
   }
 
   Future<void> filter() async {
+    selectedStatusFilter.value = null;
     await fetchAttendanceSummary();
+  }
+
+  void toggleStatusFilter(String status) {
+    if (selectedStatusFilter.value == status) {
+      selectedStatusFilter.value = null;
+      return;
+    }
+    selectedStatusFilter.value = status;
   }
 
   Future<void> fetchAttendanceSummary() async {
     isLoadingSummary.value = true;
     summaryError.value = '';
     try {
+      final studentId = await _resolveStudentId();
+      final queryParams = <String, dynamic>{
+        'student_id': studentId,
+        'class_id': null,
+        'start_date': null,
+        'end_date': null,
+      };
+
       final res = await Get.find<ApiService>().get(
-        _attendanceSummaryPath,
-        queryParameters: null,
+        EndPoints.attendanceSummary,
+        queryParameters: queryParams,
         isShowLoading: false,
       );
 
@@ -74,7 +89,18 @@ class AttendanceController extends GetxController {
       final model = attendance_summary.AttendanceSummery.fromJson(
         Map<String, dynamic>.from(res.data as Map),
       );
-      summaries.value = model.data ?? const <attendance_summary.Data>[];
+      final summary = model.summary ?? const <attendance_summary.Data>[];
+      final data = model.data ?? const <attendance_summary.Data>[];
+      final listData =
+          model.attendancesList?.data ?? const <attendance_summary.Data>[];
+
+      if (summary.isNotEmpty) {
+        summaries.value = summary;
+      } else if (listData.isNotEmpty) {
+        summaries.value = listData;
+      } else {
+        summaries.value = data;
+      }
     } catch (e) {
       summaries.value = const <attendance_summary.Data>[];
       summaryError.value = 'Failed to load attendance summary';
@@ -95,5 +121,25 @@ class AttendanceController extends GetxController {
       total += int.tryParse((pick(item) ?? '0').trim()) ?? 0;
     }
     return total;
+  }
+
+  Future<int?> _resolveStudentId() async {
+    final keys = <String>[
+      'selected_child_id',
+      'student_info_id',
+      'last_leave_student_id',
+    ];
+
+    for (final key in keys) {
+      final value = (await SharedPreferencesManager.get(key) ?? '')
+          .toString()
+          .trim();
+      if (value.isEmpty) continue;
+      final parsed = int.tryParse(value);
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+    return null;
   }
 }

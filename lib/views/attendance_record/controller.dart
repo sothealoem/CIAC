@@ -46,13 +46,18 @@ class AttendanceRecordController extends GetxController {
   Future<void> loadAttendanceLogs() async {
     try {
       isLoading.value = true;
+      final selectedStudentId = await _selectedStudentId();
+      final params = <String, dynamic>{};
+      if (selectedDate.value.trim().isNotEmpty) {
+        params['date'] = selectedDate.value;
+      }
+      if (selectedStudentId.isNotEmpty) {
+        params['student_id'] = selectedStudentId;
+      }
 
       final res = await Get.find<ApiService>().get(
         EndPoints.attendanceRecord,
-        queryParameters:
-            selectedDate.value.trim().isEmpty
-                ? null
-                : {'date': selectedDate.value},
+        queryParameters: params.isEmpty ? null : params,
         isShowLoading: false,
       );
       final payload = res.data;
@@ -278,5 +283,18 @@ class AttendanceRecordController extends GetxController {
     lastPage.value = 1;
     perPage.value = 0;
     total.value = 0;
+  }
+
+  Future<String> _selectedStudentId() async {
+    final selected =
+        (await SharedPreferencesManager.get('selected_child_id') ?? '')
+            .toString()
+            .trim();
+    if (selected.isNotEmpty) {
+      return selected;
+    }
+    return (await SharedPreferencesManager.get('student_info_id') ?? '')
+        .toString()
+        .trim();
   }
 }

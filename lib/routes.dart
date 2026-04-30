@@ -14,6 +14,7 @@ import 'package:schoolapp/views/event_gallery/view.dart';
 import 'package:schoolapp/views/language/binding.dart';
 import 'package:schoolapp/views/language/view.dart';
 import 'package:schoolapp/views/login/binding.dart';
+import 'package:schoolapp/views/login/forgot_password_view.dart';
 import 'package:schoolapp/views/login/view.dart';
 import 'package:schoolapp/views/notification/binding.dart';
 import 'package:schoolapp/views/notification/view.dart';
@@ -49,6 +50,7 @@ class Routes {
   static const String paymentDetail = '/payment-detail';
   static const String changePassword = '/change-password';
   static const String login = '/login';
+  static const String forgotPassword = '/forgot-password';
   static const String loginVaiEmail = '/login-via-email';
   static const String register = '/register';
   static const String notification = '/notification';
@@ -101,6 +103,7 @@ class Routes {
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
+    GetPage(name: forgotPassword, page: () => const ForgotPasswordView()),
     GetPage(
       name: register,
       page: () => const RegisterView(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolapp/core/widgets/month_filter_dropdown.dart';
 
 class StandingsCardWidget extends StatefulWidget {
   const StandingsCardWidget({super.key});
@@ -57,6 +58,7 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
                   if (value == null) return;
                   setState(() => _selectedMonth = value);
                 },
+                isMonth: true,
               ),
               const SizedBox(width: 8),
               _buildSmallDropdown(
@@ -131,46 +133,67 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
     required String value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
+    bool isMonth = false,
   }) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: value,
-            isExpanded: true,
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-            dropdownColor: Colors.white,
-            menuMaxHeight: 220,
-            borderRadius: BorderRadius.circular(10),
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF1F2937),
-              fontFamily: _khmerFont,
-              fontWeight: FontWeight.w600,
-            ),
-            items:
-                items
-                    .map(
-                      (item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: _khmerFont),
-                        ),
-                      ),
-                    )
-                    .toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ),
+      child:
+          isMonth
+              ? MonthFilterDropdown(
+                months: items,
+                selectedMonth: value,
+                onSelected: (selected) => onChanged(selected),
+                showFilterIcon: false,
+                borderColor: Colors.grey.shade300,
+                backgroundColor: Colors.grey.shade100,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF1F2937),
+                  fontFamily: _khmerFont,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+              : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: value,
+                    isExpanded: true,
+                    icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                    dropdownColor: Colors.white,
+                    menuMaxHeight: 220,
+                    borderRadius: BorderRadius.circular(10),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF1F2937),
+                      fontFamily: _khmerFont,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    items:
+                        items
+                            .map(
+                              (item) => DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontFamily: _khmerFont),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: onChanged,
+                  ),
+                ),
+              ),
     );
   }
 

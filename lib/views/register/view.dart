@@ -1,214 +1,352 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/login/widgets/inline_language_dropdown.dart';
+import 'package:schoolapp/views/login/widgets/role_switch_label.dart';
 import 'package:schoolapp/views/login/widgets/socialButtonCustom.dart';
 import 'package:schoolapp/views/views.dart';
 
 class RegisterView extends GetView<RegisterController> {
   const RegisterView({super.key});
 
-  void registerTab() {
-    if (!controller.formKey.currentState!.validate()) {
-      return;
-    }
-    controller.formKey.currentState!.save();
+  void registerTap() async {
+    await controller.register();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(title: Text(LocaleKeys.register.tr)),
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Form(
-            key: controller.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                UIConstants.spacingMedium.height,
-                // logo
-                const LogoWidget(),
-                Text("Sign Up", style: AppTextStyle.hugePrimarySemiBold),
-                SizedBox(height: 10.0),
-
-                Center(
-                  child: Text(
-                    "Please enter your information for create \nyour account.",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.normalGreenBold,
-                  ),
-                ),
-
-                UIConstants.spacing.height,
-
-                Padding(
-                  padding: UIConstants.spacing.padHorizontal,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: bottomInset + 12),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Form(
+                  key: controller.formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CustomTextField(
-                        controller: controller.nameCon,
-                        hintText: LocaleKeys.enterYourName.tr,
-                        validator: (text) => FormValidator.empty(text),
-                        textInputAction: TextInputAction.next,
-                        prefixIcon: Icon(Icons.person, color: AppColor.primary),
-                      ),
-
                       UIConstants.spacing.height,
-                      CustomTextField(
-                        prefixIcon: const Icon(
-                          Icons.email,
-                          color: AppColor.primary,
-                        ),
-                        controller: controller.email,
-                        hintText: LocaleKeys.email.tr,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (text) => FormValidator.email(text),
-                      ),
-                      // CustomTextField(
-                      //   prefixIcon: Icon(Icons.email),
-                      //   controller: controller.email,
-                      //   hintText: LocaleKeys.email.tr,
-
-                      //   // controller.isLogVaiEmail.value
-                      //   //     ? LocaleKeys.email.tr
-                      //   //     : LocaleKeys.phoneNumber.tr,
-                      //   validator: (text) {
-                      //     if (controller.isLogVaiEmail.value) {
-                      //       return FormValidator.email(text); // Validate email
-                      //     }
-                      //     // return FormValidator.phoneNumber(text);
-                      //   },
-                      // ),
-
-                      // CustomTextField(
-                      //   controller: controller.phoneNumberCon,
-                      //   hintText: LocaleKeys.phoneNumber.tr,
-                      //   validator: (text) => FormValidator.phoneNumber(text),
-                      //   inputFormatters: [FormValidator.maskInputPhoneNumber()],
-                      //   textInputAction: TextInputAction.next,
-                      //   keyboardType: TextInputType.phone,
-                      //   prefixIcon: Icon(Icons.email, color: AppColor.primary),
-                      // ),
-                      UIConstants.spacing.height,
-                      // Phone number
-                      CustomTextField(
-                        controller: controller.phoneNumberCon,
-                        hintText: LocaleKeys.phoneNumber.tr,
-                        validator: (text) => FormValidator.phoneNumber(text),
-                        inputFormatters: [FormValidator.maskInputPhoneNumber()],
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.phone,
-                        prefixIcon: Icon(Icons.phone, color: AppColor.primary),
-                      ),
-
-                      UIConstants.spacing.height,
-
-                      Obx(
-                        () => CustomTextField(
-                          prefixIcon: Icon(Icons.lock, color: AppColor.primary),
-                          controller: controller.passCon,
-                          validator: (text) => FormValidator.empty(text),
-
-                          hintText: LocaleKeys.password.tr,
-
-                          obscureText: controller.isPassVisible.value,
-                          suffixIcon: InkWell(
-                            onTap:
-                                () =>
-                                    controller.isPassVisible.value =
-                                        !controller.isPassVisible.value,
-                            child: Icon(
-                              controller.isPassVisible.value
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: AppColor.primary,
-                            ),
+                      const SizedBox(height: 40.0),
+                      Hero(
+                        tag: 'app_logo_hero',
+                        child: ClipOval(
+                          child: Image.asset(
+                            AssetPath.appLogo.path,
+                            height: 110,
+                            width: 110,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
-                      UIConstants.spacing.height,
-
-                      // Confirm password
-                      Obx(
-                        () => CustomTextField(
-                          controller: controller.confirmCon,
-                          hintText: LocaleKeys.confirmPassword.tr,
-                          validator:
-                              (text) => FormValidator.equalValues(
-                                original: controller.passCon.text,
-                                confirm: text,
+                      10.height,
+                      Container(
+                        margin: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: UIConstants.spacing.padHorizontal,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 10.0),
+                              Text(
+                                LocaleKeys.signUp.tr,
+                                style: AppTextStyle.hugePrimaryMediumBold,
                               ),
-                          textInputAction: TextInputAction.next,
-                          prefixIcon: Icon(Icons.lock, color: AppColor.primary),
-                          suffixIcon: InkWell(
-                            onTap:
-                                () =>
-                                    controller.isPassVisibleConfirm.value =
-                                        !controller.isPassVisibleConfirm.value,
-                            child: Icon(
-                              controller.isPassVisibleConfirm.value
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: AppColor.primary,
-                            ),
+                              UIConstants.midSpacing.height,
+                              Text(
+                                LocaleKeys.loginContinueMessage.tr,
+                                style: AppTextStyle.normalGreenRegular,
+                                textAlign: TextAlign.center,
+                              ),
+                              UIConstants.spacing.height,
+                              Obx(() {
+                                final selected =
+                                    controller.selectedRegisterRole.value;
+                                return Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    RoleSwitchLabel(
+                                      label: LocaleKeys.teacher.tr,
+                                      isSelected: selected == UserType.teacher,
+                                      onTap:
+                                          () => controller.setRegisterRole(
+                                            UserType.teacher,
+                                          ),
+                                    ),
+                                    RoleSwitchLabel(
+                                      label: LocaleKeys.parent.tr,
+                                      isSelected: selected == UserType.parent,
+                                      onTap:
+                                          () => controller.setRegisterRole(
+                                            UserType.parent,
+                                          ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                              const SizedBox(height: 15),
+                              Obx(
+                                () => CustomTextField(
+                                  key: ValueKey(
+                                    'register_name_${controller.selectedRegisterRole.value.key}',
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.person,
+                                    color: AppColor.primary,
+                                  ),
+                                  controller: controller.nameCon,
+                                  hintText: LocaleKeys.enterYourName.tr,
+                                  errorText: controller.nameError.value,
+                                  onChanged:
+                                      (val) =>
+                                          controller.nameError.value = null,
+                                  validator: FormValidator.empty,
+                                ),
+                              ),
+                              UIConstants.spacing.height,
+                              Obx(() {
+                                final isParent =
+                                    controller.selectedRegisterRole.value ==
+                                    UserType.parent;
+                                return CustomTextField(
+                                  key: ValueKey(
+                                    'register_identity_${controller.selectedRegisterRole.value.key}',
+                                  ),
+                                  prefixIcon: Icon(
+                                    isParent ? Icons.phone : Icons.person,
+                                    color: AppColor.primary,
+                                  ),
+                                  controller: controller.identityCon,
+                                  hintText:
+                                      isParent
+                                          ? LocaleKeys.phoneNumber.tr
+                                          : LocaleKeys.phoneOrEmail.tr,
+                                  errorText: controller.identityError.value,
+                                  onChanged:
+                                      (val) =>
+                                          controller.identityError.value = null,
+                                  keyboardType:
+                                      isParent
+                                          ? TextInputType.phone
+                                          : TextInputType.text,
+                                  inputFormatters:
+                                      isParent
+                                          ? [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                              12,
+                                            ),
+                                          ]
+                                          : null,
+                                  validator: controller.validateIdentity,
+                                );
+                              }),
+                              UIConstants.spacing.height,
+                              Obx(
+                                () => CustomTextField(
+                                  prefixIcon: const Icon(
+                                    Icons.lock,
+                                    color: AppColor.primary,
+                                  ),
+                                  controller: controller.passCon,
+                                  hintText: LocaleKeys.password.tr,
+                                  errorText: controller.passwordError.value,
+                                  onChanged:
+                                      (val) =>
+                                          controller.passwordError.value = null,
+                                  obscureText: controller.isPassVisible.value,
+                                  suffixIcon: InkWell(
+                                    onTap:
+                                        () =>
+                                            controller.isPassVisible.value =
+                                                !controller.isPassVisible.value,
+                                    child: Icon(
+                                      controller.isPassVisible.value
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: AppColor.primary,
+                                    ),
+                                  ),
+                                  validator: FormValidator.empty,
+                                ),
+                              ),
+                              UIConstants.spacing.height,
+                              Obx(
+                                () => CustomTextField(
+                                  prefixIcon: const Icon(
+                                    Icons.lock,
+                                    color: AppColor.primary,
+                                  ),
+                                  controller: controller.confirmCon,
+                                  hintText: LocaleKeys.confirmPassword.tr,
+                                  errorText:
+                                      controller.confirmPasswordError.value,
+                                  onChanged:
+                                      (val) =>
+                                          controller
+                                              .confirmPasswordError
+                                              .value = null,
+                                  obscureText:
+                                      controller.isPassVisibleConfirm.value,
+                                  suffixIcon: InkWell(
+                                    onTap:
+                                        () =>
+                                            controller
+                                                .isPassVisibleConfirm
+                                                .value = !controller
+                                                    .isPassVisibleConfirm
+                                                    .value,
+                                    child: Icon(
+                                      controller.isPassVisibleConfirm.value
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: AppColor.primary,
+                                    ),
+                                  ),
+                                  validator:
+                                      (text) => FormValidator.equalValues(
+                                        original: controller.passCon.text,
+                                        confirm: text,
+                                      ),
+                                ),
+                              ),
+                              UIConstants.spacing.height,
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                runSpacing: 8,
+                                spacing: 8,
+                                children: [
+                                  const InlineLanguageDropdown(),
+                                  InkWell(
+                                    onTap: Get.back,
+                                    child: Text(
+                                      LocaleKeys.login.tr,
+                                      style: const TextStyle(
+                                        color: AppColor.primary,
+                                        fontSize: 14,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              UIConstants.spacing.height,
+                              Obx(() {
+                                final isLoading = controller.isLoading.value;
+                                return SizedBox(
+                                  width: double.infinity,
+                                  height: UIConstants.btnHeight,
+                                  child: ElevatedButton(
+                                    onPressed: isLoading ? null : registerTap,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColor.primary,
+                                      disabledBackgroundColor: AppColor.primary
+                                          .withOpacity(0.8),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            UIConstants.radius.radiusAll,
+                                      ),
+                                    ),
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 500,
+                                      ),
+                                      child:
+                                          isLoading
+                                              ? Row(
+                                                key: const ValueKey('loading'),
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2.4,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                            Color
+                                                          >(Colors.white),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    LocaleKeys.signingIn.tr,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              : Text(
+                                                LocaleKeys.signUp.tr,
+                                                key: const ValueKey('idle'),
+                                                style:
+                                                    AppTextStyle
+                                                        .normalWhiteBold,
+                                              ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                              UIConstants.spacing.height,
+                              Center(
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 10,
+                                  runSpacing: 4,
+                                  children: [
+                                    Text(
+                                      'Have an account?',
+                                      style: AppTextStyle.normalGreenRegular,
+                                    ),
+                                    InkWell(
+                                      onTap: Get.back,
+                                      child: Text(
+                                        LocaleKeys.login.tr,
+                                        style: const TextStyle(
+                                          color: AppColor.primary,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                            ],
                           ),
                         ),
                       ),
+                      UIConstants.spacing.height,
+                      const SizedBox(height: 12),
+                      const SocialButtonCustomWidget(),
                     ],
                   ),
                 ),
-
-                10.height,
-
-                Padding(
-                  padding: UIConstants.spacing.padHorizontal,
-                  child: PrimaryButton(text: 'Sign Up', onPressed: registerTab),
-                ),
-                UIConstants.spacing.height,
-
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Have an account?",
-                        style: AppTextStyle.normalGreenRegular,
-                        //style: TextStyle(color: AppColor.primary),
-                      ),
-                      SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/login');
-                          print("welcome Log In!");
-                        },
-
-                        child: Text(
-                          "Log In",
-                          style: TextStyle(
-                            color: AppColor.primary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                UIConstants.radius.height,
-                Center(
-                  child: Text(
-                    "Or connect with?",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.normalGreenRegular,
-                  ),
-                ),
-                UIConstants.spacing.height,
-                SocialButtonCustomWidget(),
-                UIConstants.spacing.height,
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -37,10 +37,14 @@ class AttendanceView extends GetView<AttendanceController> {
 
           const CustomIndicator(progress: 1 / 4),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                decoration: const BoxDecoration(),
-                child: const AttendanceCardWidget(),
+            child: RefreshIndicator(
+              onRefresh: controller.fetchAttendanceSummary,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  decoration: const BoxDecoration(),
+                  child: const AttendanceCardWidget(),
+                ),
               ),
             ),
           ),

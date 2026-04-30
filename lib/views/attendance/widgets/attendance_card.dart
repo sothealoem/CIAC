@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolapp/core/core.dart';
@@ -23,21 +23,30 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
                   label: 'Present',
                   count: controller.totalPresent.toString(),
                   color: Colors.green,
+                  isActive: controller.selectedStatusFilter.value == 'Present',
+                  onTap: () => controller.toggleStatusFilter('Present'),
                 ),
                 SummaryItem(
                   label: 'Late',
                   count: controller.totalLate.toString(),
                   color: Colors.orange,
+                  isActive: controller.selectedStatusFilter.value == 'Late',
+                  onTap: () => controller.toggleStatusFilter('Late'),
                 ),
                 SummaryItem(
                   label: 'Absent',
                   count: controller.totalAbsent.toString(),
                   color: Colors.red,
+                  isActive: controller.selectedStatusFilter.value == 'Absent',
+                  onTap: () => controller.toggleStatusFilter('Absent'),
                 ),
                 SummaryItem(
                   label: 'Permission',
                   count: controller.totalPermission.toString(),
                   color: Colors.blue,
+                  isActive:
+                      controller.selectedStatusFilter.value == 'Permission',
+                  onTap: () => controller.toggleStatusFilter('Permission'),
                 ),
               ],
             ),
@@ -61,9 +70,45 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
               );
             }
 
+            var cards = controller.summaries
+                .expand(_expandCards)
+                .toList(growable: false);
+
+            final selected = controller.selectedStatusFilter.value;
+            if (selected != null && selected.isNotEmpty) {
+              if (selected.toLowerCase() == 'present') {
+                cards =
+                    cards
+                        .where(
+                          (card) =>
+                              card.status.toLowerCase() == 'present' ||
+                              card.status.toLowerCase() == 'late',
+                        )
+                        .toList(growable: false);
+              } else {
+                cards =
+                    cards
+                        .where(
+                          (card) =>
+                              card.status.toLowerCase() ==
+                              selected.toLowerCase(),
+                        )
+                        .toList(growable: false);
+              }
+            }
+
+            if (cards.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Text(
+                  'No attendance logs found.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              );
+            }
+
             return Column(
-              children:
-                  controller.summaries.map((item) => _buildCard(item)).toList(),
+              children: cards.map(_buildCard).toList(growable: false),
             );
           }),
         ],
@@ -71,12 +116,11 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
     );
   }
 
-  Widget _buildCard(attendance_summary.Data item) {
-    final className = (item.classroom ?? '').trim();
-    final section = (item.section ?? '').trim();
-    final dateText = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  List<_AttendanceStatusCardData> _expandCards(attendance_summary.Data item) {
     final studentName =
         (item.firstnamekh ?? item.firstname ?? 'Student').trim();
+    final className = (item.classroom ?? '').trim();
+    final section = (item.section ?? '').trim();
     final classSection =
         className.isEmpty && section.isEmpty
             ? '-'
@@ -84,66 +128,81 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
             ? className
             : '$className "$section"';
 
+    final present = int.tryParse((item.totalPresence ?? '0').trim()) ?? 0;
+    final late = int.tryParse((item.totalLate ?? '0').trim()) ?? 0;
+    final absent = int.tryParse((item.totalAbsent ?? '0').trim()) ?? 0;
+    final permission = int.tryParse((item.totalPermission ?? '0').trim()) ?? 0;
+
+    final list = <_AttendanceStatusCardData>[];
+
+    void addIfPositive(int count, String status) {
+      if (count <= 0) return;
+      list.add(
+        _AttendanceStatusCardData(
+          studentName: studentName,
+          classSection: classSection,
+          dateText: DateFormat('dd MMM yyyy').format(DateTime.now()),
+          status: status,
+          count: count,
+        ),
+      );
+    }
+
+    addIfPositive(absent, 'Absent');
+    addIfPositive(permission, 'Permission');
+    addIfPositive(late, 'Late');
+    addIfPositive(present, 'Present');
+
+    return list;
+  }
+
+  Widget _buildCard(_AttendanceStatusCardData card) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F3F3),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFD6D6D6)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x16000000),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '$studentName   ថ្នាក់ទី $classSection',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    fontFamily: 'Battambang',
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_month, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      dateText,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'Battambang',
-                      ),
-                    ),
-                  ],
-                ),
+                _line('និស្ស័យឈ្មោះ', card.studentName),
+                const SizedBox(height: 4),
+                _line('ថ្នាក់រៀន', card.classSection),
+                const SizedBox(height: 4),
+                _line('កាលបរិច្ឆេទ', card.dateText),
               ],
             ),
           ),
           const SizedBox(width: 10),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            height: 34,
-            width: 88.w,
+            margin: const EdgeInsets.only(top: 18),
+            width: 110,
+            height: 38,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFF006E6D),
-              borderRadius: BorderRadius.circular(9),
+              color: _statusColor(card.status),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              _statusTextKh(item),
+              '${_statusTextKh(card.status)}',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 12,
                 fontFamily: 'Battambang',
                 fontWeight: FontWeight.w600,
+                fontSize: 12,
               ),
             ),
           ),
@@ -152,51 +211,75 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
     );
   }
 
-  Color _statusColor(attendance_summary.Data item) {
-    final absent = int.tryParse((item.totalAbsent ?? '0').trim()) ?? 0;
-    final permission = int.tryParse((item.totalPermission ?? '0').trim()) ?? 0;
-    final late = int.tryParse((item.totalLate ?? '0').trim()) ?? 0;
-
-    if (absent > 0) {
-      return Colors.red;
-    }
-    if (permission > 0) {
-      return Colors.blue;
-    }
-    if (late > 0) {
-      return Colors.orange;
-    }
-    return Colors.green;
+  Widget _line(String label, String value) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 88,
+          child: Text(
+            '$label:',
+            style: const TextStyle(
+              fontFamily: 'Battambang',
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Battambang',
+              fontSize: 13,
+              color: Color(0xFF555555),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  String _statusText(attendance_summary.Data item) {
-    final absent = int.tryParse((item.totalAbsent ?? '0').trim()) ?? 0;
-    final permission = int.tryParse((item.totalPermission ?? '0').trim()) ?? 0;
-    final late = int.tryParse((item.totalLate ?? '0').trim()) ?? 0;
-
-    if (absent > 0) {
-      return 'Absent';
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'Late':
+        return Colors.orange;
+      case 'Absent':
+        return Colors.red;
+      case 'Permission':
+        return Colors.blue;
+      default:
+        return const Color(0xFF4CAF50);
     }
-    if (permission > 0) {
-      return 'Permission';
-    }
-    if (late > 0) {
-      return 'Late';
-    }
-    return 'Present';
   }
 
-  String _statusTextKh(attendance_summary.Data item) {
-    final status = _statusText(item);
+  String _statusTextKh(String status) {
     switch (status) {
       case 'Late':
         return 'យឺត';
       case 'Absent':
         return 'អវត្តមាន';
       case 'Permission':
-        return 'សុំច្បាប់';
+        return 'ច្បាប់';
       default:
         return 'វត្តមាន';
     }
   }
+}
+
+class _AttendanceStatusCardData {
+  const _AttendanceStatusCardData({
+    required this.studentName,
+    required this.classSection,
+    required this.dateText,
+    required this.status,
+    required this.count,
+  });
+
+  final String studentName;
+  final String classSection;
+  final String dateText;
+  final String status;
+  final int count;
 }
