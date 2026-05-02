@@ -4,6 +4,8 @@ import 'package:schoolapp/views/views.dart';
 class DashbordBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<DashboardController>(() => DashboardController());
+    if (!Get.isRegistered<DashboardController>()) {
+      Get.lazyPut<DashboardController>(() => DashboardController(), fenix: true);
+    }
   }
 }

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:schoolapp/core/core.dart';
 
 class RoleSwitchLabel extends StatelessWidget {
   const RoleSwitchLabel({
     super.key,
     required this.label,
+    required this.icon,
     required this.isSelected,
     required this.onTap,
   });
 
   final String label;
+  final IconData icon;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -19,21 +20,27 @@ class RoleSwitchLabel extends StatelessWidget {
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          color: isSelected ? AppColor.primary.withOpacity(0.12) : Colors.white,
-          border: Border.all(
-            color: isSelected ? AppColor.primary : Colors.grey.shade300,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? AppColor.primary : Colors.black54,
-          ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? Colors.white : const Color(0xFF8B90A0),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isSelected ? Colors.white : const Color(0xFF8B90A0),
+              ),
+            ),
+          ],
         ),
       ),
     );

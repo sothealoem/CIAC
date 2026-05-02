@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart' as d;
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/services/end_points.dart';
 import 'package:schoolapp/core/utils/exception_manager.dart';
@@ -8,7 +9,6 @@ import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart' as d;
 
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/dialog_manager.dart';
@@ -49,8 +49,6 @@ class LoginController extends GetxController {
         loginIdentity: loginIdentity,
         password: password,
       );
-      print("LOGIN RESPONSE: $response");
-
       if (response == null) {
         DialogManager.showDialog(
           title: "Error",
@@ -78,7 +76,6 @@ class LoginController extends GetxController {
         return;
       }
 
-      ///  extract values safely
       final String token = data['token']?.toString() ?? '';
       final String role = (data['role'] ?? '').toString().toLowerCase();
       final String name = data['name']?.toString() ?? '';
@@ -126,15 +123,13 @@ class LoginController extends GetxController {
         return;
       }
 
-      // Keep role locally so start screen can build correct tabs immediately.
       UserRepository.shared.setUserType(role);
 
-      ///  SET NAME (clean & safe)
-      final dashboardController = Get.find<DashboardController>();
-      dashboardController.userName.value = name;
-      print("CONTROLLER NAME: ${dashboardController.userName.value}");
-
-      ///  save token
+      if (Get.isRegistered<DashboardController>()) {
+        final dashboardController = Get.find<DashboardController>();
+        dashboardController.userName.value = name;
+        await dashboardController.fetchSliders();
+      }
       AppConfig.shared.token = token;
 
       await SharedPreferencesManager.setValue('token', token);
@@ -149,14 +144,10 @@ class LoginController extends GetxController {
         scannerOwnerId,
       );
 
-      // Ensure locale is refreshed for the authenticated area as well.
       Get.updateLocale(AppConfig.shared.languageLocale);
 
-      /// navigate
       Get.offAllNamed(Routes.start);
     } catch (e) {
-      print("LOGIN ERROR: $e");
-
       DialogManager.showDialog(
         title: "Error",
         subTitle: "Something went wrong. Please try again.",
@@ -168,7 +159,6 @@ class LoginController extends GetxController {
     }
   }
 
-  ///  logout
   Future<void> logout() async {
     await SharedPreferencesManager.clear();
     AppConfig.shared.token = '';
@@ -304,13 +294,6 @@ class LoginController extends GetxController {
 
     attempts.add({"username": rawIdentity, "password": password});
 
-    if (attempts.isEmpty) {
-      return {
-        "success": false,
-        "message": "Please enter username, phone number, or email",
-      };
-    }
-
     dynamic latestResponse;
     for (final payload in attempts) {
       try {
@@ -352,9 +335,6 @@ class LoginController extends GetxController {
     final emptyCheck = FormValidator.empty(identity);
     if (emptyCheck != null) return emptyCheck;
 
-    if (_isLikelyPhone(identity) || _isLikelyEmail(identity)) {
-      return null;
-    }
     return null;
   }
 

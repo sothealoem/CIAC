@@ -32,6 +32,11 @@ class CustomTextField extends StatelessWidget {
     this.enable = true,
     this.hintStyle = AppTextStyle.normalLightGreyRegular,
     this.filled,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.enabledBorderColor,
+    this.contentPadding,
   });
 
   final bool obscureText;
@@ -61,9 +66,17 @@ class CustomTextField extends StatelessWidget {
   final bool enable;
   final TextStyle hintStyle;
   final bool? filled;
+  final BorderRadius? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+  final Color? enabledBorderColor;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
+    final fieldRadius = borderRadius ?? UIConstants.radius.radiusAll;
+    final idleBorderColor = enabledBorderColor ?? borderColor ?? AppColor.primary;
+    final activeBorderColor = focusedBorderColor ?? borderColor ?? AppColor.primary;
     return TextFormField(
       textInputAction: textInputAction,
       key: key,
@@ -83,7 +96,7 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
-        contentPadding: 15.padHorizontal,
+        contentPadding: contentPadding ?? 15.padHorizontal,
         hintText: hintText,
         filled: filled,
         fillColor: AppColor.white,
@@ -91,27 +104,27 @@ class CustomTextField extends StatelessWidget {
         suffixIconColor: AppColor.primaryText,
         errorStyle: AppTextStyle.smallRedRegular,
         border: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColor.primary, width: 1),
-          borderRadius: UIConstants.radius.radiusAll,
+          borderSide: BorderSide(color: activeBorderColor, width: 1),
+          borderRadius: fieldRadius,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: UIConstants.radius.radiusAll,
-          borderSide: const BorderSide(color: AppColor.primary, width: 1),
+          borderRadius: fieldRadius,
+          borderSide: BorderSide(color: activeBorderColor, width: 1.2),
         ),
         disabledBorder: OutlineInputBorder(
-          borderRadius: UIConstants.radius.radiusAll,
-          borderSide: const BorderSide(color: AppColor.primary, width: 1),
+          borderRadius: fieldRadius,
+          borderSide: BorderSide(color: idleBorderColor, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: UIConstants.radius.radiusAll,
-          borderSide: const BorderSide(color: AppColor.primary, width: 1),
+          borderRadius: fieldRadius,
+          borderSide: BorderSide(color: idleBorderColor, width: 1),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: UIConstants.radius.radiusAll,
+          borderRadius: fieldRadius,
           borderSide: const BorderSide(color: AppColor.red, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: UIConstants.radius.radiusAll,
+          borderRadius: fieldRadius,
           borderSide: const BorderSide(color: AppColor.red, width: 1),
         ),
         errorText: errorText,

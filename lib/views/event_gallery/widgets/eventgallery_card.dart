@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:schoolapp/core/core.dart';
 
-class EventGalleryCardWidget extends StatelessWidget {
-  const EventGalleryCardWidget({super.key});
+class ActivityCardWidget extends StatelessWidget {
+  const ActivityCardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,18 +10,16 @@ class EventGalleryCardWidget extends StatelessWidget {
       padding: 5.padAll,
       margin: 5.padAll,
       child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Number of columns in the grid
-          crossAxisSpacing: 10, // Spacing between columns
-          mainAxisSpacing: 10, // Spacing between rows
-          childAspectRatio: 1.0, // Ratio of width to height for grid cells
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1.0,
         ),
         itemBuilder: (context, index) {
-          return YourGridItemWidget(
-            index: index,
-          ); // Replace with your grid item widget
+          return YourGridItemWidget(index: index);
         },
-        itemCount: 10, // Replace with the actual number of items in your grid
+        itemCount: 10,
       ),
     );
   }
@@ -42,7 +40,7 @@ class YourGridItemWidget extends StatelessWidget {
       child: Center(
         child: Text(
           'Item $index',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,

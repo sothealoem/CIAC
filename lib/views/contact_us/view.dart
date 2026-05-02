@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/views/login/widgets/socialButtonCustom.dart';
 import 'package:schoolapp/views/views.dart';
 
 class ContactUsView extends GetView<ContactUsController> {
@@ -19,17 +18,14 @@ class ContactUsView extends GetView<ContactUsController> {
       backgroundColor: const Color(0xFFF7F7F7),
       body: Obx(() {
         final data = ctl.contactUs.value;
-        final enName = _clean(
-          data?.englishName,
-          fallback: 'លោកអ្នក អាចទាក់ទងមកកាន់ពួកយើងតាមរយៈទីតាំងខាងក្រោម',
-        );
         final address = _clean(data?.address, fallback: 'Phnom Penh, Cambodia');
-        final phone = _clean(data?.phone, fallback: '096342730');
-        final email = _clean(data?.email, fallback: 'info@softcreative.biz');
-        final website = _clean(data?.website, fallback: 'www.softcreative.biz');
-        final mapUrl = _socialOrDefault(
-          data?.mapUrl,
-          'https://maps.google.com/?q=11.5335286,104.881178',
+        final phone = _clean(data?.phone, fallback: '');
+        final email = _clean(data?.email, fallback: '');
+        final mapUrl = _ensureHttp(
+          _clean(
+            data?.mapUrl,
+            fallback: 'https://maps.google.com/?q=11.5335286,104.881178',
+          ),
         );
 
         return SingleChildScrollView(
@@ -38,100 +34,55 @@ class ContactUsView extends GetView<ContactUsController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                enName,
+                LocaleKeys.contactUs.tr,
                 style: const TextStyle(
                   color: Color(0xFF1F2937),
                   fontSize: 13,
                   fontFamily: 'battambang',
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               _buildProgressLine(),
               const SizedBox(height: 18),
               _locationCard(address: address, mapUrl: mapUrl),
               const SizedBox(height: 16),
-              _infoCard(
-                icon: Icons.phone_in_talk_outlined,
-                title: 'Phone',
-                value: phone,
-                onTap: () => UrlLauncherManager.call(phone),
-              ),
-              const SizedBox(height: 12),
-              _infoCard(
-                icon: Icons.mail_outline_rounded,
-                title: 'Email',
-                value: email,
-                onTap: () => UrlLauncherManager.launch('mailto:$email'),
-              ),
-              const SizedBox(height: 12),
-              _infoCard(
-                icon: Icons.language_rounded,
-                title: 'Website',
-                value: website,
-                onTap: () => UrlLauncherManager.launch(_ensureHttp(website)),
-              ),
-              const SizedBox(height: 18),
+              if (phone.isNotEmpty) ...[
+                _infoCard(
+                  icon: Icons.phone_in_talk_outlined,
+                  title: LocaleKeys.phoneNumber.tr,
+                  value: phone,
+                  onTap: () => UrlLauncherManager.call(phone),
+                ),
+                const SizedBox(height: 12),
+              ],
+              if (email.isNotEmpty) ...[
+                _infoCard(
+                  icon: Icons.mail_outline_rounded,
+                  title: LocaleKeys.email.tr,
+                  value: email,
+                  onTap: () => UrlLauncherManager.launch('mailto:$email'),
+                ),
+                const SizedBox(height: 18),
+              ],
               Row(
                 children: [
                   Expanded(
                     child: _actionBtn(
-                      icon: Icons.phone,
-                      label: 'Call Now',
-                      onTap: () => UrlLauncherManager.call(phone),
+                      icon: Icons.map_outlined,
+                      label: LocaleKeys.openMap.tr,
+                      onTap: () => UrlLauncherManager.launch(mapUrl),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: _actionBtn(
-                      icon: Icons.mail_outline,
-                      label: 'Send Email',
-                      onTap: () => UrlLauncherManager.launch('mailto:$email'),
+                      icon: Icons.phone,
+                      label: LocaleKeys.callNow.tr,
+                      onTap:
+                          phone.isEmpty
+                              ? () {}
+                              : () => UrlLauncherManager.call(phone),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              const Center(
-                child: Text(
-                  'or',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SocialButtonCustom(
-                    buttonText: '',
-                    imagePath: AssetPath.fb.path,
-                    onPressed:
-                        () => UrlLauncherManager.launch(
-                          _socialOrDefault(
-                            data?.facebook,
-                            'https://www.facebook.com',
-                          ),
-                        ),
-                  ),
-                  const SizedBox(width: 14),
-                  SocialButtonCustom(
-                    buttonText: '',
-                    imagePath: AssetPath.twitter.path,
-                    onPressed:
-                        () => UrlLauncherManager.launch(
-                          _socialOrDefault(data?.twitter, 'https://x.com'),
-                        ),
-                  ),
-                  const SizedBox(width: 14),
-                  SocialButtonCustom(
-                    buttonText: '',
-                    imagePath: AssetPath.linked.path,
-                    onPressed:
-                        () => UrlLauncherManager.launch(
-                          _socialOrDefault(
-                            data?.linkedin,
-                            'https://www.linkedin.com',
-                          ),
-                        ),
                   ),
                 ],
               ),
@@ -163,17 +114,17 @@ class ContactUsView extends GetView<ContactUsController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.location_on_outlined,
                 color: AppColor.primary,
                 size: 30,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                'Follow Us',
-                style: TextStyle(
+                LocaleKeys.address.tr,
+                style: const TextStyle(
                   color: AppColor.primary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -196,16 +147,14 @@ class ContactUsView extends GetView<ContactUsController> {
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
               borderRadius: BorderRadius.circular(30),
-              onTap: () {
-                UrlLauncherManager.launch(mapUrl);
-              },
-              child: const SizedBox(
+              onTap: () => UrlLauncherManager.launch(mapUrl),
+              child: SizedBox(
                 height: 42,
                 width: double.infinity,
                 child: Center(
                   child: Text(
-                    'Open in Google Map',
-                    style: TextStyle(
+                    LocaleKeys.openInGoogleMap.tr,
+                    style: const TextStyle(
                       color: AppColor.primary,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
@@ -304,12 +253,6 @@ class ContactUsView extends GetView<ContactUsController> {
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       ),
     );
-  }
-
-  String _socialOrDefault(String? input, String fallback) {
-    final text = _clean(input, fallback: '');
-    if (text.isEmpty) return fallback;
-    return _ensureHttp(text);
   }
 
   String _clean(String? value, {String fallback = ''}) {

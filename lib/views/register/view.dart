@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/login/widgets/inline_language_dropdown.dart';
 import 'package:schoolapp/views/login/widgets/role_switch_label.dart';
 import 'package:schoolapp/views/login/widgets/socialButtonCustom.dart';
@@ -63,7 +62,7 @@ class RegisterView extends GetView<RegisterController> {
                                 LocaleKeys.signUp.tr,
                                 style: AppTextStyle.hugePrimaryMediumBold,
                               ),
-                              UIConstants.midSpacing.height,
+                              UIConstants.spacingSmall.height,
                               Text(
                                 LocaleKeys.loginContinueMessage.tr,
                                 style: AppTextStyle.normalGreenRegular,
@@ -85,6 +84,7 @@ class RegisterView extends GetView<RegisterController> {
                                           () => controller.setRegisterRole(
                                             UserType.teacher,
                                           ),
+                                      icon: Icons.cast_for_education,
                                     ),
                                     RoleSwitchLabel(
                                       label: LocaleKeys.parent.tr,
@@ -93,6 +93,7 @@ class RegisterView extends GetView<RegisterController> {
                                           () => controller.setRegisterRole(
                                             UserType.parent,
                                           ),
+                                      icon: Icons.people_alt,
                                     ),
                                   ],
                                 );
@@ -225,24 +226,9 @@ class RegisterView extends GetView<RegisterController> {
                                 ),
                               ),
                               UIConstants.spacing.height,
-                              Wrap(
-                                alignment: WrapAlignment.spaceBetween,
-                                runSpacing: 8,
-                                spacing: 8,
-                                children: [
-                                  const InlineLanguageDropdown(),
-                                  InkWell(
-                                    onTap: Get.back,
-                                    child: Text(
-                                      LocaleKeys.login.tr,
-                                      style: const TextStyle(
-                                        color: AppColor.primary,
-                                        fontSize: 14,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [InlineLanguageDropdown()],
                               ),
                               UIConstants.spacing.height,
                               Obx(() {
@@ -309,37 +295,46 @@ class RegisterView extends GetView<RegisterController> {
                               }),
                               UIConstants.spacing.height,
                               Center(
-                                child: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  spacing: 10,
-                                  runSpacing: 4,
+                                child: Column(
                                   children: [
-                                    Text(
-                                      'Have an account?',
-                                      style: AppTextStyle.normalGreenRegular,
-                                    ),
-                                    InkWell(
-                                      onTap: Get.back,
-                                      child: Text(
-                                        LocaleKeys.login.tr,
-                                        style: const TextStyle(
-                                          color: AppColor.primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline,
+                                    Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 10,
+                                      runSpacing: 4,
+                                      children: [
+                                        Text(
+                                          LocaleKeys.haveAnAccount.tr,
+                                          style:
+                                              AppTextStyle.normalGreenRegular,
                                         ),
-                                      ),
+                                        InkWell(
+                                          onTap: Get.back,
+                                          child: Text(
+                                            LocaleKeys.login.tr,
+                                            style: const TextStyle(
+                                              color: AppColor.primary,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      LocaleKeys.orConnectWith.tr,
+                                      style: AppTextStyle.normalGreenRegular,
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 2),
                             ],
                           ),
                         ),
                       ),
-                      UIConstants.spacing.height,
-                      const SizedBox(height: 12),
+                      UIConstants.spacingSmall.height,
+
                       const SocialButtonCustomWidget(),
                     ],
                   ),

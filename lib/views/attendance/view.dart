@@ -34,7 +34,6 @@ class AttendanceView extends GetView<AttendanceController> {
             ),
           ),
           UIConstants.spacingSmall.height,
-
           const CustomIndicator(progress: 1 / 4),
           Expanded(
             child: RefreshIndicator(

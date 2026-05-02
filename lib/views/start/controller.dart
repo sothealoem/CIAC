@@ -54,6 +54,7 @@ class StartController extends GetxController {
     }
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(index);
+    _refreshDashboardSliderIfNeeded(index);
   }
 
   void changeMenu(
@@ -80,6 +81,13 @@ class StartController extends GetxController {
     }
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(selectedIndex.value);
+    _refreshDashboardSliderIfNeeded(selectedIndex.value);
+  }
+
+  void _refreshDashboardSliderIfNeeded(int index) {
+    if (index != 0) return;
+    if (!Get.isRegistered<DashboardController>()) return;
+    Get.find<DashboardController>().fetchSliders();
   }
 
   void _normalizeSelectionForRole() {

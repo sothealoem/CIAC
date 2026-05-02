@@ -223,7 +223,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
 
     return Drawer(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(),
       child: SafeArea(
         child: Column(
@@ -239,7 +239,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             const SizedBox(height: 10),
             Text(
               profileName.isEmpty ? 'CIAC School' : profileName,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -283,9 +287,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   const SizedBox(height: 8),
                   Text(
                     'App Version: V${AppConfig.shared.version}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF2A2A2A),
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                 ],
@@ -306,7 +310,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
 
     return Drawer(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(),
       child: SafeArea(
         child: Column(
@@ -337,9 +341,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'CIAC School',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
             ),
             const SizedBox(height: 12),
             if (_isLoadingChildren)
@@ -415,9 +423,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   const SizedBox(height: 8),
                   Text(
                     'App Version: V${AppConfig.shared.version}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Color(0xFF2A2A2A),
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                 ],
@@ -446,11 +454,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       onTap: onTap,
-      leading: Icon(icon, color: const Color(0xFF0E5D56)),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(
         label,
-        style: const TextStyle(
-          color: Color(0xFF4A4A4A),
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
@@ -463,19 +471,25 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     required bool active,
     required VoidCallback? onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF223039) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDADADA)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF3A4957) : const Color(0xFFDADADA),
+        ),
       ),
       child: ListTile(
         onTap: onTap,
         leading: _childAvatar(child.avatar),
         title: Text(
           child.name.isEmpty ? 'Student' : child.name,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

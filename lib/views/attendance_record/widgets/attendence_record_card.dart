@@ -1,6 +1,5 @@
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
-import 'package:schoolapp/core/widgets/attendance/summary_item.dart';
 import 'package:schoolapp/models/staff/model.dart';
 import 'package:schoolapp/views/attendance_record/controller.dart';
 import 'package:schoolapp/views/start/controller.dart';
@@ -26,40 +25,6 @@ class _AttendenceRecordCardWidgetState
       padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
-          Obx(
-            () => Row(
-              children: [
-                SummaryItem(
-                  label: 'Present',
-                  count: controller.presentSummary.value,
-                  color: Colors.green,
-                  isActive: controller.isStatusSelected('present'),
-                  onTap: () => controller.toggleStatusFilter('present'),
-                ),
-                SummaryItem(
-                  label: 'Late',
-                  count: controller.lateSummary.value,
-                  color: Colors.orange,
-                  isActive: controller.isStatusSelected('late'),
-                  onTap: () => controller.toggleStatusFilter('late'),
-                ),
-                SummaryItem(
-                  label: 'Absent',
-                  count: controller.absentSummary.value,
-                  color: Colors.red,
-                  isActive: controller.isStatusSelected('absent'),
-                  onTap: () => controller.toggleStatusFilter('absent'),
-                ),
-                SummaryItem(
-                  label: 'Permission',
-                  count: controller.permissionSummary.value,
-                  color: Colors.blue,
-                  isActive: controller.isStatusSelected('permission'),
-                  onTap: () => controller.toggleStatusFilter('permission'),
-                ),
-              ],
-            ),
-          ),
           Obx(
             () =>
                 controller.selectedStatus.value.isEmpty

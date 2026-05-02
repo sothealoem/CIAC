@@ -25,14 +25,21 @@ class ContactUsController extends GetxController {
       isLoading.value = true;
 
       final res = await Get.find<ApiService>()
-          .get(EndPoints.contactUs)
+          .get(EndPoints.generalSetting)
           .timeout(const Duration(seconds: 4));
       final data = getPropertyFromJson(res.data, 'data');
-      if (data is Map<String, dynamic>) {
-        contactUs.value = ContactUsModel.fromJson(data);
-        await SharedPreferencesManager.setValue(_cacheKey, jsonEncode(data));
-      } else if (data is Map) {
-        final normalized = Map<String, dynamic>.from(data);
+      final setting =
+          (data is Map<String, dynamic>)
+              ? data['setting']
+              : (data is Map)
+              ? Map<String, dynamic>.from(data)['setting']
+              : null;
+
+      if (setting is Map<String, dynamic>) {
+        contactUs.value = ContactUsModel.fromJson(setting);
+        await SharedPreferencesManager.setValue(_cacheKey, jsonEncode(setting));
+      } else if (setting is Map) {
+        final normalized = Map<String, dynamic>.from(setting);
         contactUs.value = ContactUsModel.fromJson(normalized);
         await SharedPreferencesManager.setValue(
           _cacheKey,

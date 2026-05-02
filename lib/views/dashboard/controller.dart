@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/models.dart';
-import 'package:schoolapp/views/views.dart';
 import 'package:intl/intl.dart';
 
 class DashboardController extends GetxController {
@@ -10,8 +9,12 @@ class DashboardController extends GetxController {
 
   final Rxn<DashboardModel> dashboardModel = Rxn<DashboardModel>();
   final RxBool isLoading = false.obs;
+  final RxBool isSliderLoading = false.obs;
 
   final RxList<BookingModel> bookings = <BookingModel>[].obs;
+  final RxList<String> sliderImages = <String>[].obs;
+  int _sliderRetryCount = 0;
+  static const int _maxSliderRetries = 3;
 
   final PageController pageController = PageController();
 
@@ -56,6 +59,7 @@ class DashboardController extends GetxController {
     // fetchDashboard();
     super.onInit();
     loadUserName();
+    fetchSliders();
   }
 
   @override
@@ -117,5 +121,60 @@ class DashboardController extends GetxController {
 
   void clearDateFilter() {
     dateCtl.text = '';
+  }
+
+  Future<void> fetchSliders() async {
+    if (isSliderLoading.value) return;
+    isSliderLoading.value = true;
+    try {
+      final res = await Get.find<ApiService>()
+          .get(EndPoints.sliders, isShowLoading: false)
+          .timeout(const Duration(seconds: 12));
+      debugPrint('fetchSliders endpoint: ${EndPoints.sliders}');
+      debugPrint('fetchSliders response: ${res.data}');
+
+      if (res.data is! Map) return;
+      final map = Map<String, dynamic>.from(res.data as Map);
+      final rawData = map['data'];
+      if (rawData is! List) return;
+
+      final urls = rawData
+          .whereType<dynamic>()
+          .map((e) {
+            if (e is Map<String, dynamic>) {
+              return (e['banner'] ?? '').toString().trim();
+            }
+            if (e is Map) {
+              final map = Map<String, dynamic>.from(e);
+              return (map['banner'] ?? '').toString().trim();
+            }
+            return '';
+          })
+          .where((url) => url.isNotEmpty)
+          .toList(growable: false);
+
+      debugPrint('fetchSliders urls: $urls');
+      sliderImages.assignAll(urls);
+      if (urls.isNotEmpty) {
+        _sliderRetryCount = 0;
+      } else {
+        _scheduleSliderRetry();
+      }
+    } catch (e, s) {
+      debugPrint('fetchSliders error: $e');
+      debugPrintStack(stackTrace: s);
+      _scheduleSliderRetry();
+    } finally {
+      isSliderLoading.value = false;
+    }
+  }
+
+  void _scheduleSliderRetry() {
+    if (_sliderRetryCount >= _maxSliderRetries) return;
+    _sliderRetryCount++;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (isClosed) return;
+      fetchSliders();
+    });
   }
 }

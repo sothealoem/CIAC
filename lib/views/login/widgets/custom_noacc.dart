@@ -5,7 +5,7 @@ import 'package:schoolapp/routes.dart';
 
 class CustomNoAccountWidget extends StatelessWidget {
   final bool showForgotPassword;
-  final bool isLoginMode; // If true, shows "Login", if false, shows "Register"
+  final bool isLoginMode;
   final VoidCallback? onForgotTap;
   final VoidCallback? onActionTap;
 
@@ -25,7 +25,6 @@ class CustomNoAccountWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Optional Forgot Password Section
             if (showForgotPassword) ...[
               InkWell(
                 onTap: onForgotTap ?? () => Get.toNamed(Routes.register),
@@ -38,10 +37,9 @@ class CustomNoAccountWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              20.width, // Spacing between the two links
+              20.width,
             ],
 
-            // Action Section (Login or Register)
             InkWell(
               onTap: onActionTap ?? () => Get.toNamed(Routes.register),
               child: Container(

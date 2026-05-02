@@ -43,7 +43,7 @@ class StartView extends GetView<StartController> {
           appBar:
               showCustomAppBar
                   ? PreferredSize(
-                    preferredSize: const Size.fromHeight(130),
+                    preferredSize: const Size.fromHeight(150),
                     child: CustomAppBar(
                       profileUrl: controller.appBarProfileUrl,
                       title: RichText(
@@ -51,7 +51,7 @@ class StartView extends GetView<StartController> {
                           children: [
                             TextSpan(
                               text: roleWelcomePrefix,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -63,7 +63,7 @@ class StartView extends GetView<StartController> {
                                       ? dashboardController.displayName
                                       : controller.userName.value,
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontStyle: FontStyle.italic,
                                 color: AppColor.yellow,
                                 fontWeight: FontWeight.bold,
@@ -71,7 +71,10 @@ class StartView extends GetView<StartController> {
                             ),
                             const TextSpan(
                               text: ' !',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),

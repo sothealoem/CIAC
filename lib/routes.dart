@@ -68,7 +68,7 @@ class Routes {
   static const String studentInforation = '/studentInforation';
   static const String studentDocument = '/studentDocument';
   static const String onlineCourses = '/onlineCourses';
-  static const String eventGallery = '/eventGallery';
+  static const String activity = '/activity';
   static const String dashbord = '/dashbord';
 
   static List<GetPage> pages = [
@@ -166,9 +166,9 @@ class Routes {
       binding: OnlineCoursesBinding(),
     ),
     GetPage(
-      name: eventGallery,
-      page: () => const EventGalleryView(),
-      binding: EventGalleryBinding(),
+      name: activity,
+      page: () => const ActivityView(),
+      binding: ActivityBinding(),
     ),
     GetPage(
       name: dashbord,

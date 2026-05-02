@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/resources/locales.g.dart';
 import 'package:schoolapp/models/requestleave/model.dart';
 import 'package:schoolapp/views/all_requested_leave/widget/custom_tab.dart';
 import 'package:schoolapp/views/request_leave/controller.dart';
@@ -62,7 +63,7 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
                   } else if (selectedIndex == 1) {
                     list =
                         controller.requests
-                            .where((e) => _statusOf(e) == 'pending')
+                            .where((e) => _statusOf(e) == LocaleKeys.pending.tr)
                             .toList();
                   } else if (selectedIndex == 2) {
                     list =

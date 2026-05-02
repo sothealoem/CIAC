@@ -77,23 +77,20 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
             final selected = controller.selectedStatusFilter.value;
             if (selected != null && selected.isNotEmpty) {
               if (selected.toLowerCase() == 'present') {
-                cards =
-                    cards
-                        .where(
-                          (card) =>
-                              card.status.toLowerCase() == 'present' ||
-                              card.status.toLowerCase() == 'late',
-                        )
-                        .toList(growable: false);
+                cards = cards
+                    .where(
+                      (card) =>
+                          card.status.toLowerCase() == 'present' ||
+                          card.status.toLowerCase() == 'late',
+                    )
+                    .toList(growable: false);
               } else {
-                cards =
-                    cards
-                        .where(
-                          (card) =>
-                              card.status.toLowerCase() ==
-                              selected.toLowerCase(),
-                        )
-                        .toList(growable: false);
+                cards = cards
+                    .where(
+                      (card) =>
+                          card.status.toLowerCase() == selected.toLowerCase(),
+                    )
+                    .toList(growable: false);
               }
             }
 
@@ -178,9 +175,9 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _line('និស្ស័យឈ្មោះ', card.studentName),
+                _line('ឈ្មោះ', card.studentName),
                 const SizedBox(height: 4),
-                _line('ថ្នាក់រៀន', card.classSection),
+                _line('ថ្នាក់', card.classSection),
                 const SizedBox(height: 4),
                 _line('កាលបរិច្ឆេទ', card.dateText),
               ],
@@ -261,7 +258,7 @@ class AttendanceCardWidget extends GetView<AttendanceController> {
       case 'Absent':
         return 'អវត្តមាន';
       case 'Permission':
-        return 'ច្បាប់';
+        return 'សុំច្បាប់';
       default:
         return 'វត្តមាន';
     }

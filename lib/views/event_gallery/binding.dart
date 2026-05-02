@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:schoolapp/views/views.dart';
 
-class EventGalleryBinding extends Bindings {
+class ActivityBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<EventGalleryController>(() => EventGalleryController());
+    Get.lazyPut<ActivityController>(() => ActivityController());
   }
 }

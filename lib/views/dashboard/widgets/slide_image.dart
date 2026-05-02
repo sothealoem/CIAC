@@ -39,11 +39,16 @@ class _PremiumSliderState extends State<PremiumSlider> {
                         width: MediaQuery.of(context).size.width,
                         placeholder: (context, url) => const ShimmerPreloader(),
                         errorWidget:
-                            (context, url, error) => const Icon(
-                              Icons.broken_image,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
+                            (context, url, error) {
+                              debugPrint(
+                                'PremiumSlider image load error for $url: $error',
+                              );
+                              return const Icon(
+                                Icons.broken_image,
+                                size: 50,
+                                color: Colors.grey,
+                              );
+                            },
                         // Optional: fade in/out for better UX
                         fadeInDuration: const Duration(milliseconds: 300),
                         fadeOutDuration: const Duration(milliseconds: 100),

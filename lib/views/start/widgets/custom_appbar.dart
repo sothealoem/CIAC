@@ -1,4 +1,3 @@
-import 'package:schoolapp/core/configs/app_style.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:schoolapp/routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  static const double _avatarSize = 36;
+  static const double _avatarSize = 42;
   final Widget? title;
   final String? subTitle;
   final String imagePath;
@@ -19,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.subTitle,
     required this.imagePath,
     this.profileUrl,
-    this.height = 130,
+    this.height = 112,
   });
 
   @override
@@ -56,20 +55,38 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.only(right: 14),
               child: InkWell(
                 borderRadius: BorderRadius.circular(999),
                 onTap: _handleProfileTap,
                 child: Container(
-                  width: _avatarSize + 4,
-                  height: _avatarSize + 4,
-                  padding: const EdgeInsets.all(2),
+                  width: _avatarSize + 10,
+                  height: _avatarSize + 10,
+                  padding: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColor.primaryColor, width: 2),
+                    border: Border.all(
+                      color: const Color(0xFF0B7566),
+                      width: 2,
+                    ),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.16),
+                        blurRadius: 9,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: ClipOval(
-                    child: SizedBox.expand(child: _buildProfileImage()),
+                  child: Container(
+                    padding: const EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: ClipOval(
+                      child: SizedBox.expand(child: _buildProfileImage()),
+                    ),
                   ),
                 ),
               ),
@@ -81,16 +98,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             fit: StackFit.expand,
             children: [
               Image.asset(imagePath, fit: BoxFit.cover),
-              Container(color: Colors.white.withOpacity(0.22)),
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Color(0xAA0B5A57),
+                      // Color(0x661A7A74),
+                      Color(0x22FFFFFF),
+                    ],
+                  ),
+                ),
+              ),
+
               Positioned(
                 left: 16,
-                bottom: 8,
+                bottom: 20,
                 right: 16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     title ?? const SizedBox(),
-
+                    5.height,
                     Text(
                       subTitle ?? '',
                       style: const TextStyle(

@@ -4,8 +4,14 @@ import 'package:schoolapp/views/views.dart';
 class StartBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<StartController>(() => StartController());
-    Get.lazyPut<DashboardController>(() => DashboardController());
-    Get.lazyPut<ProfileController>(() => ProfileController());
+    if (!Get.isRegistered<StartController>()) {
+      Get.lazyPut<StartController>(() => StartController(), fenix: true);
+    }
+    if (!Get.isRegistered<DashboardController>()) {
+      Get.lazyPut<DashboardController>(() => DashboardController(), fenix: true);
+    }
+    if (!Get.isRegistered<ProfileController>()) {
+      Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);
+    }
   }
 }

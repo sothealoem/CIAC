@@ -77,6 +77,10 @@ class LocaleKeys {
   static const filterDate = 'filterDate';
   static const termAndCondition = 'termAndCondition';
   static const contactUs = 'contactUs';
+  static const address = 'address';
+  static const openInGoogleMap = 'openInGoogleMap';
+  static const openMap = 'openMap';
+  static const callNow = 'callNow';
   static const contact = 'contact';
   static const noPackage = 'noPackage';
   static const totalAmount = 'totalAmount';
@@ -276,6 +280,30 @@ class LocaleKeys {
   static const typeOfCod = 'typeOfCod';
   static const enterYourName = 'enterYourName';
   static const successfulGetProduct = 'successfulGetProduct';
+  static const present = 'present';
+  static const absent = 'absent';
+  static const late = 'late';
+  static const noStaffAttendanceLogsFound = 'noStaffAttendanceLogsFound';
+  static const allDates = 'allDates';
+  static const breakTime = 'breakTime';
+  static const morning = 'morning';
+  static const afternoon = 'afternoon';
+  static const evening = 'evening';
+  static const grade = 'grade';
+  static const subject = 'subject';
+  static const score = 'score';
+  static const math = 'math';
+  static const khmer = 'khmer';
+  static const english = 'english';
+  static const history = 'history';
+  static const biology = 'biology';
+  static const chemistry = 'chemistry';
+  static const to = 'to';
+  static const prending = 'prending';
+  static const approved = 'approved';
+  static const reject = 'reject';
+  static const haveAnAccount = 'haveAnAccount';
+  static const orConnectWith = 'orConnectWith';
 }
 
 class Locales {
@@ -349,6 +377,10 @@ class Locales {
     'filterDate': 'Filter date',
     'termAndCondition': 'Term and Conditions',
     'contactUs': 'Contact Us',
+    'address': 'Address',
+    'openInGoogleMap': 'Open in Google Map',
+    'openMap': 'Open Map',
+    'callNow': 'Call Now',
     'contact': 'Contact',
     'noPackage': 'No Package',
     'totalAmount': 'Total amount',
@@ -393,6 +425,7 @@ class Locales {
     'anyExtraType': 'Any extra type',
     'serviceFee': 'Service fee',
     'confirmation': 'Confirmation',
+    'haveAnAccount': 'Have an account?',
     'areYouSureYouWantToDeleteThisBooking':
         'Are you sure you want to delete this booking?',
     'thanksYou': 'Thanks you',
@@ -422,6 +455,7 @@ class Locales {
     'inStock': 'In Stock',
     'filter': 'Filter',
     'doNotHaveAnAccount': 'Don\'t have an account? ',
+    'orConnectWith': 'Or connect with',
     'register': 'Register',
     'yourNameOrShopName': 'Your Name or Shop Name',
     'confirmPassword': 'Confirm Password',
@@ -547,11 +581,35 @@ class Locales {
     'update': 'Update',
     'apply': 'Apply',
     'commend': 'Commend',
+    //————————————————————haysan——————————————————————//
+    'present': 'Present',
+    'absent': 'Absent',
+    'late': 'Late',
+    'noStaffAttendanceLogsFound': 'No Staff Attendance Logs Found',
+    'allDates': 'All Dates',
+    'breakTime': 'Break Time',
+    'morning': 'Morning',
+    'afternoon': 'Afternoon',
+    'evening': 'Evening',
+    'grade': 'Grade',
+    'subject': 'Subject',
+    'score': 'Score',
+    'math': 'Math',
+    'khmer': 'Khmer',
+    'english': 'English',
+    'history': 'History',
+    'biology': 'Biology',
+    'chemistry': 'Chemistry',
+    'to': 'To',
+    'prending': 'Pending',
+    'approved': 'Approved',
+    'reject': 'Reject',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់ទៅអ៊ីនធឺណិតបាន',
     'cancelled': 'បានបោះបង់',
     'send': 'ផ្ញើ',
+    'orConnectWith': 'ឬតភ្ជាប់ជាមួយ',
     'yourRequestHasBeenCancelled': 'សំណើរបស់អ្នកត្រូវបានបោះបង់',
     'connectionTimeout': 'ការតភ្ជាប់អស់ពេល',
     'yourConnectionIsTimeout': 'ការតភ្ជាប់របស់អ្នកអស់ពេល',
@@ -604,6 +662,7 @@ class Locales {
     'logout': 'ចាកចេញ',
     'cancel': 'បោះបង់',
     'settings': 'ការកំណត់',
+    'haveAnAccount': 'មានគណនីរួចហើយ? ',
     'changePassword': 'ប្ដូរពាក្យសម្ងាត់',
     'photoLibrary': 'បណ្ណាល័យរូបថត',
     'camera': 'កាមេរ៉ា',
@@ -615,6 +674,10 @@ class Locales {
     'termAndCondition': 'លក្ខខណ្ឌប្រើប្រាស់',
     'contact': 'ទំនាក់ទំនង',
     'contactUs': 'ទាក់ទងមកយើង',
+    'address': 'អាសយដ្ឋាន',
+    'openInGoogleMap': 'បើកក្នុង Google Map',
+    'openMap': 'បើកផែនទី',
+    'callNow': 'ហៅឥឡូវ',
     'noPackage': 'គ្មានកញ្ចប់',
     'totalAmount': 'ចំនួនសរុប',
     'transfers': 'ការផ្ទេរ',
@@ -653,7 +716,7 @@ class Locales {
     'bookingDate': 'កាលបរិច្ឆេទកក់',
     'bookingDetails': 'ព័ត៌មានលម្អិតការកក់',
     'typeOfService': 'ប្រភេទសេវាកម្ម',
-    'typeOfCod': 'ប្រភេទ COD',
+    'typeOfCod': 'ប្រភេទ CODE',
     'anyExtra': 'មានបន្ថែមទេ',
     'extraAmount': 'ចំនួនទឹកប្រាក់បន្ថែម',
     'anyExtraType': 'ប្រភេទបន្ថែម',
@@ -769,5 +832,28 @@ class Locales {
     'update': 'ធ្វើបច្ចុប្បន្នភាព',
     'apply': 'អនុវត្ត',
     'commend': 'មតិយោបល់',
+    //————————————————————haysan——————————————————————//
+    'present': 'វត្តមាន',
+    'absent': 'អវត្តមាន',
+    'late': 'យឺត',
+    'noStaffAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមានបុគ្គលិក',
+    'allDates': 'កាលបរិច្ឆេទទាំងអស់',
+    'breakTime': 'ពេលសម្រាក',
+    'morning': 'ព្រឹក',
+    'afternoon': 'រសៀល',
+    'evening': 'ល្ងាច',
+    'grade': 'ចំណាត់ថ្នាក់',
+    'subject': 'មុខវិជ្ជា',
+    'score': 'ពិន្ទុ',
+    'math': 'គណិតវិទ្យា',
+    'khmer': 'ភាសាខ្មែរ',
+    'english': 'ភាសាអង់គ្លេស',
+    'history': 'ប្រវត្តិវិទ្យា',
+    'biology': 'ជីវវិទ្យា',
+    'chemistry': 'គីមីវិទ្យា',
+    'to': 'ទៅកាន់',
+    'prending': 'កំពុងរង់ចាំ',
+    'approved': 'បានអនុម័ត',
+    'reject': 'បដិសេធ',
   };
 }
