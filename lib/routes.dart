@@ -22,6 +22,8 @@ import 'package:schoolapp/views/online_courses/binding.dart';
 import 'package:schoolapp/views/online_courses/view.dart';
 import 'package:schoolapp/views/payment_collection/binding.dart';
 import 'package:schoolapp/views/payment_collection/view.dart';
+import 'package:schoolapp/views/payment_history/binding.dart';
+import 'package:schoolapp/views/payment_history/view.dart';
 import 'package:schoolapp/views/register/binding.dart';
 import 'package:schoolapp/views/register/view.dart';
 import 'package:schoolapp/views/all_requested_leave/all_requested_leave.dart';
@@ -59,6 +61,7 @@ class Routes {
   static const String successfulRegisterd = '/successful-registerd';
   static const String bookingDetails = '/booking-details';
   static const String paymentCollection = '/payment_collection';
+  static const String paymentHistory = '/payment_history';
   static const String requestLeave = '/request_leave';
   static const String allRequestLeave = '/all_request_leave';
   static const String standings = '/standings';
@@ -119,6 +122,11 @@ class Routes {
       name: paymentCollection,
       page: () => const PaymentCollectionView(),
       binding: PaymentCollectionBinding(),
+    ),
+    GetPage(
+      name: paymentHistory,
+      page: () => const PaymentHistoryView(),
+      binding: PaymentHistoryBinding(),
     ),
     GetPage(
       name: requestLeave,

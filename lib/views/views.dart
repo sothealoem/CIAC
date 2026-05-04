@@ -12,6 +12,7 @@ export 'notification/notification.dart';
 export 'successfully_register/successfully_register.dart';
 export 'scan/scan.dart';
 export 'payment_collection/paymentcollection.dart';
+export 'payment_history/payment_history.dart';
 export 'request_leave/requestleave.dart';
 export 'standings/standings.dart';
 export 'schedule/schedule.dart';

@@ -31,36 +31,39 @@ class _PremiumSliderState extends State<PremiumSlider> {
               borderRadius: const BorderRadius.all(Radius.circular(12.0)),
               child: Stack(
                 children: <Widget>[
-                  item.startsWith('http') || item.startsWith('https')
-                      ? CachedNetworkImage(
-                        imageUrl: item,
-                        fit: BoxFit.cover,
-                        // height: 350,
-                        width: MediaQuery.of(context).size.width,
-                        placeholder: (context, url) => const ShimmerPreloader(),
-                        errorWidget:
-                            (context, url, error) {
-                              debugPrint(
-                                'PremiumSlider image load error for $url: $error',
-                              );
-                              return const Icon(
-                                Icons.broken_image,
-                                size: 50,
-                                color: Colors.grey,
-                              );
-                            },
-                        // Optional: fade in/out for better UX
-                        fadeInDuration: const Duration(milliseconds: 300),
-                        fadeOutDuration: const Duration(milliseconds: 100),
-                        // Optional: image cache options
-                        cacheKey: item,
-                        useOldImageOnUrlChange: true,
-                      )
-                      : Image.asset(
-                        item,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                      ),
+                  Positioned.fill(
+                    child:
+                        item.startsWith('http') || item.startsWith('https')
+                            ? CachedNetworkImage(
+                              imageUrl: item,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              placeholder:
+                                  (context, url) => const ShimmerPreloader(),
+                              errorWidget: (context, url, error) {
+                                debugPrint(
+                                  'PremiumSlider image load error for $url: $error',
+                                );
+                                return const Icon(
+                                  Icons.broken_image,
+                                  size: 50,
+                                  color: Colors.grey,
+                                );
+                              },
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fadeOutDuration:
+                                  const Duration(milliseconds: 100),
+                              cacheKey: item,
+                              useOldImageOnUrlChange: true,
+                            )
+                            : Image.asset(
+                              item,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                  ),
                 ],
               ),
             ),
@@ -73,10 +76,8 @@ class _PremiumSliderState extends State<PremiumSlider> {
             constraints.maxHeight.isFinite ? constraints.maxHeight : 180.0;
         const indicatorHeight = 12.0;
         const indicatorGap = 6.0;
-        final sliderHeight = (maxHeight - indicatorHeight - indicatorGap).clamp(
-          90.0,
-          260.0,
-        );
+        final sliderHeight =
+            (maxHeight - indicatorHeight - indicatorGap).clamp(90.0, 2000.0);
 
         return Column(
           mainAxisSize: MainAxisSize.min,

@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/event_gallery/controller.dart';
+import 'package:schoolapp/views/event_gallery/widgets/eventgallery_card.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:schoolapp/views/start/widgets/customize_app_bar.dart';
 
@@ -50,7 +52,9 @@ class ActivityView extends GetView<ActivityController> {
                         const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 24),
-                            child: CircularProgressIndicator(color: AppColor.primary),
+                            child: CircularProgressIndicator(
+                              color: AppColor.primary,
+                            ),
                           ),
                         )
                       else if (activities.isEmpty)
@@ -64,28 +68,13 @@ class ActivityView extends GetView<ActivityController> {
                           ),
                         )
                       else
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: activities.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 8,
-                            mainAxisExtent: 214,
-                          ),
-                          itemBuilder: (context, index) {
-                            return _EventCard(
-                              item: activities[index],
-                              onTap: () async {
-                                final detail = await controller
-                                    .fetchClassActivityDetail(activities[index].id);
-                                if (detail == null) return;
-                                Get.to(
-                                  () => ActivityDetailView(detail: detail),
-                                );
-                              },
-                            );
+                        ActivityCardWidget(
+                          items: activities,
+                          onTap: (item) async {
+                            final detail = await controller
+                                .fetchClassActivityDetail(item.id);
+                            if (detail == null) return;
+                            Get.to(() => ActivityDetailView(detail: detail));
                           },
                         ),
                     ],
@@ -93,10 +82,11 @@ class ActivityView extends GetView<ActivityController> {
                 ),
               ),
               if (isDetailLoading)
-                Container(
-                  color: Colors.black.withOpacity(0.15),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: AppColor.primary),
+                const Positioned.fill(
+                  child: IgnorePointer(
+                    child: Center(
+                      child: CircularProgressIndicator(color: AppColor.white),
+                    ),
                   ),
                 ),
             ],
@@ -124,11 +114,12 @@ class ActivityView extends GetView<ActivityController> {
         width: width,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(color: const Color(0xFFE9EEF2)),
-        errorWidget: (_, __, ___) => Container(
-          color: const Color(0xFFE9EEF2),
-          alignment: Alignment.center,
-          child: const Icon(Icons.broken_image, color: Colors.grey),
-        ),
+        errorWidget:
+            (_, __, ___) => Container(
+              color: const Color(0xFFE9EEF2),
+              alignment: Alignment.center,
+              child: const Icon(Icons.broken_image, color: Colors.grey),
+            ),
       );
     }
 
@@ -160,16 +151,28 @@ class _EventCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(11),
             child: _cardImage(item.image),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             item.title,
-            maxLines: 3,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontFamily: 'Battambang',
-              fontSize: 14,
-              height: 1.22,
+              fontSize: 13,
+              height: 1.28,
               color: Color(0xFF212121),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            _formatActivityTime(item.timeText),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Battambang',
+              fontSize: 12,
+              color: Color(0xFF555555),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -178,26 +181,47 @@ class _EventCard extends StatelessWidget {
     );
   }
 
+  String _formatActivityTime(String raw) {
+    final value = raw.trim();
+    if (value.isEmpty) return 'Date not available';
+
+    final dt = DateTime.tryParse(value);
+    if (dt != null) {
+      return DateFormat('dd/MM/yyyy hh:mm a').format(dt);
+    }
+
+    final timeOnly = RegExp(r'^\d{1,2}:\d{2}(:\d{2})?$');
+    if (timeOnly.hasMatch(value)) {
+      final parsed = DateFormat(
+        value.split(':').length == 3 ? 'HH:mm:ss' : 'HH:mm',
+      ).parseStrict(value);
+      return DateFormat('hh:mm a').format(parsed);
+    }
+
+    return value;
+  }
+
   Widget _cardImage(String imagePath) {
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return CachedNetworkImage(
         imageUrl: imagePath,
         width: double.infinity,
-        height: 100,
+        height: 95,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(color: const Color(0xFFE9EEF2)),
-        errorWidget: (_, __, ___) => Container(
-          color: const Color(0xFFE9EEF2),
-          alignment: Alignment.center,
-          child: const Icon(Icons.broken_image, color: Colors.grey),
-        ),
+        errorWidget:
+            (_, __, ___) => Container(
+              color: const Color(0xFFE9EEF2),
+              alignment: Alignment.center,
+              child: const Icon(Icons.broken_image, color: Colors.grey),
+            ),
       );
     }
 
     return Image.asset(
       imagePath,
       width: double.infinity,
-      height: 100,
+      height: 95,
       fit: BoxFit.cover,
       filterQuality: FilterQuality.high,
     );
@@ -263,12 +287,13 @@ class ActivityDetailView extends StatelessWidget {
         height: 220,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(color: const Color(0xFFE9EEF2)),
-        errorWidget: (_, __, ___) => Container(
-          height: 220,
-          color: const Color(0xFFE9EEF2),
-          alignment: Alignment.center,
-          child: const Icon(Icons.broken_image, color: Colors.grey),
-        ),
+        errorWidget:
+            (_, __, ___) => Container(
+              height: 220,
+              color: const Color(0xFFE9EEF2),
+              alignment: Alignment.center,
+              child: const Icon(Icons.broken_image, color: Colors.grey),
+            ),
       );
     }
 
@@ -282,6 +307,9 @@ class ActivityDetailView extends StatelessWidget {
   }
 
   String _stripHtml(String value) {
-    return value.replaceAll(RegExp(r'<[^>]*>'), '').replaceAll('&nbsp;', ' ').trim();
+    return value
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .replaceAll('&nbsp;', ' ')
+        .trim();
   }
 }

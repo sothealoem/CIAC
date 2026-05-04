@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/views.dart';
 
 class SplashView extends GetView<SplashController> {
@@ -36,9 +37,9 @@ class SplashView extends GetView<SplashController> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 28),
+                20.height,
                 Text(
-                  'Welcome To',
+                  'welcomeTo'.tr,
                   style: TextStyle(
                     fontSize: titleSize,
                     fontWeight: FontWeight.w700,
@@ -50,7 +51,7 @@ class SplashView extends GetView<SplashController> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Text(
-                    'Create an account and access thousand of cool stuffs.',
+                    'createAccountAndAccessCoolStuffs'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: subtitleSize,

@@ -46,17 +46,29 @@ class AttendanceRecordController extends GetxController {
   Future<void> loadAttendanceLogs() async {
     try {
       isLoading.value = true;
+      final isParentMode = UserRepository.shared.isDriver;
       final selectedStudentId = await _selectedStudentId();
       final params = <String, dynamic>{};
       if (selectedDate.value.trim().isNotEmpty) {
         params['date'] = selectedDate.value;
       }
-      if (selectedStudentId.isNotEmpty) {
+      if (isParentMode) {
+        if (selectedStudentId.isEmpty) {
+          _clearAll();
+          return;
+        }
+        params['student_id'] = selectedStudentId;
+      } else if (selectedStudentId.isNotEmpty) {
         params['student_id'] = selectedStudentId;
       }
 
+      final endpoint =
+          isParentMode
+              ? EndPoints.parentChildrenAttendanceLog
+              : EndPoints.attendanceRecord;
+
       final res = await Get.find<ApiService>().get(
-        EndPoints.attendanceRecord,
+        endpoint,
         queryParameters: params.isEmpty ? null : params,
         isShowLoading: false,
       );

@@ -41,11 +41,11 @@ class ContactUsView extends GetView<ContactUsController> {
                   fontFamily: 'battambang',
                 ),
               ),
-              const SizedBox(height: 12),
+              12.height,
               _buildProgressLine(),
-              const SizedBox(height: 18),
+              18.height,
               _locationCard(address: address, mapUrl: mapUrl),
-              const SizedBox(height: 16),
+              16.height,
               if (phone.isNotEmpty) ...[
                 _infoCard(
                   icon: Icons.phone_in_talk_outlined,
@@ -124,11 +124,7 @@ class ContactUsView extends GetView<ContactUsController> {
               const SizedBox(width: 8),
               Text(
                 LocaleKeys.address.tr,
-                style: const TextStyle(
-                  color: AppColor.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: AppTextStyle.regularPrimarytextPrimary,
               ),
             ],
           ),
@@ -153,12 +149,8 @@ class ContactUsView extends GetView<ContactUsController> {
                 width: double.infinity,
                 child: Center(
                   child: Text(
-                    LocaleKeys.openInGoogleMap.tr,
-                    style: const TextStyle(
-                      color: AppColor.primary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
+                    LocaleKeys.address.tr,
+                    style: AppTextStyle.regularPrimarytextPrimary,
                   ),
                 ),
               ),
@@ -204,14 +196,7 @@ class ContactUsView extends GetView<ContactUsController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColor.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text(title, style: AppTextStyle.regularPrimarytextPrimary),
                     const SizedBox(height: 2),
                     Text(
                       value,
@@ -239,14 +224,7 @@ class ContactUsView extends GetView<ContactUsController> {
     return OutlinedButton.icon(
       onPressed: onTap,
       icon: Icon(icon, color: AppColor.primary, size: 20),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: AppColor.primary,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      label: Text(label, style: AppTextStyle.regularPrimarytextPrimary),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: Colors.grey.shade400),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),

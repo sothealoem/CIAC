@@ -55,7 +55,7 @@ class RegisterView extends GetView<RegisterController> {
                         child: Padding(
                           padding: UIConstants.spacing.padHorizontal,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const SizedBox(height: 10.0),
                               Text(
@@ -72,30 +72,86 @@ class RegisterView extends GetView<RegisterController> {
                               Obx(() {
                                 final selected =
                                     controller.selectedRegisterRole.value;
-                                return Wrap(
-                                  alignment: WrapAlignment.center,
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [
-                                    RoleSwitchLabel(
-                                      label: LocaleKeys.teacher.tr,
-                                      isSelected: selected == UserType.teacher,
-                                      onTap:
-                                          () => controller.setRegisterRole(
-                                            UserType.teacher,
-                                          ),
-                                      icon: Icons.cast_for_education,
-                                    ),
-                                    RoleSwitchLabel(
-                                      label: LocaleKeys.parent.tr,
-                                      isSelected: selected == UserType.parent,
-                                      onTap:
-                                          () => controller.setRegisterRole(
-                                            UserType.parent,
-                                          ),
-                                      icon: Icons.people_alt,
-                                    ),
-                                  ],
+                                return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final width =
+                                        constraints.maxWidth > 0
+                                            ? constraints.maxWidth
+                                            : MediaQuery.of(context).size.width -
+                                                56;
+                                    final indicatorWidth = (width - 8) / 2;
+                                    final isTeacher =
+                                        selected == UserType.teacher;
+
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(999),
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: SizedBox(
+                                        height: 52,
+                                        child: Stack(
+                                          children: [
+                                            AnimatedPositioned(
+                                              duration: const Duration(
+                                                milliseconds: 280,
+                                              ),
+                                              curve: Curves.easeInOutCubic,
+                                              left: isTeacher ? 0 : indicatorWidth,
+                                              top: 0,
+                                              bottom: 0,
+                                              child: Container(
+                                                width: indicatorWidth,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(999),
+                                                  gradient:
+                                                      const LinearGradient(
+                                                        colors: [
+                                                          Color(0xFF0A6A5E),
+                                                          Color(0xFF024139),
+                                                        ],
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: RoleSwitchLabel(
+                                                    label:
+                                                        LocaleKeys.teacher.tr,
+                                                    icon: Icons.school,
+                                                    isSelected: isTeacher,
+                                                    onTap: () => controller
+                                                        .setRegisterRole(
+                                                          UserType.teacher,
+                                                        ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: RoleSwitchLabel(
+                                                    label:
+                                                        LocaleKeys.parent.tr,
+                                                    icon: Icons.groups,
+                                                    isSelected: !isTeacher,
+                                                    onTap: () => controller
+                                                        .setRegisterRole(
+                                                          UserType.parent,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               }),
                               const SizedBox(height: 15),
@@ -110,6 +166,15 @@ class RegisterView extends GetView<RegisterController> {
                                   ),
                                   controller: controller.nameCon,
                                   hintText: LocaleKeys.enterYourName.tr,
+                                  filled: true,
+                                  borderRadius: BorderRadius.circular(22),
+                                  borderColor: const Color(0xFFC9CFD8),
+                                  enabledBorderColor: const Color(0xFFC9CFD8),
+                                  focusedBorderColor: AppColor.primary,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
                                   errorText: controller.nameError.value,
                                   onChanged:
                                       (val) =>
@@ -135,6 +200,15 @@ class RegisterView extends GetView<RegisterController> {
                                       isParent
                                           ? LocaleKeys.phoneNumber.tr
                                           : LocaleKeys.phoneOrEmail.tr,
+                                  filled: true,
+                                  borderRadius: BorderRadius.circular(22),
+                                  borderColor: const Color(0xFFC9CFD8),
+                                  enabledBorderColor: const Color(0xFFC9CFD8),
+                                  focusedBorderColor: AppColor.primary,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
                                   errorText: controller.identityError.value,
                                   onChanged:
                                       (val) =>
@@ -170,16 +244,45 @@ class RegisterView extends GetView<RegisterController> {
                                       (val) =>
                                           controller.passwordError.value = null,
                                   obscureText: controller.isPassVisible.value,
-                                  suffixIcon: InkWell(
-                                    onTap:
-                                        () =>
-                                            controller.isPassVisible.value =
-                                                !controller.isPassVisible.value,
-                                    child: Icon(
-                                      controller.isPassVisible.value
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: AppColor.primary,
+                                  filled: true,
+                                  borderRadius: BorderRadius.circular(22),
+                                  borderColor: const Color(0xFFC9CFD8),
+                                  enabledBorderColor: const Color(0xFFC9CFD8),
+                                  focusedBorderColor: AppColor.primary,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  suffixIcon: SizedBox(
+                                    width: 62,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.end,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 1,
+                                          height: 22,
+                                          color: const Color(0xFFD6DBE3),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap:
+                                              () =>
+                                                  controller
+                                                      .isPassVisible
+                                                      .value = !controller
+                                                          .isPassVisible
+                                                          .value,
+                                          child: Icon(
+                                            controller.isPassVisible.value
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: const Color(0xFF8F97A5),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                      ],
                                     ),
                                   ),
                                   validator: FormValidator.empty,
@@ -203,19 +306,45 @@ class RegisterView extends GetView<RegisterController> {
                                               .value = null,
                                   obscureText:
                                       controller.isPassVisibleConfirm.value,
-                                  suffixIcon: InkWell(
-                                    onTap:
-                                        () =>
-                                            controller
-                                                .isPassVisibleConfirm
-                                                .value = !controller
-                                                    .isPassVisibleConfirm
-                                                    .value,
-                                    child: Icon(
-                                      controller.isPassVisibleConfirm.value
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: AppColor.primary,
+                                  filled: true,
+                                  borderRadius: BorderRadius.circular(22),
+                                  borderColor: const Color(0xFFC9CFD8),
+                                  enabledBorderColor: const Color(0xFFC9CFD8),
+                                  focusedBorderColor: AppColor.primary,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  suffixIcon: SizedBox(
+                                    width: 62,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.end,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 1,
+                                          height: 22,
+                                          color: const Color(0xFFD6DBE3),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap:
+                                              () => controller
+                                                      .isPassVisibleConfirm
+                                                      .value =
+                                                  !controller
+                                                      .isPassVisibleConfirm
+                                                      .value,
+                                          child: Icon(
+                                            controller.isPassVisibleConfirm.value
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: const Color(0xFF8F97A5),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                      ],
                                     ),
                                   ),
                                   validator:

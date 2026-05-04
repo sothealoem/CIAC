@@ -62,8 +62,17 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       }
 
       var selected = _selectedChildId;
-      if (selected.isEmpty && list.isNotEmpty) {
-        selected = list.first.id;
+      if (list.isNotEmpty) {
+        var exists = false;
+        for (final child in list) {
+          if (child.id == selected) {
+            exists = true;
+            break;
+          }
+        }
+        if (selected.isEmpty || !exists) {
+          selected = list.first.id;
+        }
       }
 
       setState(() {

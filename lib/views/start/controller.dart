@@ -44,6 +44,7 @@ class StartController extends GetxController {
       if (index == 2) {
         selectedIndex.value = index;
         selectedScreen.value = _buildScreen(3);
+        _refreshPaymentHistoryIfNeeded(3);
         return;
       }
       if (index == 3) {
@@ -55,6 +56,7 @@ class StartController extends GetxController {
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(index);
     _refreshDashboardSliderIfNeeded(index);
+    _refreshPaymentHistoryIfNeeded(index);
   }
 
   void changeMenu(
@@ -71,6 +73,7 @@ class StartController extends GetxController {
       if (index == 3) {
         selectedIndex.value = 2;
         selectedScreen.value = _buildScreen(3);
+        _refreshPaymentHistoryIfNeeded(3);
         return;
       }
       if (index == 4) {
@@ -82,12 +85,21 @@ class StartController extends GetxController {
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(selectedIndex.value);
     _refreshDashboardSliderIfNeeded(selectedIndex.value);
+    _refreshPaymentHistoryIfNeeded(selectedIndex.value);
   }
 
   void _refreshDashboardSliderIfNeeded(int index) {
     if (index != 0) return;
     if (!Get.isRegistered<DashboardController>()) return;
     Get.find<DashboardController>().fetchSliders();
+  }
+
+  void _refreshPaymentHistoryIfNeeded(int index) {
+    if (index != 3) return;
+    if (!Get.isRegistered<PaymentHistoryController>()) return;
+    Get.find<PaymentHistoryController>().fetchPaymentHistory(
+      resetBeforeLoad: true,
+    );
   }
 
   void _normalizeSelectionForRole() {
@@ -129,7 +141,7 @@ class StartController extends GetxController {
       case 2:
         return CardScanView();
       case 3:
-        return const PaymentCollectionView();
+        return const PaymentHistoryView();
       case 4:
         return const ContactUsView();
       default:
@@ -152,9 +164,7 @@ class StartController extends GetxController {
     final storedName =
         (await SharedPreferencesManager.get('name') ?? '').toString().trim();
     final storedProfile =
-        (await SharedPreferencesManager.get('profile') ?? '')
-            .toString()
-            .trim();
+        (await SharedPreferencesManager.get('profile') ?? '').toString().trim();
 
     if (userName.value.trim().isEmpty && storedName.isNotEmpty) {
       userName.value = storedName;
@@ -217,9 +227,7 @@ class StartController extends GetxController {
       if (profileUrl.value.trim().isNotEmpty) {
         await SharedPreferencesManager.setValue('profile', profileUrl.value);
       }
-    } catch (_) {
-      // Keep local fallback values when API call fails.
-    }
+    } catch (_) {}
   }
 
   Future<void> refreshParentAppBarChild() async {
@@ -261,17 +269,32 @@ class StartController extends GetxController {
       if (selectedId.isEmpty) {
         selectedId = (students.first.id?.toString() ?? '').trim();
         if (selectedId.isNotEmpty) {
-          await SharedPreferencesManager.setValue('selected_child_id', selectedId);
+          await SharedPreferencesManager.setValue(
+            'selected_child_id',
+            selectedId,
+          );
         }
       }
 
       parent_model.Student selected = students.first;
+      var matchedSelectedId = false;
       if (selectedId.isNotEmpty) {
         for (final child in students) {
           if ((child.id?.toString() ?? '').trim() == selectedId) {
             selected = child;
+            matchedSelectedId = true;
             break;
           }
+        }
+      }
+
+      if (!matchedSelectedId) {
+        final fallbackSelectedId = (selected.id?.toString() ?? '').trim();
+        if (fallbackSelectedId.isNotEmpty) {
+          await SharedPreferencesManager.setValue(
+            'selected_child_id',
+            fallbackSelectedId,
+          );
         }
       }
 
@@ -283,14 +306,15 @@ class StartController extends GetxController {
         selected.name,
         selected.admissionNo,
       ]);
-      await SharedPreferencesManager.setValue('selected_child_name', selectedName);
+      await SharedPreferencesManager.setValue(
+        'selected_child_name',
+        selectedName,
+      );
       await SharedPreferencesManager.setValue(
         'selected_child_avatar',
         selected.profile ?? '',
       );
-    } catch (_) {
-      // Keep existing app bar values if child refresh fails.
-    }
+    } catch (_) {}
   }
 
   String get appBarProfileUrl {
@@ -354,7 +378,9 @@ class StartController extends GetxController {
         .replaceAll('/public/public/', '/public/')
         .replaceAll('/storage/storage/', '/storage/');
     return baseUri
-        .resolve(normalized.startsWith('/') ? normalized.substring(1) : normalized)
+        .resolve(
+          normalized.startsWith('/') ? normalized.substring(1) : normalized,
+        )
         .toString();
   }
 
@@ -413,30 +439,4 @@ class StartController extends GetxController {
         return "App";
     }
   }
-  // String getTitle() {
-  //   String title = 'StartView';
-
-  //   switch (selectedIndex.value) {
-  //     case 0:
-  //       title = LocaleKeys.dashboard;
-  //       break;
-  //     case 1:
-  //       title = LocaleKeys.payments;
-  //       break;
-  //     case 2:
-  //       if (UserRepository.shared.isDriver) {
-  //         title = LocaleKeys.scanner;
-  //         break;
-  //       }
-  //       title = LocaleKeys.tracking;
-  //       break;
-  //     case 3:
-  //       title = LocaleKeys.delivery;
-  //       break;
-  //     case 4:
-  //       title = LocaleKeys.profile;
-  //       break;
-  //   }
-  //   return title.tr;
-  // }
 }

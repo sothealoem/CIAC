@@ -281,6 +281,9 @@ class LocaleKeys {
   static const enterYourName = 'enterYourName';
   static const successfulGetProduct = 'successfulGetProduct';
   static const present = 'present';
+  static const all = 'all';
+  static const paid = 'paid';
+  static const unpaid = 'unpaid';
   static const absent = 'absent';
   static const late = 'late';
   static const noStaffAttendanceLogsFound = 'noStaffAttendanceLogsFound';
@@ -304,6 +307,9 @@ class LocaleKeys {
   static const reject = 'reject';
   static const haveAnAccount = 'haveAnAccount';
   static const orConnectWith = 'orConnectWith';
+  static const welcomeTo = 'welcomeTo';
+  static const createAccountAndAccessCoolStuffs =
+      'createAccountAndAccessCoolStuffs';
 }
 
 class Locales {
@@ -583,6 +589,9 @@ class Locales {
     'commend': 'Commend',
     //————————————————————haysan——————————————————————//
     'present': 'Present',
+    'all': 'All',
+    'paid': 'Paid',
+    'unpaid': 'Unpaid',
     'absent': 'Absent',
     'late': 'Late',
     'noStaffAttendanceLogsFound': 'No Staff Attendance Logs Found',
@@ -604,6 +613,9 @@ class Locales {
     'prending': 'Pending',
     'approved': 'Approved',
     'reject': 'Reject',
+    'welcomeTo': 'Welcome To',
+    'createAccountAndAccessCoolStuffs':
+        'Create an account and access \\n thousand of cool stuffs.',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់ទៅអ៊ីនធឺណិតបាន',
@@ -629,6 +641,9 @@ class Locales {
     'loginNow': 'ចូលឥឡូវ',
     'cannotBeEmpty': 'មិនអាចទទេ',
     'attendance': 'វត្តមាន',
+    'welcomeTo': 'សូមស្វាគមន៍',
+    'createAccountAndAccessCoolStuffs':
+        'បង្កើតគណនី ហើយចូលប្រើ មុខងារល្អៗរាប់ពាន់។',
     'invalidPhoneNumber': 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ',
     'login': 'ចូល',
     'loginWithUsernameEmail': 'ចូលដោយប្រើឈ្មោះអ្នកប្រើ ឬ អ៊ីមែល',
@@ -834,6 +849,9 @@ class Locales {
     'commend': 'មតិយោបល់',
     //————————————————————haysan——————————————————————//
     'present': 'វត្តមាន',
+    'all': 'ទាំងអស់',
+    'paid': 'បានបង់',
+    'unpaid': 'មិនទាន់បង់',
     'absent': 'អវត្តមាន',
     'late': 'យឺត',
     'noStaffAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមានបុគ្គលិក',

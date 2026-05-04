@@ -48,6 +48,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottomRight: Radius.circular(25),
         ),
         child: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,

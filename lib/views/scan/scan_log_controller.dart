@@ -85,7 +85,6 @@ class CardScanController extends GetxController {
       await postScanCard(
         scanPoint: parsed.code,
         qrType: parsed.type,
-        rawPayload: parsed.rawPayload,
         lat: lat,
         lng: lng,
       );
@@ -215,7 +214,6 @@ class CardScanController extends GetxController {
     await postScanCard(
       scanPoint: parsed.code,
       qrType: parsed.type,
-      rawPayload: parsed.rawPayload,
       lat: lat,
       lng: lng,
     );
@@ -224,7 +222,6 @@ class CardScanController extends GetxController {
   Future<void> postScanCard({
     required String scanPoint,
     required String qrType,
-    required String rawPayload,
     required double lat,
     required double lng,
   }) async {
@@ -239,7 +236,6 @@ class CardScanController extends GetxController {
 
       final scannerUsername =
           await SharedPreferencesManager.get(Credential.username.name) ?? '';
-      final scannerName = await SharedPreferencesManager.get('name') ?? '';
       final scannerOwnerId =
           await SharedPreferencesManager.get('scanner_owner_id') ?? '';
       if (scannerUsername.toString().trim().isEmpty) {
@@ -262,19 +258,9 @@ class CardScanController extends GetxController {
       }
       final response = await Get.find<ApiService>().post(EndPoints.scanCard, {
         "card_uid": owner,
-        "code": owner,
-        "staff_code": owner,
         "scan_point": code,
-        "scanned_code": code,
         "type": normalizedType,
-        "qr_type": normalizedType,
-        "qr_code": code,
-        "qr_payload": rawPayload,
-        "qr_payload_type": normalizedType,
-        "qr_payload_code": code,
         "scanned_by": scannerUsername,
-        "scanner_username": scannerUsername,
-        "scanner_name": scannerName,
         "lat": lat,
         "lng": lng,
       }, isShowLoading: false);
@@ -498,55 +484,12 @@ class CardScanController extends GetxController {
     return '$firstName $lastName'.trim();
   }
 
-  void _showLogDialog(dynamic staffData, {required String message}) {
-    final fullName = _getFullName(staffData);
-    final scanLog =
-        staffData['scan_log'] ??
-        staffData['attendance_log'] ??
-        staffData['attendance'] ??
-        {};
-
-    final scanTime =
-        scanLog is Map<String, dynamic>
-            ? (scanLog['time'] ??
-                    scanLog['scan_time'] ??
-                    scanLog['created_at'] ??
-                    '')
-                .toString()
-            : '';
-    final scanDate =
-        scanLog is Map<String, dynamic>
-            ? (scanLog['date'] ?? scanLog['scan_date'] ?? '').toString()
-            : '';
-    final status =
-        scanLog is Map<String, dynamic>
-            ? (scanLog['status'] ?? scanLog['attendance_status'] ?? '')
-                .toString()
-            : '';
-
-    final subtitle = [
-      if (fullName.isNotEmpty) fullName,
-      message,
-      if (scanDate.isNotEmpty) 'Date: $scanDate',
-      if (scanTime.isNotEmpty) 'Time: $scanTime',
-      if (status.isNotEmpty) 'Status: $status',
-    ].join('\n');
-
-    DialogManager.showCustom(
-      PrimaryDialog(
-        title: "Attendance Log",
-        subTitle: subtitle,
-        onPressed: () => Get.back(),
-      ),
-    );
-  }
-
   void _handleFailure(String message) {
     Get.snackbar(
       message.toLowerCase().contains("already")
           ? "Attendance Log"
           : "Scan Error",
-      message.toLowerCase().contains("already") ? message : message,
+      message,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor:
           message.toLowerCase().contains("already")
@@ -627,15 +570,6 @@ class CardScanController extends GetxController {
 
       final type = decoded['type']?.toString().trim().toLowerCase();
       final code = decoded['code']?.toString().trim();
-      final displayNameRaw = decoded['name']?.toString().trim();
-      final firstName = decoded['firstname']?.toString().trim();
-      final lastName = decoded['lastname']?.toString().trim();
-      final fullName = '${firstName ?? ''} ${lastName ?? ''}'.trim();
-      final displayName =
-          (displayNameRaw != null && displayNameRaw.isNotEmpty)
-              ? displayNameRaw
-              : (fullName.isNotEmpty ? fullName : null);
-
       if (type == null || type.isEmpty || code == null || code.isEmpty) {
         return null;
       }
@@ -647,8 +581,6 @@ class CardScanController extends GetxController {
       return _QrPayload(
         type: type,
         code: code,
-        rawPayload: normalized,
-        displayName: displayName,
       );
     } catch (_) {
       return null;
@@ -659,13 +591,9 @@ class CardScanController extends GetxController {
 class _QrPayload {
   final String type;
   final String code;
-  final String rawPayload;
-  final String? displayName;
 
   const _QrPayload({
     required this.type,
     required this.code,
-    required this.rawPayload,
-    this.displayName,
   });
 }

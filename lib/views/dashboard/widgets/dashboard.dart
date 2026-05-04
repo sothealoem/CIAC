@@ -64,7 +64,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   void click(int index) {
     switch (index) {
       case 0:
-        Get.toNamed(Routes.paymentCollection);
+        Get.toNamed(Routes.paymentHistory);
         break;
       case 1:
         Get.toNamed(Routes.attendance);
@@ -98,8 +98,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Subscribe to role changes so parent dashboard updates to 9 items
-      // once user role is loaded/refreshed.
       _startController?.isParentUser.value;
       return LayoutBuilder(
         builder: (context, constraints) {

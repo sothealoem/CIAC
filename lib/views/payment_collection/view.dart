@@ -25,8 +25,8 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
             bottom: false,
             child: SizedBox(
               width: size.width,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +42,7 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
             ),
           ),
           UIConstants.spacingSmall.height,
-          CustomIndicator(progress: 1 / 4),
+          const CustomIndicator(progress: 1 / 4),
           Expanded(child: Container(child: PaymentCardWidget())),
           UIConstants.spacingHigh.height,
         ],

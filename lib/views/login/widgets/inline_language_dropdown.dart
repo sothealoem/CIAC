@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
-import 'package:schoolapp/views/login/controller.dart';
 
 class InlineLanguageDropdown extends StatelessWidget {
   const InlineLanguageDropdown({super.key});
@@ -23,9 +21,6 @@ class InlineLanguageDropdown extends StatelessWidget {
           AppConfig.shared.updateLanguage(Language.en.key);
         } else {
           AppConfig.shared.updateLanguage(Language.kh.key);
-        }
-        if (Get.isRegistered<LoginController>()) {
-          Get.find<LoginController>().refreshValidationMessages();
         }
       },
       itemBuilder:

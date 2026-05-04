@@ -5,7 +5,7 @@ import 'package:schoolapp/views/views.dart';
 class ScanBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ScanController>(() => ScanController());
+    //Get.lazyPut<ScanController>(() => ScanController());
     Get.lazyPut<CardScanController>(() => CardScanController());
   }
 }

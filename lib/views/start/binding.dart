@@ -13,5 +13,11 @@ class StartBinding extends Bindings {
     if (!Get.isRegistered<ProfileController>()) {
       Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);
     }
+    if (!Get.isRegistered<PaymentHistoryController>()) {
+      Get.lazyPut<PaymentHistoryController>(
+        () => PaymentHistoryController(),
+        fenix: true,
+      );
+    }
   }
 }

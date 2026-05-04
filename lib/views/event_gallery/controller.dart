@@ -39,7 +39,7 @@ class ActivityController extends GetxController {
         return;
       }
 
-      final parsed =
+      final List<ClassActivityItem> parsed =
           list.whereType<dynamic>().map((e) {
             if (e is Map<String, dynamic>) {
               return ClassActivityItem.fromJson(e);
@@ -47,7 +47,13 @@ class ActivityController extends GetxController {
             if (e is Map) {
               return ClassActivityItem.fromJson(Map<String, dynamic>.from(e));
             }
-            return const ClassActivityItem(id: 0, title: '', image: '');
+            return const ClassActivityItem(
+              id: 0,
+              title: '',
+              image: '',
+              description: '',
+              timeText: '',
+            );
           }).where((e) => e.image.isNotEmpty || e.title.isNotEmpty).toList();
 
       activities.assignAll(parsed);
@@ -87,18 +93,47 @@ class ClassActivityItem {
     required this.id,
     required this.title,
     required this.image,
+    required this.description,
+    required this.timeText,
   });
 
   final int id;
   final String title;
   final String image;
+  final String description;
+  final String timeText;
 
   factory ClassActivityItem.fromJson(Map<String, dynamic> json) {
     return ClassActivityItem(
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: (json['title'] ?? '').toString().trim(),
       image: (json['image'] ?? '').toString().trim(),
+      description: (json['description'] ?? '').toString().trim(),
+      timeText: _firstNonEmpty(<dynamic>[
+        json['time'],
+        json['time_text'],
+        json['activity_time'],
+        json['created_at'],
+        json['createdAt'],
+        json['create_date'],
+        json['created_date'],
+        json['updated_at'],
+        json['updatedAt'],
+        json['update_date'],
+        json['date'],
+        json['publish_date'],
+      ]),
     );
+  }
+
+  static String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final text = (value ?? '').toString().trim();
+      if (text.isNotEmpty && text.toLowerCase() != 'null') {
+        return text;
+      }
+    }
+    return '';
   }
 }
 

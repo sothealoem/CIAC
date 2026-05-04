@@ -125,7 +125,12 @@ class StaffAttendanceItem {
       fullnameEn = _asText(json['fullname_en'] ?? json['full_name_en']),
       fullnameKh = _asText(json['fullname_kh'] ?? json['full_name_kh']),
       profile = _asText(
-        json['profile'] ?? json['avatar'] ?? json['photo'] ?? json['image'] ?? json['profile_url'],
+        json['profile'] ??
+            json['avatar'] ??
+            json['photo'] ??
+            json['image'] ??
+            json['image_url'] ??
+            json['profile_url'],
       ),
       attendanceDate = _asText(json['attendance_date'] ?? json['date']),
       timeIn1 = _asText(json['time_in_1'] ?? json['check_in_morning'] ?? json['time']),

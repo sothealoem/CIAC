@@ -25,7 +25,6 @@ class ScanController extends GetxController {
   }
 
   Future<void> cameraListen() async {
-    // Call listen over here instead of onDetect property because https://github.com/juliansteenbakker/mobile_scanner/issues/925
     subscription = mobileScannerCtl.barcodes.listen((
       BarcodeCapture capture,
     ) async {
@@ -72,9 +71,7 @@ class ScanController extends GetxController {
     try {
       await scanCard(value);
     } catch (e) {
-      ExceptionHandler.handleException(
-        'Scan failed. Please try again.',
-      );
+      ExceptionHandler.handleException('Scan failed. Please try again.');
     }
   }
 
@@ -112,5 +109,4 @@ class ScanController extends GetxController {
       );
     }
   }
-
 }
