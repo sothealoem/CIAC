@@ -5,6 +5,7 @@ import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/schedule/controller.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -176,6 +177,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       'selected_child_avatar',
       child.avatar,
     );
+    if (Get.isRegistered<ScheduleController>()) {
+      await Get.find<ScheduleController>().fetchStudentTimeSheet();
+    }
     Get.back();
     Get.snackbar(
       'Student',

@@ -6,8 +6,17 @@ import 'package:schoolapp/models/models.dart';
 class ScheduleController extends GetxController {
   final TextEditingController searchCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final RxList<TrackingModel> trackings = <TrackingModel>[].obs;
-  bool isDone = false;
+  final RxMap<String, List<ScheduleItem>> schedules =
+      <String, List<ScheduleItem>>{}.obs;
+  final Rxn<ScheduleClassInfo> classInfo = Rxn<ScheduleClassInfo>();
+  final RxBool isLoading = false.obs;
+  final RxString error = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchStudentTimeSheet();
+  }
 
   @override
   void onClose() {
@@ -15,23 +24,64 @@ class ScheduleController extends GetxController {
     super.onClose();
   }
 
-  Future<void> fetchTracking() async {
+  Future<void> fetchStudentTimeSheet() async {
+    isLoading.value = true;
+    error.value = '';
+
     try {
-      final Map<String, dynamic> param = {'invoice': searchCtl.text};
+      final studentId = await _resolveStudentId();
+      if (studentId == null) {
+        schedules.clear();
+        classInfo.value = null;
+        error.value = 'Student ID is required.';
+        return;
+      }
+
       final res = await Get.find<ApiService>().get(
-        EndPoints.tracking,
-        queryParameters: param,
-        isShowLoading: true,
-      );
-      final data = getPropertyFromJson(res.data, 'data');
-      trackings.value = List.from(
-        (data as List).map((e) => TrackingModel.fromJson(e)).toList(),
+        EndPoints.studentTimeSheet,
+        queryParameters: {'student_id': studentId},
+        isShowLoading: false,
       );
 
-      isDone = true;
-      DialogManager.hideLoading();
+      if (res.data is! Map) {
+        schedules.clear();
+        classInfo.value = null;
+        error.value = 'Invalid response data.';
+        return;
+      }
+
+      _setScheduleFromJson(Map<String, dynamic>.from(res.data as Map));
     } catch (e) {
-      ExceptionHandler.handleException(e);
+      debugPrint('Failed to load schedule: $e');
+      schedules.clear();
+      classInfo.value = null;
+      error.value = 'Failed to load schedule.';
+      ExceptionHandler.handleException(e, alert: false);
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  void _setScheduleFromJson(Map<String, dynamic> json) {
+    final model = ScheduleResponse.fromJson(json);
+    classInfo.value = model.classInfo;
+    schedules.assignAll(model.data);
+  }
+
+  Future<int?> _resolveStudentId() async {
+    final keys = <String>[
+      'selected_child_id',
+      'student_info_id',
+      'last_leave_student_id',
+    ];
+
+    for (final key in keys) {
+      final raw =
+          (await SharedPreferencesManager.get(key) ?? '').toString().trim();
+      if (raw.isEmpty) continue;
+      final parsed = int.tryParse(raw);
+      if (parsed != null) return parsed;
+    }
+    return null;
   }
 }

@@ -16,4 +16,5 @@ export 'tracking/tracking.dart';
 export 'staff/staff.dart';
 export 'student_profile_history/student_profile_history.dart';
 export 'payment_history/payment_history.dart';
+export 'schedule/schedule.dart';
 
