@@ -45,7 +45,6 @@ class PaymentStatusTabBar extends StatelessWidget {
                         tabs[index]['title'] as String,
                         style: TextStyle(
                           fontSize: 12,
-                          fontFamily: 'Battambang',
                           color: isSelected ? Colors.black : Colors.grey,
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.normal,

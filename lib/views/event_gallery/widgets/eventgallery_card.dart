@@ -38,7 +38,6 @@ class ActivityCardWidget extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: 'Battambang',
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF1F2937),
@@ -50,7 +49,6 @@ class ActivityCardWidget extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: 'Battambang',
                   fontSize: 12,
                   height: 1.3,
                   color: Color(0xFF4B5563),

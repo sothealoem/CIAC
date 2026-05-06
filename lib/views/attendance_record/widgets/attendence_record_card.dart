@@ -67,7 +67,7 @@ class _AttendenceRecordCardWidgetState
                     Expanded(
                       child: Text(
                         controller.selectedDate.value.isEmpty
-                            ? 'All dates'
+                            ? LocaleKeys.allDates.tr
                             : controller.selectedDate.value,
                         style: const TextStyle(fontSize: 14),
                       ),
@@ -214,7 +214,11 @@ class _AttendenceRecordCardWidgetState
                     ),
                     child: Text(
                       _statusText(item.status),
-                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontFamily: AppFontFamily.localized,
+                      ),
                     ),
                   ),
                 ],
@@ -279,31 +283,11 @@ class _AttendenceRecordCardWidgetState
   }
 
   Color _statusColor(String rawStatus) {
-    final status = rawStatus.toLowerCase();
-    if (status.contains('permission')) {
-      return Colors.blue;
-    }
-    if (status.contains('late')) {
-      return Colors.orange;
-    }
-    if (status.contains('absent')) {
-      return Colors.red;
-    }
-    return Colors.green;
+    return AppStatusStyles.attendance(rawStatus).color;
   }
 
   String _statusText(String rawStatus) {
-    final status = rawStatus.toLowerCase();
-    if (status.contains('permission')) {
-      return 'Permission';
-    }
-    if (status.contains('late')) {
-      return 'Late';
-    }
-    if (status.contains('absent')) {
-      return 'Absent';
-    }
-    return 'Present';
+    return AppStatusStyles.attendance(rawStatus).label;
   }
 
   String _timeText(String value) {

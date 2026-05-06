@@ -239,7 +239,6 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
           color: Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Battambang',
         ),
       ),
     );
@@ -272,7 +271,6 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
-            fontFamily: 'Battambang',
           ),
         ),
       ),
@@ -296,7 +294,6 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
           style: TextStyle(
             color: color,
             fontSize: 11,
-            fontFamily: 'Battambang',
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

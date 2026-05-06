@@ -27,6 +27,7 @@ class StartView extends GetView<StartController> {
           isParent
               ? LocaleKeys.welcomeParentSubtitle.tr
               : LocaleKeys.welcomeTeacherSubtitle.tr;
+      final titleFontFamily = AppFontFamily.localized;
 
       return PopScope(
         canPop: selectedIndex == 0,
@@ -51,10 +52,11 @@ class StartView extends GetView<StartController> {
                           children: [
                             TextSpan(
                               text: roleWelcomePrefix,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
+                                fontFamily: titleFontFamily,
                               ),
                             ),
                             TextSpan(
@@ -62,18 +64,20 @@ class StartView extends GetView<StartController> {
                                   controller.userName.value.trim().isEmpty
                                       ? dashboardController.displayName
                                       : controller.userName.value,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontStyle: FontStyle.italic,
                                 color: AppColor.yellow,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: titleFontFamily,
                               ),
                             ),
-                            const TextSpan(
+                            TextSpan(
                               text: ' !',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
+                                fontFamily: titleFontFamily,
                               ),
                             ),
                           ],
@@ -101,7 +105,7 @@ class StartView extends GetView<StartController> {
                 key: ValueKey<String>(isParent ? 'nav-4' : 'nav-5'),
                 backgroundColor: AppColor.white,
                 color: AppColor.grey,
-                activeColor: AppColor.primary,
+                activeColor: AppColor.red,
                 height: 66,
                 style: TabStyle.reactCircle,
                 initialActiveIndex: selectedIndex,
@@ -111,27 +115,20 @@ class StartView extends GetView<StartController> {
                   TabItem(
                     icon: Icons.dashboard_outlined,
                     title: LocaleKeys.dashboard.tr,
-                    fontFamily: 'Battambang',
                   ),
                   TabItem(
                     icon: Icons.notifications_outlined,
                     title: LocaleKeys.notification.tr,
-                    fontFamily: 'Battambang',
                   ),
                   if (!isParent)
-                    const TabItem(
-                      icon: Icons.qr_code_scanner_sharp,
-                      fontFamily: 'Battambang',
-                    ),
+                    const TabItem(icon: Icons.qr_code_scanner_sharp),
                   TabItem(
                     icon: Icons.mobile_friendly_outlined,
                     title: LocaleKeys.payments.tr,
-                    fontFamily: 'Battambang',
                   ),
                   TabItem(
                     icon: Icons.contact_phone,
                     title: LocaleKeys.contact.tr,
-                    fontFamily: 'Battambang',
                   ),
                 ],
               ),

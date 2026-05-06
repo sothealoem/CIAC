@@ -9,8 +9,6 @@ class StandingsCardWidget extends StatefulWidget {
 }
 
 class _StandingsCardWidgetState extends State<StandingsCardWidget> {
-  static const String _khmerFont = 'Battambang';
-
   static const List<String> _months = <String>[
     'មករា',
     'កុម្ភៈ',
@@ -123,7 +121,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontFamily: _khmerFont,
         ),
       ),
     );
@@ -152,7 +149,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
                 textStyle: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFF1F2937),
-                  fontFamily: _khmerFont,
                   fontWeight: FontWeight.w600,
                 ),
               )
@@ -174,7 +170,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
                     style: const TextStyle(
                       fontSize: 12,
                       color: Color(0xFF1F2937),
-                      fontFamily: _khmerFont,
                       fontWeight: FontWeight.w600,
                     ),
                     items:
@@ -185,7 +180,7 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
                                 child: Text(
                                   item,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontFamily: _khmerFont),
+                                  style: const TextStyle(),
                                 ),
                               ),
                             )
@@ -216,7 +211,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -226,7 +220,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
               textAlign: TextAlign.center,
             ),
@@ -238,7 +231,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
               textAlign: TextAlign.right,
             ),
@@ -267,7 +259,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               subject,
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -277,7 +268,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -290,7 +280,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
                 color: gradeColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -318,7 +307,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -329,7 +317,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
             ),
           ),
@@ -341,7 +328,6 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: _khmerFont,
               ),
             ),
           ),

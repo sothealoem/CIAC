@@ -21,7 +21,7 @@ class CustomIndicator extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: FractionallySizedBox(
             widthFactor: progress.clamp(0.0, 1.0),
-            child: Container(color: AppColor.primaryColor),
+            child: Container(color: AppColor.red),
           ),
         ),
       ),

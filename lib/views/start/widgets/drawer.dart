@@ -471,7 +471,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       onTap: onTap,
-      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+      leading: Icon(icon, color: Colors.pink),
       title: Text(
         label,
         style: TextStyle(

@@ -11,7 +11,6 @@ class AttendanceRecordController extends GetxController {
   final RxList<StaffAttendanceItem> attendanceList =
       <StaffAttendanceItem>[].obs;
   final RxBool isLoading = false.obs;
-
   final RxString presentSummary = '0'.obs;
   final RxString lateSummary = '0'.obs;
   final RxString absentSummary = '0'.obs;

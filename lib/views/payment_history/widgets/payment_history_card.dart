@@ -60,7 +60,6 @@ class PaymentHistoryCard extends StatelessWidget {
                     color: statusText,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    fontFamily: 'Battambang',
                   ),
                 ),
               ),

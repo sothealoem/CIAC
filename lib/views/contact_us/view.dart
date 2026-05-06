@@ -35,11 +35,7 @@ class ContactUsView extends GetView<ContactUsController> {
             children: [
               Text(
                 LocaleKeys.contactUs.tr,
-                style: const TextStyle(
-                  color: Color(0xFF1F2937),
-                  fontSize: 13,
-                  fontFamily: 'Battambang',
-                ),
+                style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13),
               ),
               12.height,
               _buildProgressLine(),

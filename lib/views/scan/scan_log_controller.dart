@@ -539,7 +539,6 @@ class CardScanController extends GetxController {
                 style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF334155),
-                  fontFamily: 'Battambang',
                 ),
                 children: [
                   TextSpan(

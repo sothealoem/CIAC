@@ -34,7 +34,6 @@ class ScheduleClassItem extends StatelessWidget {
                   session,
                   style: const TextStyle(
                     color: Colors.black87,
-                    fontFamily: 'Battambang',
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -53,7 +52,6 @@ class ScheduleClassItem extends StatelessWidget {
                         time,
                         style: const TextStyle(
                           color: Colors.black87,
-                          fontFamily: 'Battambang',
                           fontSize: 9,
                           fontWeight: FontWeight.w500,
                         ),

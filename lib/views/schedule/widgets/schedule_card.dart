@@ -71,7 +71,6 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                 style: const TextStyle(
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Battambang',
                   fontSize: 14,
                 ),
               ),
@@ -106,7 +105,6 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                       child: Text(
                         _dayLabels[index],
                         style: TextStyle(
-                          fontFamily: 'Battambang',
                           fontSize: 14,
                           color:
                               isSelected ? AppColor.primaryColor : Colors.grey,

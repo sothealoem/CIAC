@@ -49,7 +49,9 @@ class MyApp extends StatelessWidget {
       locale: AppConfig.shared.languageLocale,
       fallbackLocale: const Locale('KM', 'KH'),
       debugShowCheckedModeBanner: false,
-      theme: AppStyle.themeData(),
+      theme: AppStyle.themeData(
+        fontFamily: AppFontFamily.forLanguage(AppConfig.shared.language),
+      ),
       //initialRoute: Routes.start,
       initialRoute:
           AppConfig.shared.token.isNotEmpty ? Routes.root : Routes.login,

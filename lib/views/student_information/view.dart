@@ -55,7 +55,6 @@ class _ProfileActionBar extends StatelessWidget {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontFamily: 'Battambang',
                   color: Color(0xFF006E6D),
                   fontSize: 22,
                   fontWeight: FontWeight.w700,

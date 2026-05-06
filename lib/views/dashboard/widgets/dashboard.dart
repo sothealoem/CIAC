@@ -39,7 +39,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   ];
 
   final Color _panelColor = const Color(0xFFFFFFFF);
-  final Color _iconBgColor = const Color(0xFFDDE8EE);
+  final Color _iconBgColor = const Color(0xFFFFFFFF);
 
   DashboardController controller = Get.find<DashboardController>();
   StartController? get _startController =>
@@ -142,7 +142,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
           return Column(
             children: [
-              SizedBox(height: topGap),
+              const SizedBox(height: topGap),
               DashboardSliderSection(height: sliderHeight),
               const SizedBox(height: middleGap),
               Expanded(
@@ -187,9 +187,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         child: LayoutBuilder(
                           builder: (context, itemConstraints) {
                             final itemHeight = itemConstraints.maxHeight;
-                            final itemIconSize = (itemHeight * 0.54).clamp(
-                              58.0,
-                              iconSize + 14,
+                            final itemIconSize = (itemHeight * 0.62).clamp(
+                              66.0,
+                              iconSize + 22,
                             );
                             final itemGap = (itemHeight * 0.06).clamp(4.0, 8.0);
                             final itemFontSize = (itemHeight * 0.108).clamp(
@@ -224,7 +224,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                   child: Center(
                                     child: _menuIcon(
                                       catIconPaths[itemIndex],
-                                      (itemIconSize * 0.56).clamp(34.0, 40.0),
+                                      (itemIconSize * 0.52).clamp(34.0, 42.0),
                                     ),
                                   ),
                                 ),
@@ -237,7 +237,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                                       fontSize: itemFontSize,
                                       height: 1.15,
                                       color: const Color(0xFF1F2A37),
-                                      fontFamily: 'Battambang',
                                       fontWeight: FontWeight.w700,
                                     ),
                                     maxLines: 3,

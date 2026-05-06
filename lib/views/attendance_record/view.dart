@@ -2,6 +2,7 @@ import 'package:schoolapp/views/attendance_record/controller.dart';
 import 'package:schoolapp/views/attendance_record/widgets/attendence_record_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
@@ -22,19 +23,22 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
     return Scaffold(
       body: Column(
         children: [
-          const SafeArea(
+          SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'កំណត់ត្រាវត្តមាន',
-              subTitle: 'លោកអ្នកអាចដឹងពីវត្តមាន កូនៗរបស់លោកអ្នកពេលកំពុងសិក្សា',
+              title: LocaleKeys.attendanceRecordTitle.tr,
+              subTitle: LocaleKeys.attendanceRecordSubTitle.tr,
             ),
           ),
           UIConstants.spacingSmall.height,
-
           const CustomIndicator(progress: 1 / 4),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(child: const AttendenceRecordCardWidget()),
+            child: RefreshIndicator(
+              onRefresh: controller.loadAttendanceLogs,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(child: const AttendenceRecordCardWidget()),
+              ),
             ),
           ),
         ],

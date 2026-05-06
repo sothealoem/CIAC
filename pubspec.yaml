@@ -67,8 +67,16 @@ flutter:
   fonts:
     - family: Battambang
       fonts:
+        - asset: assets/fonts/Battambang-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Battambang-Light.ttf
+          weight: 300
         - asset: assets/fonts/Battambang-Regular.ttf
           weight: 400
+        - asset: assets/fonts/Battambang-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Battambang-Black.ttf
+          weight: 900
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf

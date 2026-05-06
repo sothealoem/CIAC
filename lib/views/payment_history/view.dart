@@ -43,14 +43,16 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
       return num.tryParse(matched?.group(0) ?? '0') ?? 0;
     }
 
-    return source.where((item) {
-      final total = parseNum(item.grandTotal);
-      if (total <= 0) return false;
-      final due = parseNum(item.dueAmount);
-      if (tabIndex == 1) return due <= 0;
-      if (tabIndex == 2) return due > 0;
-      return true;
-    }).toList(growable: false);
+    return source
+        .where((item) {
+          final total = parseNum(item.grandTotal);
+          if (total <= 0) return false;
+          final due = parseNum(item.dueAmount);
+          if (tabIndex == 1) return due <= 0;
+          if (tabIndex == 2) return due > 0;
+          return true;
+        })
+        .toList(growable: false);
   }
 
   Widget _buildPaymentList(List<PaymentHistoryItem> visiblePayments) {

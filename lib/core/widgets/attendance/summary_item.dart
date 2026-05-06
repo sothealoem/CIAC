@@ -70,7 +70,6 @@ class SummaryItem extends StatelessWidget {
               Text(
                 count,
                 style: TextStyle(
-                  fontFamily: 'Battambang',
                   color: color,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,

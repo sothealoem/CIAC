@@ -105,7 +105,6 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
                 child: Text(
                   '$label:',
                   style: const TextStyle(
-                    fontFamily: 'Battambang',
                     fontSize: 13.5,
                     color: Color(0xFF4B4B4B),
                     fontWeight: FontWeight.w500,
@@ -125,7 +124,6 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
                 child: Text(
                   value,
                   style: const TextStyle(
-                    fontFamily: 'Battambang',
                     fontSize: 14,
                     color: Color(0xFF1E1E1E),
                     fontWeight: FontWeight.w500,

@@ -142,7 +142,6 @@ class PaymentCardWidget extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      fontFamily: 'Battambang',
                     ),
                   ),
                 ),
@@ -187,7 +186,6 @@ class PaymentCardWidget extends StatelessWidget {
                 style: TextStyle(
                   color: AppColor.darkGrey,
                   fontSize: 12,
-                  fontFamily: 'Battambang',
                 ),
               ),
             ],
@@ -305,7 +303,6 @@ class PaymentCardWidget extends StatelessWidget {
           color: Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Battambang',
         ),
       ),
     );
@@ -347,7 +344,6 @@ class PaymentCardWidget extends StatelessWidget {
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 12,
-          fontFamily: 'Battambang',
         ),
       ),
     );
@@ -368,7 +364,6 @@ class PaymentCardWidget extends StatelessWidget {
           text,
           textAlign: centerText ? TextAlign.center : TextAlign.left,
           style: TextStyle(
-            fontFamily: 'Battambang',
             fontSize: 11,
             color: textColor ?? AppColor.primary,
           ),

@@ -8,6 +8,7 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NotificationController());
     final notifications = [
       (
         title: 'សិស្សម្នាក់បានចូលរួមក្នុងវគ្គសិក្សាថ្មីៗ',
@@ -47,7 +48,6 @@ class NotificationView extends StatelessWidget {
                         color: Color(0xFF1F2937),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        fontFamily: 'Battambang',
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -65,36 +65,40 @@ class NotificationView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.only(
-                    left: UIConstants.spacing.toDouble(),
-                    right: UIConstants.spacing.toDouble(),
-                    top: 2,
-                    bottom: UIConstants.midSpacing.toDouble(),
-                  ),
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.asset(
-                        'assets/images/playground.jpg',
-                        height: 170,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                child: RefreshIndicator(
+                  onRefresh: controller.refreshNotifications,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: UIConstants.spacing.toDouble(),
+                      right: UIConstants.spacing.toDouble(),
+                      top: 2,
+                      bottom: UIConstants.midSpacing.toDouble(),
                     ),
-                    const SizedBox(height: 12),
-                    ...notifications.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: NotificationItemWidget(
-                          title: item.title,
-                          imagePath: item.image,
-                          dateText: '9/27/2024',
-                          timeText: '9:13 AM',
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.asset(
+                          'assets/images/playground.jpg',
+                          height: 170,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      ...notifications.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: NotificationItemWidget(
+                            title: item.title,
+                            imagePath: item.image,
+                            dateText: '9/27/2024',
+                            timeText: '9:13 AM',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

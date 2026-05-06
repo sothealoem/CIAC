@@ -38,6 +38,12 @@ class LocaleKeys {
   static const passwordDoNotMatch = 'passwordDoNotMatch';
   static const newPassword = 'newPassword';
   static const dashboard = 'dashboard';
+  static const attendanceRecordTitle = 'attendanceRecordTitle';
+  static const attendanceRecordSubTitle = 'attendanceRecordSubTitle';
+  static const noAttendanceLogsFound = 'noAttendanceLogsFound';
+  static const studentNameLabel = 'studentNameLabel';
+  static const classLabel = 'classLabel';
+  static const dateLabel = 'dateLabel';
   static const dashboardMenuTuitionFee = 'dashboardMenuTuitionFee';
   static const dashboardMenuAttendance = 'dashboardMenuAttendance';
   static const dashboardMenuRequestLeave = 'dashboardMenuRequestLeave';
@@ -347,6 +353,13 @@ class Locales {
     'passwordDoNotMatch': 'Password do not match',
     'newPassword': 'New password',
     'dashboard': 'Dashboard',
+    'attendanceRecordTitle': 'Attendance Record',
+    'attendanceRecordSubTitle':
+        'You can view your children\'s attendance while they are studying.',
+    'noAttendanceLogsFound': 'No attendance logs found.',
+    'studentNameLabel': 'Name',
+    'classLabel': 'Class',
+    'dateLabel': 'Date',
     'dashboardMenuTuitionFee': 'Payment',
     'dashboardMenuAttendance': 'Attendance',
     'dashboardMenuRequestLeave': 'Request Leave',
@@ -653,6 +666,13 @@ class Locales {
     'passwordDoNotMatch': 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
     'newPassword': 'ពាក្យសម្ងាត់ថ្មី',
     'dashboard': 'ផ្ទាំងគ្រប់គ្រង',
+    'attendanceRecordTitle': 'កំណត់ត្រាវត្តមាន',
+    'attendanceRecordSubTitle':
+        'លោកអ្នកអាចដឹងពីវត្តមាន កូនៗរបស់លោកអ្នកពេលកំពុងសិក្សា',
+    'noAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមាន',
+    'studentNameLabel': 'ឈ្មោះ',
+    'classLabel': 'ថ្នាក់',
+    'dateLabel': 'កាលបរិច្ឆេទ',
     'loginContinueMessage': 'សូមចូលដើម្បីបន្តប្រើកម្មវិធីរបស់អ្នក',
     'dashboardMenuTuitionFee': 'ថ្លៃសិក្សា',
     'dashboardMenuAttendance': 'វត្តមាន',

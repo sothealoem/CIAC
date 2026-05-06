@@ -63,7 +63,7 @@ class ActivityView extends GetView<ActivityController> {
                             padding: EdgeInsets.symmetric(vertical: 24),
                             child: Text(
                               'No class activities found',
-                              style: TextStyle(fontFamily: 'Battambang'),
+                              style: TextStyle(),
                             ),
                           ),
                         )
@@ -157,7 +157,6 @@ class _EventCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontFamily: 'Battambang',
               fontSize: 13,
               height: 1.28,
               color: Color(0xFF212121),
@@ -170,7 +169,6 @@ class _EventCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontFamily: 'Battambang',
               fontSize: 12,
               color: Color(0xFF555555),
               fontWeight: FontWeight.w500,
@@ -240,7 +238,7 @@ class ActivityDetailView extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           LocaleKeys.activity.tr,
-          style: const TextStyle(fontFamily: 'Battambang'),
+          style: const TextStyle(),
         ),
         centerTitle: true,
       ),
@@ -257,7 +255,6 @@ class ActivityDetailView extends StatelessWidget {
             Text(
               detail.title,
               style: const TextStyle(
-                fontFamily: 'Battambang',
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF212121),
@@ -267,7 +264,6 @@ class ActivityDetailView extends StatelessWidget {
             Text(
               _stripHtml(detail.description),
               style: const TextStyle(
-                fontFamily: 'Battambang',
                 fontSize: 14,
                 height: 1.45,
                 color: Color(0xFF374151),

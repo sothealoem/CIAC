@@ -38,6 +38,9 @@ class AppConfig {
   Future<void> updateLanguage(String value) async {
     _language = value;
     Get.updateLocale(AppConfig.shared.languageLocale);
+    Get.changeTheme(
+      AppStyle.themeData(fontFamily: AppFontFamily.forLanguage(_language)),
+    );
     await SharedPreferencesManager.setValue(
       LanguageKey.language.name,
       _language,

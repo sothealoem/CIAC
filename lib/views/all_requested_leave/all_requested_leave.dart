@@ -7,13 +7,6 @@ import 'package:schoolapp/views/views.dart';
 class AllRequestedLeaveView extends GetView<RequestLeaveController> {
   const AllRequestedLeaveView({super.key});
 
-  // void onSearch() async {
-  //   if (!controller.formKey.currentState!.validate()) {
-  //     return;
-  //   }
-  //   await controller.fetchTracking();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
