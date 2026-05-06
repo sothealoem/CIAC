@@ -322,64 +322,64 @@ class AppTextStyle {
   static const smallPrimarytext = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 10,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const timeformatText = TextStyle(
     fontWeight: FontWeight.w500,
     color: Colors.grey,
     fontSize: 10,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const smallPrimaryBoldBlack = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 11,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const smallPrimarytextgrey = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 10,
     color: Colors.grey,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const regularPrimarytext = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 12,
     color: AppColor.white,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const regularPrimarytextblack = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 12,
     color: AppColor.black,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const regularPrimaryBoldblack = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 12,
     color: AppColor.black,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const regularPrimarytextPrimary = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 12,
     color: AppColor.primary,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const mendiumPrimary = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 13,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const mendiumPrimaryBold = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 14,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const mendiumPrimaryBoldwhite = TextStyle(
     fontWeight: FontWeight.w600,
     color: AppColor.white,
     fontSize: 13,
-    fontFamily: 'battambang',
+    fontFamily: 'Battambang',
   );
   static const mediumPrimaryBoldText = TextStyle(
     color: AppColor.primaryColor,
@@ -404,19 +404,24 @@ class AppTextStyle {
 class AppStyle {
   AppStyle._();
 
+  static const _latinFontFamily = 'Roboto';
+
   static ThemeData themeData() {
     return ThemeData(
+      fontFamily: _latinFontFamily,
       primaryColor: AppColor.primary,
       unselectedWidgetColor: const Color(0xFFDFE4E9),
       scaffoldBackgroundColor: AppColor.white,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         centerTitle: true,
         titleSpacing: 0,
         elevation: 0.5,
-        titleTextStyle: AppTextStyle.mediumWhiteMedium,
+        titleTextStyle: AppTextStyle.mediumWhiteMedium.copyWith(
+          fontFamily: _latinFontFamily,
+        ),
         backgroundColor: AppColor.primary,
         foregroundColor: AppColor.white,
-        iconTheme: IconThemeData(color: AppColor.white),
+        iconTheme: const IconThemeData(color: AppColor.white),
       ),
       // tabBarTheme: const TabBarTheme(
       //   unselectedLabelColor: AppColor.black,
@@ -424,7 +429,7 @@ class AppStyle {
       //     borderSide: BorderSide(color: AppColor.black),
       //   ),
       // ),
-      textTheme: _textTheme,
+      textTheme: _textTheme.apply(fontFamily: _latinFontFamily),
       canvasColor: AppColor.transparent,
       splashColor: AppColor.transparent,
       highlightColor: AppColor.transparent,

@@ -17,7 +17,18 @@ class PaymentCollectionController extends GetxController {
 
   Future<void> fetchTracking() async {
     try {
-      final Map<String, dynamic> param = {'invoice': searchCtl.text};
+      final studentId = await StudentIdResolver.resolve();
+      if (studentId == null) {
+        trackings.clear();
+        throw 'Student ID is required.';
+      }
+
+      final Map<String, dynamic> param = {'student_id': studentId};
+      final invoice = searchCtl.text.trim();
+      if (invoice.isNotEmpty) {
+        param['invoice'] = invoice;
+      }
+
       final res = await Get.find<ApiService>().get(
         EndPoints.tracking,
         queryParameters: param,

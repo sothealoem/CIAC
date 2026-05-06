@@ -50,14 +50,14 @@ class PaymentHistoryController extends GetxController {
       }
 
       final response = PaymentHistoryResponse.fromJson(res.data);
-      payments.assignAll(response.data.items);
+      final selectedStudentPayments =
+          response.data.items
+              .where((item) => item.studentId == studentId)
+              .toList(growable: false);
+      payments.assignAll(selectedStudentPayments);
 
-      if (response.data.items.isNotEmpty) {
-        final first = response.data.items.first;
-        studentName.value =
-            first.studentNameKh.trim().isNotEmpty
-                ? first.studentNameKh.trim()
-                : first.studentName.trim();
+      if (selectedStudentPayments.isNotEmpty) {
+        studentName.value = selectedStudentPayments.first.displayStudentName;
       } else {
         studentName.value = '';
       }
@@ -79,28 +79,7 @@ class PaymentHistoryController extends GetxController {
   }
 
   Future<int?> _resolveStudentId() async {
-    if (UserRepository.shared.isDriver) {
-      final selected =
-          (await SharedPreferencesManager.get('selected_child_id') ?? '')
-              .toString()
-              .trim();
-      return int.tryParse(selected);
-    }
-
-    final keys = <String>[
-      'selected_child_id',
-      'student_info_id',
-      'last_leave_student_id',
-    ];
-
-    for (final key in keys) {
-      final raw =
-          (await SharedPreferencesManager.get(key) ?? '').toString().trim();
-      if (raw.isEmpty) continue;
-      final parsed = int.tryParse(raw);
-      if (parsed != null) return parsed;
-    }
-    return null;
+    return StudentIdResolver.resolve();
   }
 
   Future<void> fetchInvoiceDetails(int id) async {

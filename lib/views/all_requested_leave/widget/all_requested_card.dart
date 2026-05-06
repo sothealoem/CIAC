@@ -205,7 +205,7 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
                   titleText.isEmpty ? 'Student' : titleText,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontFamily: 'battambang',
+                    fontFamily: 'Battambang',
                     fontSize: 14,
                   ),
                   maxLines: 1,
@@ -242,7 +242,7 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
                   '$start  ដល់  $end',
                   style: const TextStyle(
                     fontSize: 13,
-                    fontFamily: 'battambang',
+                    fontFamily: 'Battambang',
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,

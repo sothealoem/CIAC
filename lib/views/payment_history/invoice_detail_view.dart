@@ -454,15 +454,21 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
 
     final normalizedPath = uri.path.replaceAll('\\', '/');
     final variants = <String>[
-      uri.replace(
-        path: normalizedPath.replaceFirst('/uploads/uploads/', '/uploads/'),
-      ).toString(),
-      uri.replace(
-        path: normalizedPath.replaceFirst('/public/public/', '/public/'),
-      ).toString(),
-      uri.replace(
-        path: normalizedPath.replaceFirst('/storage/storage/', '/storage/'),
-      ).toString(),
+      uri
+          .replace(
+            path: normalizedPath.replaceFirst('/uploads/uploads/', '/uploads/'),
+          )
+          .toString(),
+      uri
+          .replace(
+            path: normalizedPath.replaceFirst('/public/public/', '/public/'),
+          )
+          .toString(),
+      uri
+          .replace(
+            path: normalizedPath.replaceFirst('/storage/storage/', '/storage/'),
+          )
+          .toString(),
       uri.toString(),
     ];
 

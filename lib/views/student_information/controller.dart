@@ -111,19 +111,20 @@ class StudentInformationController extends GetxController {
             EndPoints.profile,
             isShowLoading: false,
           );
-          final data = getPropertyFromJson(res.data, 'data');
-          if (data is Map<String, dynamic>) {
-            profile = ProfileModel.fromJson(data);
-          } else if (data is Map) {
-            profile = ProfileModel.fromJson(Map<String, dynamic>.from(data));
-          }
+          profile = _profileFromResponse(res.data);
         } catch (_) {
           // Ignore and fallback to cached profile.
         }
 
         profile ??= _safeCachedProfile();
         if (profile == null) {
-          selectedStudent.value = null;
+          if (selectedStudent.value == null) {
+            selectedStudent.value = _teacherFromCachedLogin(
+              staffCode: loginStaffCode,
+              name: loginName,
+              profile: loginProfile,
+            );
+          }
           return;
         }
 
@@ -298,6 +299,44 @@ class StudentInformationController extends GetxController {
     } catch (_) {
       return null;
     }
+  }
+
+  ProfileModel? _profileFromResponse(dynamic raw) {
+    if (raw is! Map) {
+      return null;
+    }
+    final map = Map<String, dynamic>.from(raw);
+    final candidates = <dynamic>[
+      map['data'],
+      map['user'],
+      map['profile'],
+      map,
+    ];
+
+    for (final candidate in candidates) {
+      if (candidate is Map<String, dynamic>) {
+        return ProfileModel.fromJson(candidate);
+      }
+      if (candidate is Map) {
+        return ProfileModel.fromJson(Map<String, dynamic>.from(candidate));
+      }
+    }
+    return null;
+  }
+
+  parent_model.Student _teacherFromCachedLogin({
+    required String staffCode,
+    required String name,
+    required String profile,
+  }) {
+    return parent_model.Student(
+      id: int.tryParse(staffCode),
+      admissionNo: staffCode,
+      name: name.isEmpty ? 'N/A' : name,
+      nameKh: name.isEmpty ? 'N/A' : name,
+      profile: profile,
+      profession: 'Teacher',
+    );
   }
 
   String displayName(parent_model.Student student) {

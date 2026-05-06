@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
+import 'package:schoolapp/models/child_profile/child_profile.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/schedule/controller.dart';
+import 'package:schoolapp/views/start/widgets/child_card.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -17,7 +20,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   static const String _childrenPath = '/api/v1/parent/student-info';
 
   bool _isLoadingChildren = false;
-  List<_ChildProfile> _children = const <_ChildProfile>[];
+  List<ChildProfile> _children = const <ChildProfile>[];
   String _selectedChildId = '';
 
   bool get _isParentRole => UserRepository.shared.isDriver;
@@ -82,7 +85,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
       if (selected.isNotEmpty) {
         await SharedPreferencesManager.setValue('selected_child_id', selected);
-        _ChildProfile? current;
+        ChildProfile? current;
         for (final child in list) {
           if (child.id == selected) {
             current = child;
@@ -105,7 +108,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         return;
       }
       setState(() {
-        _children = const <_ChildProfile>[];
+        _children = const <ChildProfile>[];
       });
     } finally {
       if (!mounted) {
@@ -117,14 +120,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
   }
 
-  List<_ChildProfile> _extractChildren(dynamic raw) {
+  List<ChildProfile> _extractChildren(dynamic raw) {
     if (raw is Map) {
       final model = ParentWithChild.fromJson(Map<String, dynamic>.from(raw));
       final students = model.data?.student ?? const <Student>[];
       if (students.isNotEmpty) {
         return students
             .map(
-              (student) => _ChildProfile(
+              (student) => ChildProfile(
                 id:
                     (student.id?.toString() ?? student.admissionNo ?? '')
                         .trim(),
@@ -143,7 +146,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
 
     if (raw is! Map) {
-      return const <_ChildProfile>[];
+      return const <ChildProfile>[];
     }
 
     final candidates = <dynamic>[
@@ -157,16 +160,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       if (candidate is List) {
         return candidate
             .whereType<dynamic>()
-            .map(_ChildProfile.fromDynamic)
+            .map(ChildProfile.fromDynamic)
             .where((child) => child.id.isNotEmpty || child.name.isNotEmpty)
             .toList();
       }
     }
 
-    return const <_ChildProfile>[];
+    return const <ChildProfile>[];
   }
 
-  void _selectChild(_ChildProfile child) async {
+  void _selectChild(ChildProfile child) async {
     setState(() {
       _selectedChildId = child.id;
     });
@@ -176,6 +179,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       'selected_child_avatar',
       child.avatar,
     );
+    if (Get.isRegistered<ScheduleController>()) {
+      await Get.find<ScheduleController>().fetchStudentTimeSheet();
+    }
     Get.back();
     Get.snackbar(
       'Student',
@@ -375,9 +381,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   children:
                       _children.map((child) {
                         final active = child.id == _selectedChildId;
-                        return _childCard(
+                        return ChildCard(
                           child: child,
                           active: active,
+                          avatar: _childAvatar(child.avatar),
                           onTap: () => _selectChild(child),
                         );
                       }).toList(),
@@ -388,13 +395,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 profileName.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _childCard(
-                  child: _ChildProfile(
+                child: ChildCard(
+                  child: ChildProfile(
                     id: 'self',
                     name: profileName,
                     avatar: '',
                   ),
                   active: true,
+                  avatar: _childAvatar(''),
                   onTap: null,
                 ),
               ),
@@ -471,58 +479,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
-      ),
-    );
-  }
-
-  Widget _childCard({
-    required _ChildProfile child,
-    required bool active,
-    required VoidCallback? onTap,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF223039) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? const Color(0xFF3A4957) : const Color(0xFFDADADA),
-        ),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: _childAvatar(child.avatar),
-        title: Text(
-          child.name.isEmpty ? 'Student' : child.name,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing:
-            active
-                ? Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDDF3DF),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Active',
-                    style: TextStyle(
-                      color: Color(0xFF2E7D32),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                )
-                : null,
       ),
     );
   }
@@ -787,49 +743,5 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   bool _isNetworkUrl(String value) {
     final uri = Uri.tryParse(value);
     return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
-  }
-}
-
-class _ChildProfile {
-  const _ChildProfile({
-    required this.id,
-    required this.name,
-    required this.avatar,
-  });
-
-  final String id;
-  final String name;
-  final String avatar;
-
-  factory _ChildProfile.fromDynamic(dynamic raw) {
-    if (raw is Map<String, dynamic>) {
-      final id =
-          (raw['id'] ?? raw['student_id'] ?? raw['code'] ?? '')
-              .toString()
-              .trim();
-      final name =
-          (raw['name'] ??
-                  raw['fullname_kh'] ??
-                  raw['fullname_en'] ??
-                  raw['full_name'] ??
-                  raw['student_name'] ??
-                  '')
-              .toString()
-              .trim();
-      final avatar =
-          (raw['profile_path'] ??
-                  raw['profile'] ??
-                  raw['avatar'] ??
-                  raw['photo'] ??
-                  raw['image'] ??
-                  '')
-              .toString()
-              .trim();
-      return _ChildProfile(id: id, name: name, avatar: avatar);
-    }
-    if (raw is Map) {
-      return _ChildProfile.fromDynamic(Map<String, dynamic>.from(raw));
-    }
-    return const _ChildProfile(id: '', name: '', avatar: '');
   }
 }

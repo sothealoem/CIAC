@@ -38,7 +38,7 @@ class ContactUsView extends GetView<ContactUsController> {
                 style: const TextStyle(
                   color: Color(0xFF1F2937),
                   fontSize: 13,
-                  fontFamily: 'battambang',
+                  fontFamily: 'Battambang',
                 ),
               ),
               12.height,

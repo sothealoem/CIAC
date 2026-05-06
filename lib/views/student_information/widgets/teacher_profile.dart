@@ -53,13 +53,11 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
-                  _infoRow('Id: ', controller.displayId(teacher)),
-                  _infoRow('Teacher Name: ', controller.displayName(teacher)),
-                  _infoRow('Role: ', controller.teacherRole.value),
-                  _infoRow(
-                    'Proffesion: ',
-                    controller.displayProfession(teacher),
-                  ),
+                  _infoRow('ID', controller.displayId(teacher)),
+                  _infoRow('Teacher Name', controller.displayName(teacher)),
+                  _infoRow('Role', controller.teacherRole.value),
+                  _infoRow('Profession', controller.displayProfession(teacher)),
+                  _infoRow('Phone', controller.displayPhone(teacher)),
                 ],
               ),
             ),

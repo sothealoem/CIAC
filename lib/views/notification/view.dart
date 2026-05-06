@@ -47,7 +47,7 @@ class NotificationView extends StatelessWidget {
                         color: Color(0xFF1F2937),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        fontFamily: 'battambang',
+                        fontFamily: 'Battambang',
                       ),
                     ),
                     const SizedBox(height: 8),

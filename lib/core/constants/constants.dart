@@ -1,4 +1,5 @@
 export 'asset_path.dart';
+export 'dimensions.dart';
 export 'env_key.dart';
 export 'user_type.dart';
 export 'storage_key.dart';

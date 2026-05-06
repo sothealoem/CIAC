@@ -1,5 +1,6 @@
 export 'booking/booking.dart';
 export 'booking_details/booking_details.dart';
+export 'child_profile/child_profile.dart';
 export 'contact_us/contact_us.dart';
 export 'credential/credential.dart';
 export 'customer_payment/customer_payment.dart';
@@ -16,4 +17,5 @@ export 'tracking/tracking.dart';
 export 'staff/staff.dart';
 export 'student_profile_history/student_profile_history.dart';
 export 'payment_history/payment_history.dart';
+export 'schedule/schedule.dart';
 

@@ -615,7 +615,7 @@ class Locales {
     'reject': 'Reject',
     'welcomeTo': 'Welcome To',
     'createAccountAndAccessCoolStuffs':
-        'Create an account and access \\n thousand of cool stuffs.',
+        'Create an account and access\n thousand of cool stuffs.',
   };
   static const KM_KH = {
     'unableToConnectToTheInternet': 'មិនអាចភ្ជាប់ទៅអ៊ីនធឺណិតបាន',
@@ -643,7 +643,7 @@ class Locales {
     'attendance': 'វត្តមាន',
     'welcomeTo': 'សូមស្វាគមន៍',
     'createAccountAndAccessCoolStuffs':
-        'បង្កើតគណនី ហើយចូលប្រើ មុខងារល្អៗរាប់ពាន់។',
+        'បង្កើតគណនី ហើយចូលប្រើ មុខងារល្អៗជាច្រើនមុខ',
     'invalidPhoneNumber': 'លេខទូរស័ព្ទមិនត្រឹមត្រូវ',
     'login': 'ចូល',
     'loginWithUsernameEmail': 'ចូលដោយប្រើឈ្មោះអ្នកប្រើ ឬ អ៊ីមែល',

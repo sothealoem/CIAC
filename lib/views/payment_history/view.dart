@@ -94,7 +94,7 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
         final item = visiblePayments[index];
         return PaymentHistoryCard(
           item: item,
-          studentName: controller.studentName.value,
+          studentName: item.displayStudentName,
           isLoading:
               controller.isLoadingInvoice.value &&
               controller.loadingInvoiceId.value == item.id,

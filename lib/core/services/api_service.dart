@@ -10,7 +10,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ApiService extends GetxService {
   ApiService init() => this;
 
-  // String get baseUrl => AppConfig.shared.baseUrl;
   String get baseUrl => dotenv.env['BASE_URL'] ?? '';
   Logger get logger => Logger.root;
 
@@ -35,30 +34,11 @@ class ApiService extends GetxService {
     // client.interceptors.add(LoadingInterceptor(isShow: isShowLoading ?? false));
     //
     client.interceptors.add(
-      AuthenticationInterceptor(accessToken: AppConfig.shared.authorizationToken),
+      AuthenticationInterceptor(
+        accessToken: AppConfig.shared.authorizationToken,
+      ),
     );
-    //
-    // // DO NOT change order of these interceptors
-    // client.interceptors.add(
-    //   LoggingInterceptor(
-    //     requestHeader: true,
-    //     logPrint: (step, message) {
-    //       switch (step) {
-    //         case InterceptStep.request:
-    //           logger.info(message);
-    //           break;
-    //         case InterceptStep.response:
-    //           logger.info(message);
-    //           break;
-    //         case InterceptStep.error:
-    //           logger.severe(message);
-    //           break;
-    //       }
-    //     },
-    //   ),
-    // );
-    //
-    // client.interceptors.add(ConnectivityInterceptor());
+
     print(client);
     return client;
   }

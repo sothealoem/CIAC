@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schoolapp/core/constants/dimensions.dart';
 
 extension IntX on int {
   Duration get minute => Duration(minutes: this);
@@ -6,16 +7,20 @@ extension IntX on int {
   Duration get milliSecond => Duration(milliseconds: this);
   Duration get microseconds => Duration(microseconds: this);
 
-  Widget get width => SizedBox(width: toDouble());
-  Widget get height => SizedBox(height: toDouble());
+  double get dynamicWidth => AppDimensions.width(this);
+  double get dynamicHeight => AppDimensions.height(this);
+  double get dynamicSize => AppDimensions.size(this);
 
-  BorderRadius get radiusAll => BorderRadius.circular(toDouble());
+  Widget get width => SizedBox(width: dynamicWidth);
+  Widget get height => SizedBox(height: dynamicHeight);
 
-  EdgeInsets get padAll => EdgeInsets.all(toDouble());
-  EdgeInsets get padHorizontal => EdgeInsets.symmetric(horizontal: toDouble());
-  EdgeInsets get padVertical => EdgeInsets.symmetric(vertical: toDouble());
-  EdgeInsets get padLeft => EdgeInsets.only(left: toDouble());
-  EdgeInsets get padRight => EdgeInsets.only(right: toDouble());
-  EdgeInsets get padBottom => EdgeInsets.only(bottom: toDouble());
-  EdgeInsets get padTop => EdgeInsets.only(top: toDouble());
+  BorderRadius get radiusAll => BorderRadius.circular(AppDimensions.radius(this));
+
+  EdgeInsets get padAll => AppDimensions.all(this);
+  EdgeInsets get padHorizontal => AppDimensions.horizontal(this);
+  EdgeInsets get padVertical => AppDimensions.vertical(this);
+  EdgeInsets get padLeft => AppDimensions.only(left: this);
+  EdgeInsets get padRight => AppDimensions.only(right: this);
+  EdgeInsets get padBottom => AppDimensions.only(bottom: this);
+  EdgeInsets get padTop => AppDimensions.only(top: this);
 }

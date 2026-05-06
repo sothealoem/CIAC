@@ -22,29 +22,39 @@ class SplashView extends GetView<SplashController> {
                 (shortestSide * 0.038).clamp(12.0, 16.0).toDouble();
 
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Spacer(flex: 2),
-                Hero(
-                  tag: 'app_logo_hero',
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/app_icon.png',
-                      width: logoSize,
-                      height: logoSize,
-                      fit: BoxFit.cover,
-                      filterQuality: FilterQuality.medium,
-                      gaplessPlayback: true,
+                SizedBox(
+                  width: double.infinity,
+                  child: Center(
+                    child: Hero(
+                      tag: 'app_logo_hero',
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/app_icon.png',
+                          width: logoSize,
+                          height: logoSize,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.medium,
+                          gaplessPlayback: true,
+                        ),
+                      ),
                     ),
                   ),
                 ),
                 20.height,
-                Text(
-                  'welcomeTo'.tr,
-                  style: TextStyle(
-                    fontSize: titleSize,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF084E49),
-                    height: 1.05,
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'welcomeTo'.tr,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: titleSize,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF084E49),
+                      height: 1.05,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 14),

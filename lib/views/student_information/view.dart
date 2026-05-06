@@ -11,29 +11,12 @@ class StudentInformationView extends GetView<StudentInformationController> {
       backgroundColor: const Color(0xFFF5F5F5),
       body: Column(
         children: [
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Get.back(),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Color(0xFF006E6D),
-                    ),
-                  ),
-                  const Text(
-                    'ពត៌មានប្រវត្តិសិស្ស',
-                    style: TextStyle(
-                      fontFamily: 'Battambang',
-                      color: Color(0xFF006E6D),
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
+          Obx(
+            () => _ProfileActionBar(
+              title:
+                  controller.isTeacherMode.value
+                      ? 'Teacher Profile'
+                      : 'Student Profile',
             ),
           ),
           Obx(
@@ -43,6 +26,46 @@ class StudentInformationView extends GetView<StudentInformationController> {
                     : const StudentProfileWidget(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProfileActionBar extends StatelessWidget {
+  const _ProfileActionBar({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () => Get.back(),
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Color(0xFF006E6D),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Battambang',
+                  color: Color(0xFF006E6D),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

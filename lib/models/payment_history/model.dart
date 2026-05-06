@@ -81,6 +81,11 @@ class PaymentHistoryItem {
     final student = Map<String, dynamic>.from(
       json['student'] ?? const <String, dynamic>{},
     );
+    final firstName = (student['firstname'] ?? '').toString().trim();
+    final lastName = (student['lastname'] ?? '').toString().trim();
+    final firstNameKh = (student['firstnamekh'] ?? '').toString().trim();
+    final lastNameKh = (student['lastnamekh'] ?? '').toString().trim();
+
     return PaymentHistoryItem(
       id: _toInt(json['id']) ?? 0,
       studentId: _toInt(json['student_id']) ?? 0,
@@ -91,9 +96,19 @@ class PaymentHistoryItem {
       dueAmount: (json['due_amount'] ?? '0.00').toString(),
       amountPaid: (json['amount_paid'] ?? '0.00').toString(),
       paymentDate: (json['payment_date'] ?? '').toString(),
-      studentName: (student['firstname'] ?? '').toString(),
-      studentNameKh: (student['firstnamekh'] ?? '').toString(),
+      studentName: _joinName(firstName, lastName),
+      studentNameKh: _joinName(firstNameKh, lastNameKh),
     );
+  }
+
+  String get displayStudentName {
+    final khName = studentNameKh.trim();
+    if (khName.isNotEmpty) return khName;
+
+    final name = studentName.trim();
+    if (name.isNotEmpty) return name;
+
+    return studentId > 0 ? 'Student #$studentId' : 'Student';
   }
 }
 
@@ -101,4 +116,8 @@ int? _toInt(dynamic value) {
   if (value is int) return value;
   if (value is String) return int.tryParse(value.trim());
   return null;
+}
+
+String _joinName(String firstName, String lastName) {
+  return [firstName, lastName].where((part) => part.isNotEmpty).join(' ');
 }
