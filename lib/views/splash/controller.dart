@@ -3,7 +3,7 @@ import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
 
 class SplashController extends GetxController {
-  static const Duration _minSplashTime = Duration(milliseconds: 1400);
+  static const Duration _minSplashTime = Duration(milliseconds: 2000);
   static const Duration _maxSplashTime = Duration(milliseconds: 900);
   bool _didNavigate = false;
 
@@ -17,8 +17,9 @@ class SplashController extends GetxController {
     final startedAt = DateTime.now();
     try {
       final rawToken =
-          await SharedPreferencesManager.get(Credential.token.name)
-              .timeout(_maxSplashTime, onTimeout: () => '') ??
+          await SharedPreferencesManager.get(
+            Credential.token.name,
+          ).timeout(_maxSplashTime, onTimeout: () => '') ??
           '';
       if (_didNavigate || isClosed) {
         return;

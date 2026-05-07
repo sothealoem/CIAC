@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
@@ -13,12 +15,11 @@ class ScheduleView extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const SafeArea(
+          SafeArea(
             bottom: false,
             child: CustomizeAppBar(
-              title: 'កាលវិភាគសិក្សា',
-              subTitle:
-                  'លោកអ្នកអាចដឹងពីសកម្មភាពកូនៗ របស់លោកអ្នកពេលកំពុងសិក្សាបាន៖',
+              title: LocaleKeys.scheduleTitle.tr,
+              subTitle: LocaleKeys.scheduleSubTitle.tr,
             ),
           ),
           UIConstants.spacingSmall.height,

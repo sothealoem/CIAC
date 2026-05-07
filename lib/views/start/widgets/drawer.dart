@@ -184,10 +184,31 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
     Get.back();
     Get.snackbar(
-      'Student',
-      '${child.name.isEmpty ? 'Student' : child.name} selected',
-      snackPosition: SnackPosition.BOTTOM,
+      LocaleKeys.student.tr,
+      child.name.isEmpty ? LocaleKeys.student.tr : child.name,
+      snackPosition: SnackPosition.TOP,
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      borderRadius: 18,
+      backgroundColor: Colors.white,
+      colorText: AppColor.primaryText,
       duration: const Duration(milliseconds: 1300),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.12),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
+      ],
+      icon: Container(
+        width: 38,
+        height: 38,
+        margin: const EdgeInsets.only(left: 12),
+        decoration: const BoxDecoration(
+          color: Color(0xFFEAF6F3),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(Icons.check_rounded, color: AppColor.primary),
+      ),
     );
   }
 

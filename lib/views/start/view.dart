@@ -96,7 +96,10 @@ class StartView extends GetView<StartController> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 15,
+                ),
               ],
             ),
             child: StyleProvider(
@@ -104,8 +107,8 @@ class StartView extends GetView<StartController> {
               child: ConvexAppBar(
                 key: const ValueKey<String>('nav-4'),
                 backgroundColor: AppColor.white,
-                color: AppColor.grey,
-                activeColor: AppColor.red,
+                color: const Color(0xFFE56B76),
+                activeColor: const Color(0xFFD50B1E),
                 height: 66,
                 style: TabStyle.reactCircle,
                 initialActiveIndex: selectedIndex,
@@ -113,11 +116,11 @@ class StartView extends GetView<StartController> {
                 shadowColor: const Color.fromARGB(255, 179, 211, 207),
                 items: [
                   TabItem(
-                    icon: Icons.dashboard_outlined,
+                    icon: Icons.dashboard,
                     title: LocaleKeys.dashboard.tr,
                   ),
                   TabItem(
-                    icon: Icons.notifications_outlined,
+                    icon: Icons.notifications,
                     title: LocaleKeys.notification.tr,
                   ),
                   if (!isParent)
@@ -127,7 +130,7 @@ class StartView extends GetView<StartController> {
                     ),
                   if (isParent)
                     TabItem(
-                      icon: Icons.mobile_friendly_outlined,
+                      icon: Icons.mobile_friendly,
                       title: LocaleKeys.payments.tr,
                     ),
                   TabItem(
@@ -164,6 +167,7 @@ class _BottomNavStyle extends StyleHook {
       color: color,
       fontFamily: fontFamily,
       fontSize: fontSize,
+      fontWeight: FontWeight.w700,
       height: 1.0,
     );
   }

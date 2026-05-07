@@ -9,73 +9,169 @@ class SplashView extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F3F3),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final shortestSide = constraints.biggest.shortestSide;
-            final logoSize =
-                (shortestSide * 0.34).clamp(120.0, 170.0).toDouble();
-            final titleSize =
-                (shortestSide * 0.072).clamp(24.0, 34.0).toDouble();
-            final subtitleSize =
-                (shortestSide * 0.038).clamp(12.0, 16.0).toDouble();
+      backgroundColor: AppColor.white,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final size = constraints.biggest;
+          final shortestSide = size.shortestSide;
+          final logoSize = (shortestSide * 0.5).clamp(172.0, 232.0);
+          final titleSize = (shortestSide * 0.062).clamp(22.0, 28.0);
+          final subtitleSize = (shortestSide * 0.034).clamp(12.0, 14.0);
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Spacer(flex: 2),
-                SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: Hero(
-                      tag: 'app_logo_hero',
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/app_icon.png',
-                          width: logoSize,
-                          height: logoSize,
-                          fit: BoxFit.cover,
-                          filterQuality: FilterQuality.medium,
-                          gaplessPlayback: true,
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFFFF7F8),
+                      AppColor.white,
+                      Color(0xFFF4FBFA),
+                    ],
+                    stops: [0, 0.55, 1],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -size.height * 0.16,
+                left: -size.width * 0.16,
+                right: -size.width * 0.16,
+                child: Container(
+                  height: size.height * 0.35,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD50B1E),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(120),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -size.height * 0.18,
+                left: -size.width * 0.18,
+                right: -size.width * 0.18,
+                child: Container(
+                  height: size.height * 0.28,
+                  decoration: const BoxDecoration(
+                    color: AppColor.primary,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(120),
+                    ),
+                  ),
+                ),
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.88, end: 1),
+                    duration: const Duration(milliseconds: 820),
+                    curve: Curves.easeOutBack,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value.clamp(0.0, 1.0),
+                        child: Transform.scale(scale: value, child: child),
+                      );
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Spacer(flex: 3),
+                        Hero(
+                          tag: 'app_logo_hero',
+                          child: Container(
+                            width: logoSize,
+                            height: logoSize,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColor.primary.withOpacity(0.14),
+                                  blurRadius: 34,
+                                  offset: const Offset(0, 18),
+                                ),
+                                BoxShadow(
+                                  color: const Color(0xFFD50B1E)
+                                      .withOpacity(0.08),
+                                  blurRadius: 26,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/app_logo.png',
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.medium,
+                                gaplessPlayback: true,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        22.height,
+                        Text(
+                          'welcomeTo'.tr,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: titleSize,
+                            fontWeight: FontWeight.w800,
+                            color: AppColor.primary,
+                            height: 1.08,
+                          ),
+                        ),
+                        8.height,
+                        Text(
+                          'createAccountAndAccessCoolStuffs'.tr,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: subtitleSize,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.primaryText.withOpacity(0.72),
+                            height: 1.35,
+                          ),
+                        ),
+                        const Spacer(flex: 2),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 700),
+                          curve: Curves.easeOut,
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value,
+                              child: Transform.scale(
+                                scale: 0.88 + (value * 0.12),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: const SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: Color(0xFFD50B1E),
+                              backgroundColor: Color(0x22D50B1E),
+                            ),
+                          ),
+                        ),
+                        48.height,
+                      ],
                     ),
                   ),
                 ),
-                20.height,
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'welcomeTo'.tr,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF084E49),
-                      height: 1.05,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Text(
-                    'createAccountAndAccessCoolStuffs'.tr,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: subtitleSize,
-                      color: const Color(0xFF1E1E1E),
-                      height: 1,
-                    ),
-                  ),
-                ),
-
-                const Spacer(flex: 3),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

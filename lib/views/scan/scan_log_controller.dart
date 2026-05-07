@@ -56,9 +56,7 @@ class CardScanController extends GetxController {
   }) async {
     final parsed = _parseQrPayload(raw);
     if (parsed == null) {
-      _handleFailure(
-        "Invalid QR format. Expected JSON like {\"type\":\"staff\",\"code\":\"CIAC-001\"}.",
-      );
+      _handleFailure("Invalid QR", goDashboard: true);
       return;
     }
 
@@ -230,7 +228,7 @@ class CardScanController extends GetxController {
       final token =
           await SharedPreferencesManager.get(Credential.token.name) ?? '';
       if (token.toString().trim().isEmpty) {
-        _handleFailure("Please login first.");
+        _handleFailure("Please login first.", goDashboard: true);
         return;
       }
 
@@ -239,7 +237,10 @@ class CardScanController extends GetxController {
       final scannerOwnerId =
           await SharedPreferencesManager.get('scanner_owner_id') ?? '';
       if (scannerUsername.toString().trim().isEmpty) {
-        _handleFailure("Scanner account not found. Please login again.");
+        _handleFailure(
+          "Scanner account not found. Please login again.",
+          goDashboard: true,
+        );
         return;
       }
       final code = scanPoint.trim();
@@ -248,12 +249,15 @@ class CardScanController extends GetxController {
       final owner = scannerOwnerId.toString().trim();
 
       if (owner.isEmpty) {
-        _handleFailure("Scanner owner id not found. Please login again.");
+        _handleFailure(
+          "Scanner owner id not found. Please login again.",
+          goDashboard: true,
+        );
         return;
       }
 
       if (_isDuplicateWithinWindow(dedupeKey)) {
-        _handleFailure("Already logged recently. Please wait and scan again.");
+        _handleDuplicateScanAttempt();
         return;
       }
       final response = await Get.find<ApiService>().post(EndPoints.scanCard, {
@@ -304,22 +308,20 @@ class CardScanController extends GetxController {
     final fullName = _getFullName(staff);
     final alreadyScanned = message.toLowerCase().contains("already");
 
-    Get.snackbar(
-      alreadyScanned ? "Attendance Log" : "Success",
-      fullName.isEmpty
-          ? message
-          : alreadyScanned
-          ? "$fullName\n$message"
-          : "Attendance recorded for $fullName",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: alreadyScanned ? Colors.orange : Colors.green,
-      colorText: Colors.white,
+    _showScanPopup(
+      title: alreadyScanned ? "Attendance Log" : "Success",
+      message:
+          fullName.isEmpty
+              ? message
+              : alreadyScanned
+              ? "$fullName\n$message"
+              : "Attendance recorded for $fullName",
+      color: alreadyScanned ? const Color(0xFFF59E0B) : AppColor.primary,
+      icon: alreadyScanned ? Icons.info_outline_rounded : Icons.check_rounded,
     );
 
     if (_teacherDirectFlow) {
-      Future.delayed(const Duration(milliseconds: 400), () {
-        // Teacher flow navigates away immediately; keep scanner armed for
-        // when user comes back to scan again.
+      Future.delayed(const Duration(milliseconds: 1500), () {
         isScanning.value = true;
         if (Get.currentRoute != Routes.attendanceRecord) {
           Get.toNamed(Routes.attendanceRecord);
@@ -329,7 +331,7 @@ class CardScanController extends GetxController {
     }
 
     if (!alreadyScanned) {
-      Future.delayed(const Duration(milliseconds: 900), () {
+      Future.delayed(const Duration(milliseconds: 1500), () {
         if (Get.currentRoute != Routes.attendanceRecord) {
           Get.toNamed(Routes.attendanceRecord);
         }
@@ -484,23 +486,77 @@ class CardScanController extends GetxController {
     return '$firstName $lastName'.trim();
   }
 
-  void _handleFailure(String message) {
-    Get.snackbar(
-      message.toLowerCase().contains("already")
-          ? "Attendance Log"
-          : "Scan Error",
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor:
-          message.toLowerCase().contains("already")
-              ? Colors.orange
-              : Colors.red,
-      colorText: Colors.white,
+  void _handleFailure(String message, {bool goDashboard = false}) {
+    final alreadyScanned = message.toLowerCase().contains("already");
+    _showScanPopup(
+      title: alreadyScanned ? "Attendance Log" : "Scan Error",
+      message: message,
+      color: alreadyScanned ? const Color(0xFFF59E0B) : const Color(0xFFD50B1E),
+      icon: alreadyScanned ? Icons.info_outline_rounded : Icons.close_rounded,
+    );
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (goDashboard) {
+        if (Get.currentRoute != Routes.start) {
+          Get.offAllNamed(Routes.start);
+        }
+        return;
+      }
+      if (Get.currentRoute != Routes.attendanceRecord) {
+        Get.toNamed(Routes.attendanceRecord);
+      }
+    });
+  }
+
+  void _handleDuplicateScanAttempt() {
+    _showScanPopup(
+      title: "Attendance Log",
+      message: "Already logged recently. Please wait and scan again.",
+      color: const Color(0xFFF59E0B),
+      icon: Icons.info_outline_rounded,
     );
 
     Future.delayed(const Duration(seconds: 2), () {
       isScanning.value = true;
     });
+  }
+
+  void _showScanPopup({
+    required String title,
+    required String message,
+    required Color color,
+    required IconData icon,
+  }) {
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.TOP,
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      borderRadius: 18,
+      backgroundColor: Colors.white,
+      colorText: AppColor.primaryText,
+      duration: const Duration(milliseconds: 1500),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.12),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
+      ],
+      icon: Container(
+        width: 38,
+        height: 38,
+        margin: const EdgeInsets.only(left: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.12),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: color),
+      ),
+    );
   }
 
   bool _isDuplicateWithinWindow(String key) {
@@ -560,30 +616,56 @@ class CardScanController extends GetxController {
 
   _QrPayload? _parseQrPayload(String raw) {
     final normalized = raw.trim().replaceAll(RegExp(r'[\r\n\t]'), '');
+    if (normalized.isEmpty) {
+      return null;
+    }
 
     try {
       final decoded = jsonDecode(normalized);
-      if (decoded is! Map) {
-        return null;
-      }
+      if (decoded is Map) {
+        final type =
+            (decoded['type'] ?? decoded['qr_type'] ?? 'staff')
+                .toString()
+                .trim()
+                .toLowerCase();
+        final code =
+            (decoded['code'] ??
+                    decoded['scan_point'] ??
+                    decoded['staff_code'] ??
+                    decoded['card_uid'] ??
+                    decoded['id'] ??
+                    '')
+                .toString()
+                .trim();
 
-      final type = decoded['type']?.toString().trim().toLowerCase();
-      final code = decoded['code']?.toString().trim();
-      if (type == null || type.isEmpty || code == null || code.isEmpty) {
-        return null;
-      }
+        if (type != 'staff' || code.isEmpty) {
+          return null;
+        }
 
-      if (type != 'staff') {
-        return null;
+        return _QrPayload(type: type, code: code);
       }
-
-      return _QrPayload(
-        type: type,
-        code: code,
-      );
     } catch (_) {
-      return null;
+      // Fall through and try URL/plain-code formats.
     }
+
+    final uri = Uri.tryParse(normalized);
+    final queryCode =
+        uri?.queryParameters['code'] ??
+        uri?.queryParameters['scan_point'] ??
+        uri?.queryParameters['staff_code'] ??
+        uri?.queryParameters['card_uid'];
+    if ((queryCode ?? '').trim().isNotEmpty) {
+      return _QrPayload(type: 'staff', code: queryCode!.trim());
+    }
+
+    final plainCode = normalized.split('/').last.trim();
+    if (plainCode.isNotEmpty &&
+        plainCode.length <= 80 &&
+        !plainCode.contains(' ')) {
+      return _QrPayload(type: 'staff', code: plainCode);
+    }
+
+    return null;
   }
 }
 

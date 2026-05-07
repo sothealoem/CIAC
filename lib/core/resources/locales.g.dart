@@ -37,6 +37,16 @@ class LocaleKeys {
   static const invalidEmail = 'invalidEmail';
   static const passwordDoNotMatch = 'passwordDoNotMatch';
   static const newPassword = 'newPassword';
+  static const loginFailed = 'loginFailed';
+  static const loginFailedMessage = 'loginFailedMessage';
+  static const noResponseFromServer = 'noResponseFromServer';
+  static const invalidCredentials = 'invalidCredentials';
+  static const invalidServerResponse = 'invalidServerResponse';
+  static const tokenMissing = 'tokenMissing';
+  static const selectedRoleIs = 'selectedRoleIs';
+  static const pleaseSwitchRoleAndTryAgain = 'pleaseSwitchRoleAndTryAgain';
+  static const pleaseEnterValidPhoneNumber = 'pleaseEnterValidPhoneNumber';
+  static const somethingWentWrongTryAgain = 'somethingWentWrongTryAgain';
   static const dashboard = 'dashboard';
   static const attendanceRecordTitle = 'attendanceRecordTitle';
   static const attendanceRecordSubTitle = 'attendanceRecordSubTitle';
@@ -47,9 +57,22 @@ class LocaleKeys {
   static const afternoonIn = 'afternoonIn';
   static const afternoonOut = 'afternoonOut';
   static const scanQrCodeToLogAttendance = 'scanQrCodeToLogAttendance';
+  static const scheduleTitle = 'scheduleTitle';
+  static const scheduleSubTitle = 'scheduleSubTitle';
   static const studentNameLabel = 'studentNameLabel';
   static const classLabel = 'classLabel';
   static const dateLabel = 'dateLabel';
+  static const noClass = 'noClass';
+  static const sessionNumber = 'sessionNumber';
+  static const teacherLabel = 'teacherLabel';
+  static const roomLabel = 'roomLabel';
+  static const mondayShort = 'mondayShort';
+  static const tuesdayShort = 'tuesdayShort';
+  static const wednesdayShort = 'wednesdayShort';
+  static const thursdayShort = 'thursdayShort';
+  static const fridayShort = 'fridayShort';
+  static const saturdayShort = 'saturdayShort';
+  static const sundayShort = 'sundayShort';
   static const requestLeaveTitle = 'requestLeaveTitle';
   static const requestLeaveSubTitle = 'requestLeaveSubTitle';
   static const requestLeaveSelectStudent = 'requestLeaveSelectStudent';
@@ -71,6 +94,8 @@ class LocaleKeys {
   static const teacherProfile = 'teacherProfile';
   static const studentProfile = 'studentProfile';
   static const parentProfile = 'parentProfile';
+  static const selectedChild = 'selectedChild';
+  static const tapToSwitchChild = 'tapToSwitchChild';
   static const shift = 'shift';
   static const totalLeaveDays = 'totalLeaveDays';
   static const leaveFromDate = 'leaveFromDate';
@@ -389,6 +414,16 @@ class Locales {
     'invalidEmail': 'Invalid Email',
     'passwordDoNotMatch': 'Password do not match',
     'newPassword': 'New password',
+    'loginFailed': 'Login Failed',
+    'loginFailedMessage': 'Login failed. Please check your information.',
+    'noResponseFromServer': 'No response from server',
+    'invalidCredentials': 'Invalid credentials',
+    'invalidServerResponse': 'Invalid server response',
+    'tokenMissing': 'Token missing',
+    'selectedRoleIs': 'Selected role is',
+    'pleaseSwitchRoleAndTryAgain': 'Please switch role and try again.',
+    'pleaseEnterValidPhoneNumber': 'Please enter a valid phone number',
+    'somethingWentWrongTryAgain': 'Something went wrong. Please try again.',
     'dashboard': 'Dashboard',
     'attendanceRecordTitle': 'Attendance Record',
     'attendanceRecordSubTitle':
@@ -400,9 +435,23 @@ class Locales {
     'afternoonIn': 'Afternoon In',
     'afternoonOut': 'Afternoon Out',
     'scanQrCodeToLogAttendance': 'Scan QR code to log attendance',
+    'scheduleTitle': 'Class Schedule',
+    'scheduleSubTitle':
+        'You can view your children\'s study activities while they are learning.',
     'studentNameLabel': 'Name',
     'classLabel': 'Class',
     'dateLabel': 'Date',
+    'noClass': 'No class',
+    'sessionNumber': 'Session',
+    'teacherLabel': 'Teacher',
+    'roomLabel': 'Room',
+    'mondayShort': 'Mon',
+    'tuesdayShort': 'Tue',
+    'wednesdayShort': 'Wed',
+    'thursdayShort': 'Thu',
+    'fridayShort': 'Fri',
+    'saturdayShort': 'Sat',
+    'sundayShort': 'Sun',
     'requestLeaveTitle': 'Request Leave',
     'requestLeaveSubTitle': 'You can submit a leave request.',
     'requestLeaveSelectStudent':
@@ -425,6 +474,8 @@ class Locales {
     'teacherProfile': 'Teacher Profile',
     'studentProfile': 'Student Profile',
     'parentProfile': 'Parent Profile',
+    'selectedChild': 'Selected',
+    'tapToSwitchChild': 'Tap to switch',
     'shift': 'Shift',
     'totalLeaveDays': 'Leave days',
     'leaveFromDate': 'Leave from',
@@ -741,6 +792,16 @@ class Locales {
     'invalidEmail': 'អ៊ីមែលមិនត្រឹមត្រូវ',
     'passwordDoNotMatch': 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
     'newPassword': 'ពាក្យសម្ងាត់ថ្មី',
+    'loginFailed': 'ចូលប្រើបរាជ័យ',
+    'loginFailedMessage': 'ចូលប្រើបរាជ័យ។ សូមពិនិត្យព័ត៌មានរបស់អ្នក។',
+    'noResponseFromServer': 'មិនមានការឆ្លើយតបពីម៉ាស៊ីនមេ',
+    'invalidCredentials': 'ព័ត៌មានចូលប្រើមិនត្រឹមត្រូវ',
+    'invalidServerResponse': 'ការឆ្លើយតបពីម៉ាស៊ីនមេមិនត្រឹមត្រូវ',
+    'tokenMissing': 'បាត់ Token',
+    'selectedRoleIs': 'តួនាទីដែលបានជ្រើសគឺ',
+    'pleaseSwitchRoleAndTryAgain': 'សូមប្ដូរតួនាទី ហើយព្យាយាមម្ដងទៀត។',
+    'pleaseEnterValidPhoneNumber': 'សូមបញ្ចូលលេខទូរស័ព្ទត្រឹមត្រូវ',
+    'somethingWentWrongTryAgain': 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្ដងទៀត។',
     'dashboard': 'ផ្ទាំងគ្រប់គ្រង',
     'attendanceRecordTitle': 'កំណត់ត្រាវត្តមាន',
     'attendanceRecordSubTitle':
@@ -752,9 +813,23 @@ class Locales {
     'afternoonIn': 'រសៀល ចូល',
     'afternoonOut': 'រសៀល ចេញ',
     'scanQrCodeToLogAttendance': 'ស្កេន QR កូដ ដើម្បីកត់ត្រាវត្តមាន',
+    'scheduleTitle': 'កាលវិភាគសិក្សា',
+    'scheduleSubTitle':
+        'លោកអ្នកអាចដឹងពីសកម្មភាពសិក្សារបស់កូនៗពេលកំពុងសិក្សា។',
     'studentNameLabel': 'ឈ្មោះ',
     'classLabel': 'ថ្នាក់',
     'dateLabel': 'កាលបរិច្ឆេទ',
+    'noClass': 'មិនមានថ្នាក់',
+    'sessionNumber': 'ម៉ោងទី',
+    'teacherLabel': 'លោកគ្រូ/អ្នកគ្រូ',
+    'roomLabel': 'បន្ទប់',
+    'mondayShort': 'ចន្ទ',
+    'tuesdayShort': 'អង្គារ',
+    'wednesdayShort': 'ពុធ',
+    'thursdayShort': 'ព្រហស្បតិ៍',
+    'fridayShort': 'សុក្រ',
+    'saturdayShort': 'សៅរ៍',
+    'sundayShort': 'អាទិត្យ',
     'requestLeaveTitle': 'ស្នើសុំច្បាប់',
     'requestLeaveSubTitle': 'អ្នកអាចបញ្ជូនសំណើសុំច្បាប់បាន។',
     'requestLeaveSelectStudent': '១. ជ្រើសរើសសិស្សដែលអ្នកចង់ស្នើសុំច្បាប់',
@@ -776,6 +851,8 @@ class Locales {
     'teacherProfile': 'ព័ត៌មានគ្រូ',
     'studentProfile': 'ព័ត៌មានសិស្ស',
     'parentProfile': 'ព័ត៌មានអាណាព្យាបាល',
+    'selectedChild': 'បានជ្រើសរើស',
+    'tapToSwitchChild': 'ចុចដើម្បីប្ដូរ',
     'shift': 'វេន',
     'totalLeaveDays': 'ចំនួនថ្ងៃឈប់',
     'leaveFromDate': 'ឈប់ពីថ្ងៃទី',

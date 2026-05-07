@@ -31,17 +31,25 @@ class CustomizeAppBar extends StatelessWidget {
                   onPressed: () => Get.back(),
                   icon: const Icon(Icons.arrow_back_ios, size: 20),
                 ),
-                Text(title, style: AppTextStyle.mediumPrimaryGreenBold),
-                if (trailing != null) const Spacer(),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: AppTextStyle.mediumPrimaryGreenBold,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 if (trailing != null) ...[const SizedBox(width: 8), trailing!],
               ],
             ),
             if ((subTitle ?? '').isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 12.0),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: Text(
                   subTitle!,
                   style: AppTextStyle.smallPrimaryGreenBold,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
           ],

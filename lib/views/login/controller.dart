@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' as d;
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
+import 'package:schoolapp/core/resources/resources.dart';
 import 'package:schoolapp/core/services/end_points.dart';
 import 'package:schoolapp/core/utils/exception_manager.dart';
 import 'package:schoolapp/core/utils/form_validator.dart';
@@ -60,8 +61,8 @@ class LoginController extends GetxController {
       );
       if (response == null) {
         DialogManager.showDialog(
-          title: "Error",
-          subTitle: "No response from server",
+          title: LocaleKeys.error.tr,
+          subTitle: LocaleKeys.noResponseFromServer.tr,
         );
         return;
       }
@@ -69,8 +70,8 @@ class LoginController extends GetxController {
       ///  check success
       if (response['success'] != true) {
         DialogManager.showDialog(
-          title: "Login Failed",
-          subTitle: response['message'] ?? "Invalid credentials",
+          title: LocaleKeys.loginFailed.tr,
+          subTitle: _localizedLoginMessage(response['message']),
         );
         return;
       }
@@ -79,8 +80,8 @@ class LoginController extends GetxController {
 
       if (data == null) {
         DialogManager.showDialog(
-          title: "Error",
-          subTitle: "Invalid server response",
+          title: LocaleKeys.error.tr,
+          subTitle: LocaleKeys.invalidServerResponse.tr,
         );
         return;
       }
@@ -106,8 +107,8 @@ class LoginController extends GetxController {
 
       if (token.isEmpty) {
         DialogManager.showDialog(
-          title: "Login Failed",
-          subTitle: "Token missing",
+          title: LocaleKeys.loginFailed.tr,
+          subTitle: LocaleKeys.tokenMissing.tr,
         );
         return;
       }
@@ -117,17 +118,17 @@ class LoginController extends GetxController {
 
       if (!allowedRoles.contains(role)) {
         DialogManager.showDialog(
-          title: "Permission",
-          subTitle: "No permission",
+          title: LocaleKeys.permission.tr,
+          subTitle: LocaleKeys.noPermission.tr,
         );
         return;
       }
 
       if (role != selectedLoginRole.value.key) {
         DialogManager.showDialog(
-          title: "Login Failed",
+          title: LocaleKeys.loginFailed.tr,
           subTitle:
-              "Selected role is ${selectedLoginRole.value.key}. Please switch role and try again.",
+              '${LocaleKeys.selectedRoleIs.tr} ${selectedLoginRole.value.key}. ${LocaleKeys.pleaseSwitchRoleAndTryAgain.tr}',
         );
         return;
       }
@@ -158,8 +159,8 @@ class LoginController extends GetxController {
       Get.offAllNamed(Routes.start);
     } catch (e) {
       DialogManager.showDialog(
-        title: "Error",
-        subTitle: "Something went wrong. Please try again.",
+        title: LocaleKeys.error.tr,
+        subTitle: LocaleKeys.somethingWentWrongTryAgain.tr,
       );
 
       ExceptionHandler.handleException(e);
@@ -237,7 +238,10 @@ class LoginController extends GetxController {
     final normalizedPhone = _normalizePhone(loginIdentity);
 
     if (!_isLikelyPhone(loginIdentity)) {
-      return {"success": false, "message": "Please enter a valid phone number"};
+      return {
+        "success": false,
+        "message": LocaleKeys.pleaseEnterValidPhoneNumber.tr,
+      };
     }
 
     final attempts = <Map<String, dynamic>>[
@@ -255,7 +259,10 @@ class LoginController extends GetxController {
       {"username": normalizedPhone, "password": password},
     ];
 
-    dynamic latestResponse = {"success": false, "message": "Login failed"};
+    dynamic latestResponse = {
+      "success": false,
+      "message": LocaleKeys.loginFailed.tr,
+    };
 
     for (final payload in attempts) {
       try {
@@ -271,7 +278,10 @@ class LoginController extends GetxController {
       } on d.DioException catch (e) {
         latestResponse =
             e.response?.data ??
-            {"success": false, "message": e.message ?? "Login failed"};
+            {
+              "success": false,
+              "message": e.message ?? LocaleKeys.loginFailed.tr,
+            };
       }
     }
 
@@ -318,7 +328,10 @@ class LoginController extends GetxController {
       } on d.DioException catch (e) {
         latestResponse =
             e.response?.data ??
-            {"success": false, "message": e.message ?? "Login failed"};
+            {
+              "success": false,
+              "message": e.message ?? LocaleKeys.loginFailed.tr,
+            };
       }
     }
     return latestResponse;
@@ -361,5 +374,27 @@ class LoginController extends GetxController {
       }
     }
     return '';
+  }
+
+  String _localizedLoginMessage(dynamic rawMessage) {
+    final message = (rawMessage ?? '').toString().trim();
+    final lower = message.toLowerCase();
+
+    if (message.isEmpty) {
+      return LocaleKeys.invalidCredentials.tr;
+    }
+    if (lower.contains('invalid') && lower.contains('credential')) {
+      return LocaleKeys.invalidCredentials.tr;
+    }
+    if (lower == 'login failed' || lower.contains('login failed')) {
+      return LocaleKeys.loginFailedMessage.tr;
+    }
+    if (lower.contains('valid phone')) {
+      return LocaleKeys.pleaseEnterValidPhoneNumber.tr;
+    }
+    if (lower.contains('no response')) {
+      return LocaleKeys.noResponseFromServer.tr;
+    }
+    return message;
   }
 }

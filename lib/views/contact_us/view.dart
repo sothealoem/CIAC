@@ -7,6 +7,9 @@ import 'package:schoolapp/views/views.dart';
 class ContactUsView extends GetView<ContactUsController> {
   const ContactUsView({super.key});
 
+  static const Color _accentRed = Color(0xFFD83232);
+  static const Color _softRed = Color(0xFFFFEEF0);
+
   @override
   Widget build(BuildContext context) {
     final ctl =
@@ -15,7 +18,11 @@ class ContactUsView extends GetView<ContactUsController> {
             : Get.put(ContactUsController());
 
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.contactUs.tr)),
+      appBar: AppBar(
+        title: Text(LocaleKeys.contactUs.tr),
+        // backgroundColor: const Color.fromARGB(255, 90, 11, 17),
+        foregroundColor: Colors.white,
+      ),
       backgroundColor: const Color(0xFFF7F7F7),
       body: Obx(() {
         final data = ctl.contactUs.value;
@@ -34,10 +41,7 @@ class ContactUsView extends GetView<ContactUsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                LocaleKeys.contactUs.tr,
-                style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13),
-              ),
+              Text(LocaleKeys.contactUs.tr),
               12.height,
               const CustomIndicator(progress: 1 / 4),
               18.height,
@@ -97,7 +101,7 @@ class ContactUsView extends GetView<ContactUsController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: _accentRed.withOpacity(0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +110,7 @@ class ContactUsView extends GetView<ContactUsController> {
             children: [
               const Icon(
                 Icons.location_on_outlined,
-                color: AppColor.primary,
+                color: _accentRed,
                 size: 30,
               ),
               const SizedBox(width: 8),
@@ -127,7 +131,7 @@ class ContactUsView extends GetView<ContactUsController> {
           ),
           const SizedBox(height: 12),
           Material(
-            color: const Color(0xFFE7EEED),
+            color: _softRed,
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
               borderRadius: BorderRadius.circular(30),
@@ -138,7 +142,9 @@ class ContactUsView extends GetView<ContactUsController> {
                 child: Center(
                   child: Text(
                     LocaleKeys.address.tr,
-                    style: AppTextStyle.regularPrimarytextPrimary,
+                    style: AppTextStyle.regularPrimarytextPrimary.copyWith(
+                      color: _accentRed,
+                    ),
                   ),
                 ),
               ),
@@ -166,7 +172,7 @@ class ContactUsView extends GetView<ContactUsController> {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: _accentRed.withOpacity(0.35)),
           ),
           child: Row(
             children: [
@@ -174,17 +180,22 @@ class ContactUsView extends GetView<ContactUsController> {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE7EEED),
+                  color: _softRed,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: AppColor.primary, size: 28),
+                child: Icon(icon, color: _accentRed, size: 28),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AppTextStyle.regularPrimarytextPrimary),
+                    Text(
+                      title,
+                      style: AppTextStyle.regularPrimarytextPrimary.copyWith(
+                        color: _accentRed,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       value,
@@ -211,12 +222,22 @@ class ContactUsView extends GetView<ContactUsController> {
   }) {
     return OutlinedButton.icon(
       onPressed: onTap,
-      icon: Icon(icon, color: AppColor.primary, size: 20),
-      label: Text(label, style: AppTextStyle.regularPrimarytextPrimary),
+      icon: Icon(icon, color: _accentRed, size: 18),
+      label: Text(
+        label,
+        style: AppTextStyle.regularPrimarytextPrimary.copyWith(
+          color: _accentRed,
+          fontSize: 12,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: Colors.grey.shade400),
+        backgroundColor: _softRed,
+        foregroundColor: _accentRed,
+        side: BorderSide(color: _accentRed.withOpacity(0.45)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       ),
     );
   }

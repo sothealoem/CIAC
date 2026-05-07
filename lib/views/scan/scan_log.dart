@@ -1,20 +1,33 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/scan/scan_log_controller.dart';
 import 'package:schoolapp/views/scan/widgets/overlay.dart';
 
-class CardScanView extends StatelessWidget {
-  CardScanView({super.key});
+class CardScanView extends StatefulWidget {
+  const CardScanView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller =
+  State<CardScanView> createState() => _CardScanViewState();
+}
+
+class _CardScanViewState extends State<CardScanView> {
+  late final CardScanController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
         Get.isRegistered<CardScanController>()
             ? Get.find<CardScanController>()
             : Get.put(CardScanController());
+    controller.isScanning.value = true;
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: LayoutBuilder(
@@ -38,6 +51,7 @@ class CardScanView extends StatelessWidget {
 
                     if (raw != null && raw.isNotEmpty) {
                       controller.isScanning.value = false;
+                      HapticFeedback.mediumImpact();
                       controller.handleDetectedQr(
                         raw: raw,
                         lat: 11.5621,

@@ -3,8 +3,6 @@ import 'package:schoolapp/views/attendance_record/widgets/attendence_record_card
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/core/constants/ui_constants.dart';
-import 'package:schoolapp/core/extensions/int.dart';
 import '../start/widgets/customize_app_bar.dart';
 
 class AttendanceRecordView extends GetView<AttendanceRecordController> {
