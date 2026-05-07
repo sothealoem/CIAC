@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolapp/core/widgets/month_filter_dropdown.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 
 class StandingsCardWidget extends StatefulWidget {
   const StandingsCardWidget({super.key});
@@ -45,6 +46,11 @@ class _StandingsCardWidgetState extends State<StandingsCardWidget> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: CustomIndicator(progress: 1 / 4),
+          ),
+          const SizedBox(height: 12),
           _buildStudentHeader('សុខ សាន្ត - ថ្នាក់ ៧ "ក"'),
           const SizedBox(height: 16),
           Row(

@@ -66,6 +66,8 @@ class ScheduleItem {
     required this.time,
     required this.subject,
     required this.teacher,
+    required this.className,
+    required this.sectionName,
     required this.room,
   });
 
@@ -73,6 +75,8 @@ class ScheduleItem {
   final String time;
   final String subject;
   final String teacher;
+  final String className;
+  final String sectionName;
   final String room;
 
   factory ScheduleItem.fromJson(Map<String, dynamic> json) {
@@ -92,6 +96,18 @@ class ScheduleItem {
         'course_name',
       ]),
       teacher: _teacherName(json),
+      className: _pick(json, [
+        'class_name',
+        'class',
+        'grade',
+        'grade_name',
+      ]),
+      sectionName: _pick(json, [
+        'section_name',
+        'section',
+        'group',
+        'group_name',
+      ]),
       room: _pick(json, [
         'room',
         'room_no',

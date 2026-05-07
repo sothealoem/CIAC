@@ -3,6 +3,7 @@ import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/models/staff/model.dart';
 import 'package:schoolapp/views/attendance_record/controller.dart';
 import 'package:schoolapp/views/start/controller.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +26,11 @@ class _AttendenceRecordCardWidgetState
       padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: CustomIndicator(progress: 1 / 4),
+          ),
+          10.height,
           Obx(
             () =>
                 controller.selectedStatus.value.isEmpty
@@ -96,11 +102,11 @@ class _AttendenceRecordCardWidgetState
             }
 
             if (controller.attendanceList.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Text(
-                  'No staff attendance logs found.',
-                  style: TextStyle(color: Colors.grey),
+                  LocaleKeys.noStaffAttendanceLogsFound.tr,
+                  style: const TextStyle(color: Colors.grey),
                 ),
               );
             }
@@ -229,7 +235,7 @@ class _AttendenceRecordCardWidgetState
                   Expanded(
                     child: Text(
                       style: AppTextStyle.timeformatText,
-                      'Morning In: ${_timeText(item.timeIn1)}',
+                      '${LocaleKeys.morningIn.tr}: ${_timeText(item.timeIn1)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -238,7 +244,7 @@ class _AttendenceRecordCardWidgetState
                   Expanded(
                     child: Text(
                       style: AppTextStyle.timeformatText,
-                      'Morning Out | ${_timeText(item.timeOut1)}',
+                      '${LocaleKeys.morningOut.tr} | ${_timeText(item.timeOut1)}',
                       textAlign: TextAlign.end,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -258,7 +264,7 @@ class _AttendenceRecordCardWidgetState
                   Expanded(
                     child: Text(
                       style: AppTextStyle.timeformatText,
-                      'Afternoon In: ${_timeText(item.timeIn2)}',
+                      '${LocaleKeys.afternoonIn.tr}: ${_timeText(item.timeIn2)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -267,7 +273,7 @@ class _AttendenceRecordCardWidgetState
                   Expanded(
                     child: Text(
                       style: AppTextStyle.timeformatText,
-                      'Afternoon Out | ${_timeText(item.timeOut2)}',
+                      '${LocaleKeys.afternoonOut.tr} | ${_timeText(item.timeOut2)}',
                       textAlign: TextAlign.end,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

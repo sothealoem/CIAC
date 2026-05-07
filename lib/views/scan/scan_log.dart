@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/scan/scan_log_controller.dart';
 import 'package:schoolapp/views/scan/widgets/overlay.dart';
 
@@ -47,7 +48,7 @@ class CardScanView extends StatelessWidget {
                   }
                 },
                 scanWindow: Rect.fromCenter(
-                  center: Offset(size.width / 2, size.height * 0.42),
+                  center: Offset(size.width / 2, size.height / 2),
                   width: 250,
                   height: 250,
                 ),
@@ -90,20 +91,20 @@ class CardScanView extends StatelessWidget {
                 cutOutSize: 0.0,
                 cutOutWidth: 250,
                 cutOutHeight: 250,
-                cutOutBottomOffset: 88,
+                cutOutBottomOffset: 0,
                 overlayColor: Colors.black.withOpacity(0.85),
               ),
             ),
           ),
         ),
-        const Positioned(
-          top: 40,
+        Positioned(
+          top: 120,
           left: 24,
           right: 24,
           child: Text(
-            'Scan QR code to log attendance',
+            LocaleKeys.scanQrCodeToLogAttendance.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w700,

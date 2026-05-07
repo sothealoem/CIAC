@@ -25,8 +25,8 @@ class RequestLeaveView extends GetView<RequestLeaveController> {
         child: Column(
           children: [
             CustomizeAppBar(
-              title: 'ស្នើសុំច្បាប់',
-              subTitle: 'លោកអ្នកអាចបំពេញ',
+              title: LocaleKeys.requestLeaveTitle.tr,
+              subTitle: LocaleKeys.requestLeaveSubTitle.tr,
             ),
             UIConstants.spacingSmall.height,
             CustomIndicator(progress: 1 / 4),

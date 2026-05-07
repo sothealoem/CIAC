@@ -53,10 +53,14 @@ class StartController extends GetxController {
         return;
       }
     }
+    if (index == 3) {
+      selectedIndex.value = index;
+      selectedScreen.value = _buildScreen(4);
+      return;
+    }
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(index);
     _refreshDashboardSliderIfNeeded(index);
-    _refreshPaymentHistoryIfNeeded(index);
   }
 
   void changeMenu(
@@ -82,6 +86,11 @@ class StartController extends GetxController {
         return;
       }
     }
+    if (!isParentUser.value && index == 4) {
+      selectedIndex.value = 3;
+      selectedScreen.value = _buildScreen(4);
+      return;
+    }
     selectedIndex.value = index;
     selectedScreen.value = _buildScreen(selectedIndex.value);
     _refreshDashboardSliderIfNeeded(selectedIndex.value);
@@ -104,6 +113,10 @@ class StartController extends GetxController {
 
   void _normalizeSelectionForRole() {
     if (!isParentUser.value) {
+      if (selectedIndex.value >= 4) {
+        selectedIndex.value = 3;
+        selectedScreen.value = _buildScreen(4);
+      }
       return;
     }
     if (selectedIndex.value == 2) {
@@ -407,15 +420,19 @@ class StartController extends GetxController {
           icon: Icons.timelapse_outlined,
           onTap: () => changeMenu(2),
         ),
-      BottomBarWidget(
-        label: LocaleKeys.payment.tr,
-        isSelected: selectedIndex.value == 3,
-        icon: Icons.send,
-        onTap: () => changeMenu(3),
-      ),
+      if (UserRepository.shared.isDriver)
+        BottomBarWidget(
+          label: LocaleKeys.payment.tr,
+          isSelected: selectedIndex.value == 3,
+          icon: Icons.send,
+          onTap: () => changeMenu(3),
+        ),
       BottomBarWidget(
         label: LocaleKeys.contactUs.tr,
-        isSelected: selectedIndex.value == 4,
+        isSelected:
+            UserRepository.shared.isDriver
+                ? selectedIndex.value == 4
+                : selectedIndex.value == 3,
         icon: Icons.more,
         onTap: () => changeMenu(4),
       ),
@@ -432,7 +449,9 @@ class StartController extends GetxController {
       case 2:
         return LocaleKeys.scanner.tr;
       case 3:
-        return LocaleKeys.payment.tr;
+        return isParentUser.value
+            ? LocaleKeys.payment.tr
+            : LocaleKeys.contactUs.tr;
       case 4:
         return LocaleKeys.contactUs.tr;
       default:

@@ -1,24 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/models/parent/parent.dart' as parent_model;
 import 'package:schoolapp/views/student_information/controller.dart';
 
-class TeacherProfileWidget extends GetView<StudentInformationController> {
-  const TeacherProfileWidget({super.key});
+class ParentProfileWidget extends GetView<StudentInformationController> {
+  const ParentProfileWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Obx(() {
-        final teacher = controller.selectedStudent.value;
-        if (controller.isLoading.value && teacher == null) {
+        final parent = controller.parentInfo.value;
+        if (controller.isLoading.value && parent == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (teacher == null) {
-          return Center(child: Text(LocaleKeys.noTeacherInformationFound.tr));
+        if (parent == null) {
+          return Center(child: Text(LocaleKeys.noParentInformationFound.tr));
         }
 
         return ListView(
@@ -33,7 +33,7 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
                   shape: BoxShape.circle,
                   border: Border.all(color: const Color(0xFF006E6D), width: 6),
                 ),
-                child: ClipOval(child: _buildImage(teacher)),
+                child: ClipOval(child: _buildImage(parent)),
               ),
             ),
             const SizedBox(height: 16),
@@ -54,11 +54,10 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
-                  _infoRow(LocaleKeys.studentId.tr, controller.displayId(teacher)),
-                  _infoRow(LocaleKeys.teacherName.tr, controller.displayName(teacher)),
-                  _infoRow(LocaleKeys.role.tr, controller.teacherRole.value),
-                  _infoRow(LocaleKeys.profession.tr, controller.displayProfession(teacher)),
-                  _infoRow(LocaleKeys.phoneNumber.tr, controller.displayPhone(teacher)),
+                  _infoRow(LocaleKeys.studentId.tr, _safe(parent.id?.toString())),
+                  _infoRow(LocaleKeys.parent.tr, _safe(parent.name)),
+                  _infoRow(LocaleKeys.profession.tr, _safe(parent.occupation)),
+                  _infoRow(LocaleKeys.phoneNumber.tr, _safe(parent.phone)),
                 ],
               ),
             ),
@@ -68,8 +67,8 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
     );
   }
 
-  Widget _buildImage(parent_model.Student teacher) {
-    final url = (teacher.profile ?? '').trim();
+  Widget _buildImage(parent_model.Parent parent) {
+    final url = (parent.profile ?? '').trim();
     if (url.isNotEmpty) {
       return CachedNetworkImage(
         imageUrl: _resolve(url),
@@ -85,10 +84,10 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
             ),
         errorWidget:
             (_, __, ___) =>
-                Image.asset('assets/images/teacher.jpg', fit: BoxFit.cover),
+                Image.asset('assets/images/studentprofile.jpg', fit: BoxFit.cover),
       );
     }
-    return Image.asset('assets/images/teacher.jpg', fit: BoxFit.cover);
+    return Image.asset('assets/images/studentprofile.jpg', fit: BoxFit.cover);
   }
 
   Widget _infoRow(String label, String value) {
@@ -138,9 +137,15 @@ class TeacherProfileWidget extends GetView<StudentInformationController> {
     );
   }
 
+  String _safe(String? value) {
+    final text = (value ?? '').trim();
+    return text.isEmpty ? 'N/A' : text;
+  }
+
   String _resolve(String value) {
-    if (value.startsWith('http://') || value.startsWith('https://'))
+    if (value.startsWith('http://') || value.startsWith('https://')) {
       return value;
+    }
     final base = AppConfig.shared.baseUrl.trim();
     if (base.isEmpty) return value;
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');

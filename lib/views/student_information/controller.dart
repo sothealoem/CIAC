@@ -12,7 +12,10 @@ class StudentInformationController extends GetxController {
   final RxString selectedChildName = ''.obs;
   final RxString parentProfile = ''.obs;
   final RxBool isTeacherMode = false.obs;
+  final RxBool showParentProfile = false.obs;
   final RxString teacherRole = 'N/A'.obs;
+  bool get _fromProfileAction =>
+      Get.arguments is Map && Get.arguments['fromProfileAction'] == true;
 
   @override
   void onInit() {
@@ -21,7 +24,9 @@ class StudentInformationController extends GetxController {
   }
 
   Future<void> _bootstrap() async {
-    await _loadCachedSnapshot();
+    if (!_fromProfileAction) {
+      await _loadCachedSnapshot();
+    }
     await fetchStudentInfo();
   }
 
@@ -74,6 +79,7 @@ class StudentInformationController extends GetxController {
     }
     try {
       isTeacherMode.value = !UserRepository.shared.isDriver;
+      showParentProfile.value = false;
       if (isTeacherMode.value) {
         teacherRole.value =
             (await SharedPreferencesManager.get('user_role') ?? 'N/A')
@@ -195,11 +201,8 @@ class StudentInformationController extends GetxController {
             }
           }
           // Fallback: direct student object at root.
-          d ??=
-              (map['id'] != null || map['admission_no'] != null)
-                  ? StudentProfileData.fromJson(map)
-                  : null;
-          if (d != null) {
+          d ??= _looksLikeStudentProfile(map) ? StudentProfileData.fromJson(map) : null;
+          if (d != null && _hasStudentProfileData(d)) {
             selectedStudent.value = parent_model.Student(
               id: d.id,
               admissionNo: d.admissionNo,
@@ -236,6 +239,8 @@ class StudentInformationController extends GetxController {
         parentProfile.value = (model.data?.parent?.profile ?? '').trim();
         final students = model.data?.student ?? const <parent_model.Student>[];
         if (students.isEmpty) {
+          selectedStudent.value = null;
+          showParentProfile.value = true;
           return;
         }
 
@@ -262,10 +267,73 @@ class StudentInformationController extends GetxController {
               .toString()
               .trim();
     } catch (e) {
-      ExceptionHandler.handleException(e);
+      if (!isTeacherMode.value && (_fromProfileAction || parentInfo.value != null)) {
+        await _loadParentOwnProfile();
+      } else {
+        ExceptionHandler.handleException(e);
+      }
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> _loadParentOwnProfile() async {
+    showParentProfile.value = true;
+    selectedStudent.value = null;
+
+    parent_model.Parent? parent;
+    try {
+      final res = await Get.find<ApiService>().get(
+        EndPoints.profile,
+        isShowLoading: false,
+      );
+      final profile = _profileFromResponse(res.data);
+      if (profile != null) {
+        parent = _parentFromProfile(profile);
+        UserRepository.shared.setProfile(profile);
+      }
+    } catch (_) {
+      // Keep profile screen usable even when the server endpoint fails.
+    }
+
+    parent ??= _parentFromCachedProfile();
+    parent ??= await _parentFromLocalStorage();
+    parentInfo.value = parent;
+    parentProfile.value = (parent?.profile ?? '').trim();
+  }
+
+  Future<parent_model.Parent?> _parentFromLocalStorage() async {
+    final name =
+        (await SharedPreferencesManager.get('name') ?? '').toString().trim();
+    final profile =
+        (await SharedPreferencesManager.get('profile') ?? '').toString().trim();
+    if (name.isEmpty && profile.isEmpty) {
+      return null;
+    }
+    return parent_model.Parent(name: name, profile: profile);
+  }
+
+  parent_model.Parent? _parentFromCachedProfile() {
+    try {
+      return _parentFromProfile(UserRepository.shared.profile);
+    } catch (_) {}
+    return null;
+  }
+
+  parent_model.Parent _parentFromProfile(ProfileModel profile) {
+    return parent_model.Parent(
+      id: profile.id.toInt(),
+      name: profile.name,
+      phone: profile.phone,
+      profile: _validText(profile.profilePath) ? profile.profilePath : profile.profile,
+      occupation:
+          _validText(profile.profession) ? profile.profession : profile.type,
+    );
+  }
+
+  bool _validText(String value) {
+    final text = value.trim().toLowerCase();
+    return text.isNotEmpty && text != 'n/a' && text != 'null';
   }
 
   Future<void> _cacheCurrentStudent() async {
@@ -299,6 +367,23 @@ class StudentInformationController extends GetxController {
     } catch (_) {
       return null;
     }
+  }
+
+  bool _looksLikeStudentProfile(Map<String, dynamic> map) {
+    return map['admission_no'] != null ||
+        map['student_name'] != null ||
+        map['fullname_english'] != null ||
+        map['fullname_khmer'] != null ||
+        map['class'] != null ||
+        map['class_name'] != null;
+  }
+
+  bool _hasStudentProfileData(StudentProfileData data) {
+    return (data.admissionNo ?? '').trim().isNotEmpty ||
+        (data.fullnameEnglish ?? '').trim().isNotEmpty ||
+        (data.fullnameKhmer ?? '').trim().isNotEmpty ||
+        (data.className ?? '').trim().isNotEmpty ||
+        (data.dob ?? '').trim().isNotEmpty;
   }
 
   ProfileModel? _profileFromResponse(dynamic raw) {

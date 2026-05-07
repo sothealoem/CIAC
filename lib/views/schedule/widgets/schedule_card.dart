@@ -49,8 +49,9 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
 
       final dayKey = _dayKeys[selectedDayIndex];
       final items = controller.schedules[dayKey] ?? const <ScheduleItem>[];
+      final isTeacherMode = !UserRepository.shared.isDriver;
       final classInfo = controller.classInfo.value;
-      final classLabel = [
+      final parentClassLabel = [
         classInfo?.className.trim() ?? '',
         classInfo?.sectionName.trim() ?? '',
       ].where((e) => e.isNotEmpty).join(' - ');
@@ -58,24 +59,29 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(36, 16, 36, 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColor.primaryColor),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'Class:  ${classLabel.isEmpty ? 'No class' : classLabel}',
-                style: const TextStyle(
-                  color: AppColor.primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+          if (!isTeacherMode)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(36, 16, 36, 10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColor.primaryColor),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'Class:  ${parentClassLabel.isEmpty ? 'No class' : parentClassLabel}',
+                  style: const TextStyle(
+                    color: AppColor.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),
-          ),
+          if (isTeacherMode) const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 26),
@@ -139,6 +145,8 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                           time: item.time.isEmpty ? '-' : item.time,
                           subject: item.subject.isEmpty ? '-' : item.subject,
                           teacher: item.teacher.isEmpty ? '-' : item.teacher,
+                          isTeacherMode: isTeacherMode,
+                          classLabel: _classLabelForItem(item),
                           room: item.room.isEmpty ? '-' : item.room,
                         );
                       },
@@ -147,5 +155,13 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
         ],
       );
     });
+  }
+
+  String _classLabelForItem(ScheduleItem item) {
+    final label = [
+      item.className.trim(),
+      item.sectionName.trim(),
+    ].where((e) => e.isNotEmpty).join(' - ');
+    return label.isEmpty ? '-' : label;
   }
 }

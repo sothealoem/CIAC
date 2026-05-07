@@ -21,8 +21,10 @@ class PaymentHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final due = _toNum(item.dueAmount);
     final statusLabel = due <= 0 ? 'Paid' : 'Unpaid';
-    final statusBg = due <= 0 ? const Color(0xFFC8F0D2) : const Color(0xFFFFD8D8);
-    final statusText = due <= 0 ? const Color(0xFF1B8F3A) : const Color(0xFFD83232);
+    final statusBg =
+        due <= 0 ? const Color(0xFFC8F0D2) : const Color(0xFFFFD8D8);
+    final statusText =
+        due <= 0 ? const Color(0xFF1B8F3A) : const Color(0xFFD83232);
 
     return InkWell(
       onTap: isLoading ? null : onTap,
@@ -36,67 +38,73 @@ class PaymentHistoryCard extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade300),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  studentName.isEmpty ? 'Student' : studentName,
-                  style: AppTextStyle.regularPrimaryBoldblack,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusBg,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  statusLabel,
-                  style: TextStyle(
-                    color: statusText,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    studentName.isEmpty ? 'Student' : studentName,
+                    style: AppTextStyle.regularPrimaryBoldblack,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Icon(Icons.calendar_today_outlined, size: 14),
-              const SizedBox(width: 6),
-              Text(_formatDate(item.paymentDate), style: AppTextStyle.smallRegular),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Divider(height: 1, color: Colors.grey.shade300),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Invoice ${item.invoiceNo}',
-                  style: AppTextStyle.smallPrimarytextgrey,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusBg,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: TextStyle(
+                      color: statusText,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-              if (isLoading)
-                const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.calendar_month, size: 14),
+                const SizedBox(width: 6),
+                Text(
+                  _formatDate(item.paymentDate),
+                  style: AppTextStyle.smallRegular,
                 ),
-              if (isLoading) const SizedBox(width: 8),
-              _amountBadge('\$${item.grandTotal}'),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 10),
+            Divider(height: 1, color: Colors.grey.shade300),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Invoice ${item.invoiceNo}',
+                    style: AppTextStyle.smallPrimarytextgrey,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (isLoading)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                if (isLoading) const SizedBox(width: 8),
+                _amountBadge('\$${item.grandTotal}'),
+              ],
+            ),
+          ],
         ),
       ),
     );

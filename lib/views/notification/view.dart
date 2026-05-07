@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:schoolapp/views/views.dart';
 
 class NotificationView extends StatelessWidget {
@@ -31,39 +32,25 @@ class NotificationView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(LocaleKeys.notification.tr)),
 
-      // backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: DefaultTextStyle.merge(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              12.height,
               Padding(
-                padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    const Text(
-                      'អ្នកអាចតាមដានដំណឹងសំខាន់ៗថ្មីៗ និងសកម្មភាពសាលារៀន',
-                      style: TextStyle(
-                        color: Color(0xFF1F2937),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Stack(
-                      children: [
-                        Container(height: 2, color: const Color(0xFFD1D5DB)),
-                        Container(
-                          height: 3,
-                          width: 82,
-                          color: AppColor.primary,
-                        ),
-                      ],
-                    ),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  LocaleKeys.contactUs.tr,
+                  // style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13),
                 ),
               ),
+              12.height,
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: CustomIndicator(progress: 1 / 4),
+              ),
+              12.height,
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: controller.refreshNotifications,

@@ -22,7 +22,13 @@ class ScheduleView extends StatelessWidget {
             ),
           ),
           UIConstants.spacingSmall.height,
-          const CustomIndicator(progress: 1 / 4),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: CustomIndicator(progress: 1 / 4),
+            ),
+          ),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(),

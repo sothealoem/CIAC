@@ -25,7 +25,16 @@ class LoginController extends GetxController {
 
   var emailError = RxnString();
   var passwordError = RxnString();
+  final hasEmailText = false.obs;
+  final hasPasswordText = false.obs;
   final selectedLoginRole = UserType.parent.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    emailCtl.addListener(() => hasEmailText.value = emailCtl.text.isNotEmpty);
+    passCtl.addListener(() => hasPasswordText.value = passCtl.text.isNotEmpty);
+  }
 
   @override
   void onClose() {

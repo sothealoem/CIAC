@@ -41,9 +41,46 @@ class LocaleKeys {
   static const attendanceRecordTitle = 'attendanceRecordTitle';
   static const attendanceRecordSubTitle = 'attendanceRecordSubTitle';
   static const noAttendanceLogsFound = 'noAttendanceLogsFound';
+  static const noStaffAttendanceLogsFound = 'noStaffAttendanceLogsFound';
+  static const morningIn = 'morningIn';
+  static const morningOut = 'morningOut';
+  static const afternoonIn = 'afternoonIn';
+  static const afternoonOut = 'afternoonOut';
+  static const scanQrCodeToLogAttendance = 'scanQrCodeToLogAttendance';
   static const studentNameLabel = 'studentNameLabel';
   static const classLabel = 'classLabel';
   static const dateLabel = 'dateLabel';
+  static const requestLeaveTitle = 'requestLeaveTitle';
+  static const requestLeaveSubTitle = 'requestLeaveSubTitle';
+  static const requestLeaveSelectStudent = 'requestLeaveSelectStudent';
+  static const requestLeaveFillInfo = 'requestLeaveFillInfo';
+  static const student = 'student';
+  static const studentId = 'studentId';
+  static const studentName = 'studentName';
+  static const teacherName = 'teacherName';
+  static const role = 'role';
+  static const profession = 'profession';
+  static const dob = 'dob';
+  static const pob = 'pob';
+  static const sex = 'sex';
+  static const classSection = 'classSection';
+  static const parentTeacher = 'parentTeacher';
+  static const noTeacherInformationFound = 'noTeacherInformationFound';
+  static const noStudentInformationFound = 'noStudentInformationFound';
+  static const noParentInformationFound = 'noParentInformationFound';
+  static const teacherProfile = 'teacherProfile';
+  static const studentProfile = 'studentProfile';
+  static const parentProfile = 'parentProfile';
+  static const shift = 'shift';
+  static const totalLeaveDays = 'totalLeaveDays';
+  static const leaveFromDate = 'leaveFromDate';
+  static const leaveToDate = 'leaveToDate';
+  static const leaveReason = 'leaveReason';
+  static const otherReasonHint = 'otherReasonHint';
+  static const sick = 'sick';
+  static const busy = 'busy';
+  static const all = 'all';
+  static const rejected = 'rejected';
   static const dashboardMenuTuitionFee = 'dashboardMenuTuitionFee';
   static const dashboardMenuAttendance = 'dashboardMenuAttendance';
   static const dashboardMenuRequestLeave = 'dashboardMenuRequestLeave';
@@ -109,6 +146,7 @@ class LocaleKeys {
   static const transferTo = 'transferTo';
   static const version = 'version';
   static const noData = 'noData';
+  static const noPaymentHistoryFound = 'noPaymentHistoryFound';
   static const deliveryScanHasBeenCompleted = 'deliveryScanHasBeenCompleted';
   static const driverGetProduct = 'driverGetProduct';
   static const product = 'product';
@@ -256,6 +294,7 @@ class LocaleKeys {
   static const chooseDeliveyStatus = 'chooseDeliveyStatus';
   static const paymentDes = 'paymentDes';
   static const completeDate = 'completeDate';
+  static const featureTemporarilyUnavailable = 'featureTemporarilyUnavailable';
   static const login = 'login';
   static const loginNow = 'loginNow';
   static const loginContinueMessage = 'loginContinueMessage';
@@ -287,12 +326,10 @@ class LocaleKeys {
   static const enterYourName = 'enterYourName';
   static const successfulGetProduct = 'successfulGetProduct';
   static const present = 'present';
-  static const all = 'all';
   static const paid = 'paid';
   static const unpaid = 'unpaid';
   static const absent = 'absent';
   static const late = 'late';
-  static const noStaffAttendanceLogsFound = 'noStaffAttendanceLogsFound';
   static const allDates = 'allDates';
   static const breakTime = 'breakTime';
   static const morning = 'morning';
@@ -357,9 +394,47 @@ class Locales {
     'attendanceRecordSubTitle':
         'You can view your children\'s attendance while they are studying.',
     'noAttendanceLogsFound': 'No attendance logs found.',
+    'noStaffAttendanceLogsFound': 'No staff attendance logs found.',
+    'morningIn': 'Morning In',
+    'morningOut': 'Morning Out',
+    'afternoonIn': 'Afternoon In',
+    'afternoonOut': 'Afternoon Out',
+    'scanQrCodeToLogAttendance': 'Scan QR code to log attendance',
     'studentNameLabel': 'Name',
     'classLabel': 'Class',
     'dateLabel': 'Date',
+    'requestLeaveTitle': 'Request Leave',
+    'requestLeaveSubTitle': 'You can submit a leave request.',
+    'requestLeaveSelectStudent':
+        '1. Select the student you want to request leave for',
+    'requestLeaveFillInfo': '2. Fill in your leave request information',
+    'student': 'Student',
+    'studentId': 'Student ID',
+    'studentName': 'Student Name',
+    'teacherName': 'Teacher Name',
+    'role': 'Role',
+    'profession': 'Profession',
+    'dob': 'DOB',
+    'pob': 'POB',
+    'sex': 'Sex',
+    'classSection': 'Class/Section',
+    'parentTeacher': 'Parent/Teacher',
+    'noTeacherInformationFound': 'No teacher information found.',
+    'noStudentInformationFound': 'No student information found.',
+    'noParentInformationFound': 'No parent information found.',
+    'teacherProfile': 'Teacher Profile',
+    'studentProfile': 'Student Profile',
+    'parentProfile': 'Parent Profile',
+    'shift': 'Shift',
+    'totalLeaveDays': 'Leave days',
+    'leaveFromDate': 'Leave from',
+    'leaveToDate': 'To',
+    'leaveReason': 'Reason',
+    'otherReasonHint': 'Other reason...',
+    'sick': 'Sick',
+    'busy': 'Busy',
+    'all': 'All',
+    'rejected': 'Rejected',
     'dashboardMenuTuitionFee': 'Payment',
     'dashboardMenuAttendance': 'Attendance',
     'dashboardMenuRequestLeave': 'Request Leave',
@@ -422,6 +497,7 @@ class Locales {
     'transferTo': 'Transfer to',
     'version': 'Version',
     'noData': 'No Data',
+    'noPaymentHistoryFound': 'No payment history found.',
     'deliveryScanHasBeenCompleted': 'Delivery Scan Has Been completed.',
     'driverGetProduct': 'Driver get product.',
     'product': 'Product',
@@ -571,6 +647,8 @@ class Locales {
     'paymentDes':
         'Any friagile valnerable and illegal item are prohibited from shipment and are sender\'s responsibily',
     'completeDate': 'Complete date',
+    'featureTemporarilyUnavailable':
+        'This feature is temporarily unavailable. Please try again later.',
     'login': 'Log In',
     'loginNow': 'Log In Now',
     'loginContinueMessage': 'Please log in to continue using the app.',
@@ -602,12 +680,10 @@ class Locales {
     'commend': 'Commend',
     //————————————————————haysan——————————————————————//
     'present': 'Present',
-    'all': 'All',
     'paid': 'Paid',
     'unpaid': 'Unpaid',
     'absent': 'Absent',
     'late': 'Late',
-    'noStaffAttendanceLogsFound': 'No Staff Attendance Logs Found',
     'allDates': 'All Dates',
     'breakTime': 'Break Time',
     'morning': 'Morning',
@@ -670,9 +746,46 @@ class Locales {
     'attendanceRecordSubTitle':
         'លោកអ្នកអាចដឹងពីវត្តមាន កូនៗរបស់លោកអ្នកពេលកំពុងសិក្សា',
     'noAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមាន',
+    'noStaffAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមានបុគ្គលិក',
+    'morningIn': 'ព្រឹក ចូល',
+    'morningOut': 'ព្រឹក ចេញ',
+    'afternoonIn': 'រសៀល ចូល',
+    'afternoonOut': 'រសៀល ចេញ',
+    'scanQrCodeToLogAttendance': 'ស្កេន QR កូដ ដើម្បីកត់ត្រាវត្តមាន',
     'studentNameLabel': 'ឈ្មោះ',
     'classLabel': 'ថ្នាក់',
     'dateLabel': 'កាលបរិច្ឆេទ',
+    'requestLeaveTitle': 'ស្នើសុំច្បាប់',
+    'requestLeaveSubTitle': 'អ្នកអាចបញ្ជូនសំណើសុំច្បាប់បាន។',
+    'requestLeaveSelectStudent': '១. ជ្រើសរើសសិស្សដែលអ្នកចង់ស្នើសុំច្បាប់',
+    'requestLeaveFillInfo': '២. បំពេញព័ត៌មានសំណើសុំច្បាប់',
+    'student': 'សិស្ស',
+    'studentId': 'អត្តលេខសិស្ស',
+    'studentName': 'ឈ្មោះសិស្ស',
+    'teacherName': 'ឈ្មោះគ្រូ',
+    'role': 'តួនាទី',
+    'profession': 'មុខរបរ',
+    'dob': 'ថ្ងៃខែឆ្នាំកំណើត',
+    'pob': 'ទីកន្លែងកំណើត',
+    'sex': 'ភេទ',
+    'classSection': 'ថ្នាក់/ផ្នែក',
+    'parentTeacher': 'អាណាព្យាបាល/គ្រូ',
+    'noTeacherInformationFound': 'មិនមានព័ត៌មានគ្រូ',
+    'noStudentInformationFound': 'មិនមានព័ត៌មានសិស្ស',
+    'noParentInformationFound': 'មិនមានព័ត៌មានអាណាព្យាបាល',
+    'teacherProfile': 'ព័ត៌មានគ្រូ',
+    'studentProfile': 'ព័ត៌មានសិស្ស',
+    'parentProfile': 'ព័ត៌មានអាណាព្យាបាល',
+    'shift': 'វេន',
+    'totalLeaveDays': 'ចំនួនថ្ងៃឈប់',
+    'leaveFromDate': 'ឈប់ពីថ្ងៃទី',
+    'leaveToDate': 'ដល់ថ្ងៃទី',
+    'leaveReason': 'មូលហេតុ',
+    'otherReasonHint': 'មូលហេតុផ្សេងៗ...',
+    'sick': 'ឈឺ',
+    'busy': 'រវល់',
+    'all': 'ទាំងអស់',
+    'rejected': 'បានបដិសេធ',
     'loginContinueMessage': 'សូមចូលដើម្បីបន្តប្រើកម្មវិធីរបស់អ្នក',
     'dashboardMenuTuitionFee': 'ថ្លៃសិក្សា',
     'dashboardMenuAttendance': 'វត្តមាន',
@@ -736,6 +849,7 @@ class Locales {
     'ok': 'យល់ព្រម',
     'activitySubTitle': 'សកម្មភាពថ្មីៗរបស់អ្នក',
     'noData': 'គ្មានទិន្នន័យ',
+    'noPaymentHistoryFound': 'មិនមានប្រវត្តិការទូទាត់',
     'deliveryScanHasBeenCompleted': 'ការស្កេនការដឹកជញ្ជូនបានបញ្ចប់',
     'driverGetProduct': 'អ្នកបើកបរបានទទួលផលិតផល',
     'product': 'ផលិតផល',
@@ -846,6 +960,8 @@ class Locales {
     'filterDelivery': 'ច្រោះការដឹកជញ្ជូន',
     'chooseDeliveyStatus': 'ជ្រើសរើសស្ថានភាពដឹកជញ្ជូន',
     'completeDate': 'កាលបរិច្ឆេទបញ្ចប់',
+    'featureTemporarilyUnavailable':
+        'មុខងារនេះមិនអាចប្រើបានបណ្តោះអាសន្នទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។',
     'teacher': 'គ្រូបង្រៀន',
     'parent': 'អាណាព្យាបាល',
     'phoneOrEmail': 'លេខទូរស័ព្ទ ឬ អ៊ីមែល',
@@ -869,12 +985,10 @@ class Locales {
     'commend': 'មតិយោបល់',
     //————————————————————haysan——————————————————————//
     'present': 'វត្តមាន',
-    'all': 'ទាំងអស់',
     'paid': 'បានបង់',
     'unpaid': 'មិនទាន់បង់',
     'absent': 'អវត្តមាន',
     'late': 'យឺត',
-    'noStaffAttendanceLogsFound': 'មិនមានកំណត់ត្រាវត្តមានបុគ្គលិក',
     'allDates': 'កាលបរិច្ឆេទទាំងអស់',
     'breakTime': 'ពេលសម្រាក',
     'morning': 'ព្រឹក',

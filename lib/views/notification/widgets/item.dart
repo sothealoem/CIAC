@@ -45,7 +45,7 @@ class NotificationItemWidget extends StatelessWidget {
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColor.primary, width: 2),
+                border: Border.all(color: AppColor.red, width: 2),
               ),
               child: ClipOval(
                 child: Image.asset(

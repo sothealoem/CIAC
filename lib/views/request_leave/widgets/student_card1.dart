@@ -22,16 +22,16 @@ class StudentCard1Widget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 /// SECTION 1: STUDENT INFO
-                const Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "១.ជ្រើសរើសថ្នាក់រៀនកូនៗដែlលោកអ្នកចង់ស្នើសុំច្បាប់",
-                        style: AppTextStyle.mediumPrimaryBoldText,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      LocaleKeys.requestLeaveSelectStudent.tr,
+                      style: AppTextStyle.mediumPrimaryBoldText,
+                      softWrap: true,
                     ),
-                  ],
+                  ),
                 ),
 
                 Card.outlined(
@@ -64,13 +64,11 @@ class StudentCard1Widget extends StatelessWidget {
                             Obx(
                               () => Text(
                                 controller.studentNameText.value.isEmpty
-                                    ? 'Student'
+                                    ? LocaleKeys.student.tr
                                     : controller.studentNameText.value,
                               ),
                             ),
-                            const Text(
-                              'Student',
-                              style: TextStyle(
+                            Text(LocaleKeys.student.tr, style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
                               ),
@@ -82,27 +80,13 @@ class StudentCard1Widget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "អត្តលេខ",
-                                style: AppTextStyle.regularPrimaryBoldblack,
-                              ),
-                              const SizedBox(height: 6),
-                              Obx(
-                                () => _buildInput(
-                                  controller.studentIdText.value.isEmpty
+                              Text(LocaleKeys.studentId.tr, style: AppTextStyle.regularPrimaryBoldblack), const SizedBox(height: 6), Obx(() => _buildInput(controller.studentIdText.value.isEmpty
                                       ? '-'
                                       : controller.studentIdText.value,
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Text(
-                                "ថ្នាក់ទី",
-                                style: AppTextStyle.regularPrimaryBoldblack,
-                              ),
-                              const SizedBox(height: 6),
-                              Obx(
-                                () => _buildInput(
-                                  controller.studentGradeText.value.isEmpty
+                              Text(LocaleKeys.classLabel.tr, style: AppTextStyle.regularPrimaryBoldblack), const SizedBox(height: 6), Obx(() => _buildInput(controller.studentGradeText.value.isEmpty
                                       ? '-'
                                       : controller.studentGradeText.value,
                                 ),
@@ -112,13 +96,7 @@ class StudentCard1Widget extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    "វេន",
-                                    style: AppTextStyle.regularPrimaryBoldblack,
-                                  ),
-                                  _buildRadio(controller, "ព្រឹក"),
-                                  _buildRadio(controller, "រសៀល"),
-                                  _buildRadio(controller, "ល្ងាច"),
+                                  Text(LocaleKeys.shift.tr, style: AppTextStyle.regularPrimaryBoldblack), _buildRadio(controller, LocaleKeys.morning.tr), _buildRadio(controller, LocaleKeys.afternoon.tr), _buildRadio(controller, LocaleKeys.evening.tr),
                                 ],
                               ),
                             ],
@@ -130,16 +108,16 @@ class StudentCard1Widget extends StatelessWidget {
                 ),
 
                 /// SECTION 2: LEAVE DETAILS
-                const Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20, left: 10),
-                      child: Text(
-                        "២.បំពេញព័ត៌មានអំពីសំណើរសុំច្បាប់របស់លោកអ្នក",
-                        style: AppTextStyle.mediumPrimaryBoldText,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, left: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      LocaleKeys.requestLeaveFillInfo.tr,
+                      style: AppTextStyle.mediumPrimaryBoldText,
+                      softWrap: true,
                     ),
-                  ],
+                  ),
                 ),
 
                 Card.outlined(
@@ -151,13 +129,7 @@ class StudentCard1Widget extends StatelessWidget {
                         Obx(
                           () => Row(
                             children: [
-                              const Text(
-                                'ចំនួនឈប់សម្រាក៖',
-                                style: AppTextStyle.smallPrimaryBoldBlack,
-                              ),
-                              5.width,
-                              Container(
-                                width: 70,
+                              Text('${LocaleKeys.totalLeaveDays.tr}:', style: AppTextStyle.smallPrimaryBoldBlack), 5.width, Container(width: 70,
                                 height: 20,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
@@ -177,18 +149,7 @@ class StudentCard1Widget extends StatelessWidget {
                         10.height,
                         Row(
                           children: [
-                            const Text(
-                              'សម្រាកពីថ្ងៃទី៖',
-                              style: AppTextStyle.smallPrimaryBoldBlack,
-                            ),
-                            5.width,
-                            Expanded(
-                              child: Obx(
-                                () => Row(
-                                  children: [
-                                    Expanded(
-                                      child: _dateBox(
-                                        controller.startDate.value,
+                            Text('${LocaleKeys.leaveFromDate.tr}:', style: AppTextStyle.smallPrimaryBoldBlack), 5.width, Expanded(child: Obx(() => Row(children: [Expanded(child: _dateBox(controller.startDate.value,
                                       ),
                                     ),
                                     GestureDetector(
@@ -202,17 +163,7 @@ class StudentCard1Widget extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const Text(
-                              'ដល់ថ្ងៃ៖',
-                              style: AppTextStyle.smallPrimaryBoldBlack,
-                            ),
-                            5.width,
-                            Expanded(
-                              child: Obx(
-                                () => Row(
-                                  children: [
-                                    Expanded(
-                                      child: _dateBox(controller.endDate.value),
+                            Text('${LocaleKeys.leaveToDate.tr}:', style: AppTextStyle.smallPrimaryBoldBlack), 5.width, Expanded(child: Obx(() => Row(children: [Expanded(child: _dateBox(controller.endDate.value),
                                     ),
                                     GestureDetector(
                                       onTap: controller.pickEndDate,
@@ -230,26 +181,22 @@ class StudentCard1Widget extends StatelessWidget {
                         10.height,
                         Row(
                           children: [
-                            const Text(
-                              'មូលហេតុ៖ ',
-                              style: AppTextStyle.smallPrimaryBoldBlack,
-                            ),
-                            10.width,
+                            Text('${LocaleKeys.leaveReason.tr}: ', style: AppTextStyle.smallPrimaryBoldBlack), 10.width,
                             _buildLeaveType(
                               controller,
-                              label: 'Sick',
+                              label: LocaleKeys.sick.tr,
                               value: 'sick',
                             ),
                             20.width,
                             _buildLeaveType(
                               controller,
-                              label: 'Busy',
+                              label: LocaleKeys.busy.tr,
                               value: 'busy',
                             ),
                             20.width,
                             _buildLeaveType(
                               controller,
-                              label: 'Other',
+                              label: LocaleKeys.other.tr,
                               value: 'other',
                             ),
                           ],
@@ -262,7 +209,7 @@ class StudentCard1Widget extends StatelessWidget {
                           style: AppTextStyle.smallPrimaryBoldBlack,
                           maxLines: 5,
                           decoration: InputDecoration(
-                            hintText: 'មូលហេតុផ្សេងៗ....',
+                            hintText: LocaleKeys.otherReasonHint.tr,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -546,3 +493,4 @@ class StudentCard1Widget extends StatelessWidget {
     return '/${compact.join('/')}';
   }
 }
+

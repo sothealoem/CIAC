@@ -25,9 +25,7 @@ class OnlineCoursesView extends GetView<OnlineCoursesController> {
               subTitle: 'សូមរៀនដោយយកចិត្តទុកដាក់',
             ),
           ),
-
-          // UIConstants.spacingSmall.height,
-          const CustomIndicator(progress: 1 / 4),
+          CustomIndicator(progress: 1 / 4),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(),

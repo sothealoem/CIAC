@@ -76,11 +76,11 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
 
     if (visiblePayments.isEmpty) {
       return ListView(
-        children: const [
-          SizedBox(height: 120),
+        children: [
+          const SizedBox(height: 120),
           Center(
             child: Text(
-              'No payment history found.',
+              LocaleKeys.noPaymentHistoryFound.tr,
               style: AppTextStyle.smallGreyRegular,
             ),
           ),

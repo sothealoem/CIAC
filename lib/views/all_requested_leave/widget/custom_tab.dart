@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 
 class CustomTopTabBar extends StatelessWidget {
   final int selectedIndex;
@@ -13,10 +15,10 @@ class CustomTopTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      {"icon": Icons.menu, "title": "ទាំងអស់"},
-      {"icon": Icons.access_time, "title": "កំពុងធ្វើ"},
-      {"icon": Icons.check, "title": "បានអនុម័ត"},
-      {"icon": Icons.close, "title": "បដិសេធ"},
+      {"icon": Icons.menu, "title": LocaleKeys.all.tr},
+      {"icon": Icons.access_time, "title": LocaleKeys.pending.tr},
+      {"icon": Icons.check, "title": LocaleKeys.approved.tr},
+      {"icon": Icons.close, "title": LocaleKeys.rejected.tr},
     ];
 
     return Container(
@@ -41,14 +43,20 @@ class CustomTopTabBar extends StatelessWidget {
                         size: 15,
                         color: isSelected ? Colors.black : Colors.grey,
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        tabs[index]["title"] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isSelected ? Colors.black : Colors.grey,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          tabs[index]["title"] as String,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isSelected ? Colors.black : Colors.grey,
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                          ),
                         ),
                       ),
                     ],

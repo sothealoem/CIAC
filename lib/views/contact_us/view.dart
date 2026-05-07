@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:schoolapp/views/views.dart';
 
 class ContactUsView extends GetView<ContactUsController> {
@@ -38,7 +39,7 @@ class ContactUsView extends GetView<ContactUsController> {
                 style: const TextStyle(color: Color(0xFF1F2937), fontSize: 13),
               ),
               12.height,
-              _buildProgressLine(),
+              const CustomIndicator(progress: 1 / 4),
               18.height,
               _locationCard(address: address, mapUrl: mapUrl),
               16.height,
@@ -86,15 +87,6 @@ class ContactUsView extends GetView<ContactUsController> {
           ),
         );
       }),
-    );
-  }
-
-  Widget _buildProgressLine() {
-    return Stack(
-      children: [
-        Container(height: 2, color: Colors.grey.shade300),
-        Container(height: 3, width: 82, color: AppColor.primary),
-      ],
     );
   }
 

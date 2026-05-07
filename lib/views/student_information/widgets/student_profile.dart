@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/models/parent/parent.dart' as parent_model;
 import 'package:schoolapp/views/student_information/controller.dart';
@@ -17,10 +18,10 @@ class StudentProfileWidget extends GetView<StudentInformationController> {
           return const Center(child: CircularProgressIndicator());
         }
         if (student == null) {
-          return const Center(
+          return Center(
             child: Text(
-              'No student information found.',
-              style: TextStyle(),
+              LocaleKeys.noStudentInformationFound.tr,
+              style: const TextStyle(),
             ),
           );
         }
@@ -47,14 +48,29 @@ class StudentProfileWidget extends GetView<StudentInformationController> {
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
-                  _infoRow('Student ID', controller.displayCode(student)),
-                  _infoRow('Student Name', controller.displayName(student)),
-                  _infoRow('DOB', controller.displayDob(student)),
-                  _infoRow('POB', controller.displayPob(student)),
-                  _infoRow('Sex', controller.displaySex(student)),
-                  _infoRow('Class/Section', controller.displayClass(student)),
-                  _infoRow('Parent/Teacher', controller.displayParent(student)),
-                  _infoRow('Phone', controller.displayPhone(student)),
+                  _infoRow(
+                    LocaleKeys.studentId.tr,
+                    controller.displayCode(student),
+                  ),
+                  _infoRow(
+                    LocaleKeys.studentName.tr,
+                    controller.displayName(student),
+                  ),
+                  _infoRow(LocaleKeys.dob.tr, controller.displayDob(student)),
+                  _infoRow(LocaleKeys.pob.tr, controller.displayPob(student)),
+                  _infoRow(LocaleKeys.sex.tr, controller.displaySex(student)),
+                  _infoRow(
+                    LocaleKeys.classSection.tr,
+                    controller.displayClass(student),
+                  ),
+                  _infoRow(
+                    LocaleKeys.parentTeacher.tr,
+                    controller.displayParent(student),
+                  ),
+                  _infoRow(
+                    LocaleKeys.phoneNumber.tr,
+                    controller.displayPhone(student),
+                  ),
                 ],
               ),
             ),
@@ -123,7 +139,10 @@ class StudentProfileWidget extends GetView<StudentInformationController> {
             Expanded(
               flex: 5,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
                 child: Text(
                   '$label:',
                   style: const TextStyle(
@@ -142,7 +161,10 @@ class StudentProfileWidget extends GetView<StudentInformationController> {
             Expanded(
               flex: 4,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
                 child: Text(
                   value,
                   style: const TextStyle(
@@ -185,7 +207,9 @@ class StudentProfileWidget extends GetView<StudentInformationController> {
     final baseUri = Uri.parse(base.endsWith('/') ? base : '$base/');
     final normalized = normalizePath(value);
     return baseUri
-        .resolve(normalized.startsWith('/') ? normalized.substring(1) : normalized)
+        .resolve(
+          normalized.startsWith('/') ? normalized.substring(1) : normalized,
+        )
         .toString();
   }
 

@@ -3,6 +3,7 @@ import 'package:schoolapp/flavor/flavor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/student_information/controller.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double _avatarSize = 42;
@@ -259,7 +260,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   void _handleProfileTap() {
     // Open profile/information screen for both parent and teacher modes.
     if (Get.currentRoute != Routes.studentInforation) {
-      Get.toNamed(Routes.studentInforation);
+      if (Get.isRegistered<StudentInformationController>()) {
+        Get.delete<StudentInformationController>();
+      }
+      Get.toNamed(Routes.studentInforation, arguments: {'fromProfileAction': true});
     }
   }
 }

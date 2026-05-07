@@ -10,7 +10,7 @@ class CustomIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
         color: Colors.grey.shade300, // background
         borderRadius: BorderRadius.circular(10),

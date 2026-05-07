@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/requestleave/model.dart';
 import 'package:schoolapp/views/all_requested_leave/widget/all_requested_leave_item_card.dart';
 import 'package:schoolapp/views/all_requested_leave/widget/all_requested_leave_status.dart';
@@ -47,9 +48,12 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
           },
           child: Column(
             children: [
-              CustomTopTabBar(
-                selectedIndex: selectedIndex,
-                onChanged: _changeTab,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: CustomTopTabBar(
+                  selectedIndex: selectedIndex,
+                  onChanged: _changeTab,
+                ),
               ),
               Expanded(
                 child: Obx(() {
@@ -103,8 +107,8 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(top: 120),
-                                  children: const [
-                                    Center(child: Text('No data')),
+                                  children: [
+                                    Center(child: Text(LocaleKeys.noData.tr)),
                                   ],
                                 )
                                 : ListView.builder(
@@ -158,9 +162,9 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
               }
               await controller.fetchRequests();
             },
-            label: const Text(
-              "ស្នើសុំច្បាប់",
-              style: TextStyle(color: Colors.white),
+            label: Text(
+              LocaleKeys.requestLeaveTitle.tr,
+              style: const TextStyle(color: Colors.white),
             ),
             icon: const Icon(Icons.add, color: Colors.white),
           ),

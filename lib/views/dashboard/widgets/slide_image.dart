@@ -52,8 +52,9 @@ class _PremiumSliderState extends State<PremiumSlider> {
                                 );
                               },
                               fadeInDuration: const Duration(milliseconds: 300),
-                              fadeOutDuration:
-                                  const Duration(milliseconds: 100),
+                              fadeOutDuration: const Duration(
+                                milliseconds: 100,
+                              ),
                               cacheKey: item,
                               useOldImageOnUrlChange: true,
                             )
@@ -76,8 +77,10 @@ class _PremiumSliderState extends State<PremiumSlider> {
             constraints.maxHeight.isFinite ? constraints.maxHeight : 180.0;
         const indicatorHeight = 12.0;
         const indicatorGap = 6.0;
-        final sliderHeight =
-            (maxHeight - indicatorHeight - indicatorGap).clamp(90.0, 2000.0);
+        final sliderHeight = (maxHeight - indicatorHeight - indicatorGap).clamp(
+          90.0,
+          2000.0,
+        );
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -127,7 +130,7 @@ class _PremiumSliderState extends State<PremiumSlider> {
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: AppColor.primary.withValues(
+                            color: AppColor.red.withValues(
                               alpha: _current == curSlide ? 0.9 : 0.2,
                             ),
                           ),

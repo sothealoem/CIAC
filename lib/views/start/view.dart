@@ -102,7 +102,7 @@ class StartView extends GetView<StartController> {
             child: StyleProvider(
               style: _BottomNavStyle(fontSize: navFontSize),
               child: ConvexAppBar(
-                key: ValueKey<String>(isParent ? 'nav-4' : 'nav-5'),
+                key: const ValueKey<String>('nav-4'),
                 backgroundColor: AppColor.white,
                 color: AppColor.grey,
                 activeColor: AppColor.red,
@@ -121,11 +121,15 @@ class StartView extends GetView<StartController> {
                     title: LocaleKeys.notification.tr,
                   ),
                   if (!isParent)
-                    const TabItem(icon: Icons.qr_code_scanner_sharp),
-                  TabItem(
-                    icon: Icons.mobile_friendly_outlined,
-                    title: LocaleKeys.payments.tr,
-                  ),
+                    TabItem(
+                      icon: Icons.qr_code_scanner_sharp,
+                      title: LocaleKeys.scanner.tr,
+                    ),
+                  if (isParent)
+                    TabItem(
+                      icon: Icons.mobile_friendly_outlined,
+                      title: LocaleKeys.payments.tr,
+                    ),
                   TabItem(
                     icon: Icons.contact_phone,
                     title: LocaleKeys.contact.tr,

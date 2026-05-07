@@ -59,6 +59,7 @@ class RegisterView extends GetView<RegisterController> {
                             children: [
                               const SizedBox(height: 10.0),
                               Text(
+                                textAlign: TextAlign.center,
                                 LocaleKeys.signUp.tr,
                                 style: AppTextStyle.hugePrimaryMediumBold,
                               ),
@@ -77,7 +78,9 @@ class RegisterView extends GetView<RegisterController> {
                                     final width =
                                         constraints.maxWidth > 0
                                             ? constraints.maxWidth
-                                            : MediaQuery.of(context).size.width -
+                                            : MediaQuery.of(
+                                                  context,
+                                                ).size.width -
                                                 56;
                                     final indicatorWidth = (width - 8) / 2;
                                     final isTeacher =
@@ -86,7 +89,9 @@ class RegisterView extends GetView<RegisterController> {
                                     return Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(999),
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
                                       ),
                                       padding: const EdgeInsets.all(4),
                                       child: SizedBox(
@@ -98,23 +103,30 @@ class RegisterView extends GetView<RegisterController> {
                                                 milliseconds: 280,
                                               ),
                                               curve: Curves.easeInOutCubic,
-                                              left: isTeacher ? 0 : indicatorWidth,
+                                              left:
+                                                  isTeacher
+                                                      ? 0
+                                                      : indicatorWidth,
                                               top: 0,
                                               bottom: 0,
                                               child: Container(
                                                 width: indicatorWidth,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(999),
+                                                      BorderRadius.circular(
+                                                        999,
+                                                      ),
                                                   gradient:
                                                       const LinearGradient(
                                                         colors: [
                                                           Color(0xFF0A6A5E),
                                                           Color(0xFF024139),
                                                         ],
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end:
+                                                            Alignment
+                                                                .bottomRight,
                                                       ),
                                                 ),
                                               ),
@@ -127,22 +139,23 @@ class RegisterView extends GetView<RegisterController> {
                                                         LocaleKeys.teacher.tr,
                                                     icon: Icons.school,
                                                     isSelected: isTeacher,
-                                                    onTap: () => controller
-                                                        .setRegisterRole(
-                                                          UserType.teacher,
-                                                        ),
+                                                    onTap:
+                                                        () => controller
+                                                            .setRegisterRole(
+                                                              UserType.teacher,
+                                                            ),
                                                   ),
                                                 ),
                                                 Expanded(
                                                   child: RoleSwitchLabel(
-                                                    label:
-                                                        LocaleKeys.parent.tr,
+                                                    label: LocaleKeys.parent.tr,
                                                     icon: Icons.groups,
                                                     isSelected: !isTeacher,
-                                                    onTap: () => controller
-                                                        .setRegisterRole(
-                                                          UserType.parent,
-                                                        ),
+                                                    onTap:
+                                                        () => controller
+                                                            .setRegisterRole(
+                                                              UserType.parent,
+                                                            ),
                                                   ),
                                                 ),
                                               ],
@@ -256,8 +269,7 @@ class RegisterView extends GetView<RegisterController> {
                                   suffixIcon: SizedBox(
                                     width: 62,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Container(
@@ -318,8 +330,7 @@ class RegisterView extends GetView<RegisterController> {
                                   suffixIcon: SizedBox(
                                     width: 62,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Container(
@@ -330,14 +341,16 @@ class RegisterView extends GetView<RegisterController> {
                                         const SizedBox(width: 10),
                                         InkWell(
                                           onTap:
-                                              () => controller
+                                              () =>
+                                                  controller
                                                       .isPassVisibleConfirm
-                                                      .value =
-                                                  !controller
-                                                      .isPassVisibleConfirm
-                                                      .value,
+                                                      .value = !controller
+                                                          .isPassVisibleConfirm
+                                                          .value,
                                           child: Icon(
-                                            controller.isPassVisibleConfirm.value
+                                            controller
+                                                    .isPassVisibleConfirm
+                                                    .value
                                                 ? Icons.visibility
                                                 : Icons.visibility_off,
                                             color: const Color(0xFF8F97A5),

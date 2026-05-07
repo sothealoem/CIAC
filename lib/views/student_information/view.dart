@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/views.dart';
 
 class StudentInformationView extends GetView<StudentInformationController> {
@@ -13,21 +14,33 @@ class StudentInformationView extends GetView<StudentInformationController> {
         children: [
           Obx(
             () => _ProfileActionBar(
-              title:
-                  controller.isTeacherMode.value
-                      ? 'Teacher Profile'
-                      : 'Student Profile',
+              title: _profileTitle(),
             ),
           ),
           Obx(
-            () =>
-                controller.isTeacherMode.value
-                    ? const TeacherProfileWidget()
-                    : const StudentProfileWidget(),
+            () {
+              if (controller.isTeacherMode.value) {
+                return const TeacherProfileWidget();
+              }
+              if (controller.showParentProfile.value) {
+                return const ParentProfileWidget();
+              }
+              return const StudentProfileWidget();
+            },
           ),
         ],
       ),
     );
+  }
+
+  String _profileTitle() {
+    if (controller.isTeacherMode.value) {
+      return LocaleKeys.teacherProfile.tr;
+    }
+    if (controller.showParentProfile.value) {
+      return LocaleKeys.parentProfile.tr;
+    }
+    return LocaleKeys.studentProfile.tr;
   }
 }
 

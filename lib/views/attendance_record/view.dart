@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
-import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import '../start/widgets/customize_app_bar.dart';
 
 class AttendanceRecordView extends GetView<AttendanceRecordController> {
@@ -31,7 +30,6 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
             ),
           ),
           UIConstants.spacingSmall.height,
-          const CustomIndicator(progress: 1 / 4),
           Expanded(
             child: RefreshIndicator(
               onRefresh: controller.loadAttendanceLogs,

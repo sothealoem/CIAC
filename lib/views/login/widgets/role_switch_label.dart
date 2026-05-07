@@ -16,9 +16,6 @@ class RoleSwitchLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = const Color(0xFFD50B1E);
-    final inactiveColor = const Color(0xFF064D47);
-
     return InkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
@@ -32,7 +29,7 @@ class RoleSwitchLabel extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? activeColor : inactiveColor,
+              color: isSelected ? Colors.white : const Color(0xFF8B90A0),
             ),
             const SizedBox(width: 8),
             Text(
@@ -40,7 +37,7 @@ class RoleSwitchLabel extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? activeColor : inactiveColor,
+                color: isSelected ? Colors.white : const Color(0xFF8B90A0),
               ),
             ),
           ],

@@ -8,6 +8,8 @@ class ScheduleClassItem extends StatelessWidget {
     required this.time,
     required this.subject,
     required this.teacher,
+    required this.isTeacherMode,
+    required this.classLabel,
     required this.room,
   });
 
@@ -15,6 +17,8 @@ class ScheduleClassItem extends StatelessWidget {
   final String time;
   final String subject;
   final String teacher;
+  final bool isTeacherMode;
+  final String classLabel;
   final String room;
 
   @override
@@ -104,7 +108,9 @@ class ScheduleClassItem extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'លោកគ្រូ : $teacher  |  បន្ទប់ $room',
+                                    isTeacherMode
+                                        ? 'ថ្នាក់ : $classLabel  |  បន្ទប់ $room'
+                                        : 'លោកគ្រូ : $teacher  |  បន្ទប់ $room',
                                     style: AppTextStyle.mendiumPrimary,
                                   ),
                                 ],
