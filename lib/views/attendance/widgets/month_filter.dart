@@ -11,39 +11,13 @@ class MonthFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List of Khmer months
-    final List<String> khmerMonths = [
-      'មករា',
-      'កុម្ភៈ',
-      'មីនា',
-      'មេសា',
-      'ឧសភា',
-      'មិថុនា',
-      'កក្កដា',
-      'សីហា',
-      'កញ្ញា',
-      'តុលា',
-      'វិច្ឆិកា',
-      'ធ្នូ',
-    ];
-
     return Obx(() {
-      final selected =
-          khmerMonths.contains(controller.selectedMonth.value)
-              ? controller.selectedMonth.value
-              : khmerMonths.first;
-      return Container(
-        child: MonthFilterDropdown(
-          months: khmerMonths,
-          selectedMonth: selected,
-          height: 40,
-          backgroundColor: Colors.white,
-          borderColor: AppColor.primaryColor,
-          onSelected: (String month) {
-            controller.selectedMonth.value = month;
-            controller.filter();
-          },
-        ),
+      return LocalizedMonthFilterDropdown(
+        selectedMonth: controller.selectedMonth.value,
+        height: 40,
+        backgroundColor: Colors.white,
+        borderColor: AppColor.primaryColor,
+        onSelected: controller.selectMonth,
       );
     });
   }

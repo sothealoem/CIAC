@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/constants/ui_constants.dart';
 import 'package:schoolapp/core/extensions/int.dart';
+import 'package:schoolapp/core/resources/locales.g.dart';
 import 'package:schoolapp/views/start/widgets/customize_app_bar.dart';
 import 'package:schoolapp/views/views.dart';
 
@@ -25,6 +26,7 @@ class StandingsView extends GetView<StandingsController> {
             child: CustomizeAppBar(
               title: 'ពិនិត្យលទ្ធផលពិន្ទុ',
               subTitle: 'លោកអ្នកអាចពិនិត្យលទ្ធផលកូនៗ​ បាននៅខាងក្រោមនេះ',
+              teacherSubTitle: LocaleKeys.standingsTeacherSubTitle.tr,
             ),
           ),
           UIConstants.spacingSmall.height,

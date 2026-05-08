@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 
 class NoDataWidget extends StatelessWidget {
@@ -10,7 +11,10 @@ class NoDataWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center,
-      child: Text(text ?? 'No Data', style: AppTextStyle.mediumPrimaryBold),
+      child: Text(
+        text ?? LocaleKeys.noData.tr,
+        style: AppTextStyle.mediumPrimaryBold,
+      ),
     );
   }
 }

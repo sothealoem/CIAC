@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/resources/locales.g.dart';
 import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 import 'package:schoolapp/views/start/widgets/customize_app_bar.dart';
 import 'package:schoolapp/views/views.dart';
@@ -19,10 +20,11 @@ class OnlineCoursesView extends GetView<OnlineCoursesController> {
     return Scaffold(
       body: Column(
         children: [
-          const SafeArea(
+          SafeArea(
             child: CustomizeAppBar(
               title: 'កម្មវិធីសិក្សាផ្សេងៗ',
               subTitle: 'សូមរៀនដោយយកចិត្តទុកដាក់',
+              teacherSubTitle: LocaleKeys.onlineCoursesTeacherSubTitle.tr,
             ),
           ),
           CustomIndicator(progress: 1 / 4),

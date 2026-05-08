@@ -35,6 +35,7 @@ class ActivityView extends GetView<ActivityController> {
                       CustomizeAppBar(
                         title: LocaleKeys.activity.tr,
                         subTitle: LocaleKeys.activitySubTitle.tr,
+                        teacherSubTitle: LocaleKeys.activityTeacherSubTitle.tr,
                       ),
                       UIConstants.spacingSmall.height,
                       const CustomIndicator(progress: 1 / 4),

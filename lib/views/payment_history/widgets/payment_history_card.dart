@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolapp/core/configs/app_style.dart';
+import 'package:schoolapp/core/resources/locales.g.dart';
 import 'package:schoolapp/models/payment_history/model.dart';
 
 class PaymentHistoryCard extends StatelessWidget {
@@ -20,7 +22,7 @@ class PaymentHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final due = _toNum(item.dueAmount);
-    final statusLabel = due <= 0 ? 'Paid' : 'Unpaid';
+    final statusLabel = due <= 0 ? LocaleKeys.paid.tr : LocaleKeys.unpaid.tr;
     final statusBg =
         due <= 0 ? const Color(0xFFC8F0D2) : const Color(0xFFFFD8D8);
     final statusText =
@@ -88,7 +90,7 @@ class PaymentHistoryCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Invoice ${item.invoiceNo}',
+                    '${LocaleKeys.invoiceLabel.tr} ${item.invoiceNo}',
                     style: AppTextStyle.smallPrimarytextgrey,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

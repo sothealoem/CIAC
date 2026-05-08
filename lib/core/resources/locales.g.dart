@@ -59,6 +59,9 @@ class LocaleKeys {
   static const scanQrCodeToLogAttendance = 'scanQrCodeToLogAttendance';
   static const scheduleTitle = 'scheduleTitle';
   static const scheduleSubTitle = 'scheduleSubTitle';
+  static const scheduleStudentRequired = 'scheduleStudentRequired';
+  static const invalidResponseData = 'invalidResponseData';
+  static const failedToLoadSchedule = 'failedToLoadSchedule';
   static const studentNameLabel = 'studentNameLabel';
   static const classLabel = 'classLabel';
   static const dateLabel = 'dateLabel';
@@ -284,6 +287,32 @@ class LocaleKeys {
   static const bank = 'bank';
   static const attendance = 'attendance';
   static const attendanceSubTitle = 'attendanceSubTitle';
+  static const attendanceTeacherSubTitle = 'attendanceTeacherSubTitle';
+  static const attendanceRecordTeacherSubTitle =
+      'attendanceRecordTeacherSubTitle';
+  static const scheduleTeacherSubTitle = 'scheduleTeacherSubTitle';
+  static const requestLeaveTeacherSubTitle = 'requestLeaveTeacherSubTitle';
+  static const allRequestedLeaveTeacherSubTitle =
+      'allRequestedLeaveTeacherSubTitle';
+  static const activityTeacherSubTitle = 'activityTeacherSubTitle';
+  static const onlineCoursesTeacherSubTitle = 'onlineCoursesTeacherSubTitle';
+  static const studentDocumentTeacherSubTitle =
+      'studentDocumentTeacherSubTitle';
+  static const standingsTeacherSubTitle = 'standingsTeacherSubTitle';
+  static const paymentCollectionTeacherSubTitle =
+      'paymentCollectionTeacherSubTitle';
+  static const monthJanuary = 'monthJanuary';
+  static const monthFebruary = 'monthFebruary';
+  static const monthMarch = 'monthMarch';
+  static const monthApril = 'monthApril';
+  static const monthMay = 'monthMay';
+  static const monthJune = 'monthJune';
+  static const monthJuly = 'monthJuly';
+  static const monthAugust = 'monthAugust';
+  static const monthSeptember = 'monthSeptember';
+  static const monthOctober = 'monthOctober';
+  static const monthNovember = 'monthNovember';
+  static const monthDecember = 'monthDecember';
 
   static const accountName = 'accountName';
   static const accountNumber = 'accountNumber';
@@ -298,6 +327,13 @@ class LocaleKeys {
   static const cannotNavigationToDetailsScreen =
       'cannotNavigationToDetailsScreen';
   static const invoiceNumber = 'invoiceNumber';
+  static const invoiceDetails = 'invoiceDetails';
+  static const noInvoiceDetailsFound = 'noInvoiceDetailsFound';
+  static const studentPaymentInformation = 'studentPaymentInformation';
+  static const paymentHistorySection = 'paymentHistorySection';
+  static const noLabel = 'noLabel';
+  static const typeLabel = 'typeLabel';
+  static const invoiceLabel = 'invoiceLabel';
   static const pending = 'pending';
   static const problem = 'problem';
   static const companyPhoneNumber = 'companyPhoneNumber';
@@ -438,6 +474,9 @@ class Locales {
     'scheduleTitle': 'Class Schedule',
     'scheduleSubTitle':
         'You can view your children\'s study activities while they are learning.',
+    'scheduleStudentRequired': 'Student ID is required.',
+    'invalidResponseData': 'Invalid response data.',
+    'failedToLoadSchedule': 'Failed to load schedule.',
     'studentNameLabel': 'Name',
     'classLabel': 'Class',
     'dateLabel': 'Date',
@@ -675,6 +714,13 @@ class Locales {
         'You have successfully changed the password.',
     'cannotNavigationToDetailsScreen': 'Cannot navigate to details screen.',
     'invoiceNumber': 'Invoice number',
+    'invoiceDetails': 'Invoice Details',
+    'noInvoiceDetailsFound': 'No invoice details found.',
+    'studentPaymentInformation': '1. Student payment information',
+    'paymentHistorySection': '2. Payment history',
+    'noLabel': 'No',
+    'typeLabel': 'Type',
+    'invoiceLabel': 'Invoice',
     'pending': 'Pending',
     'problem': 'Problem',
     'companyPhoneNumber': 'Company phonenumber',
@@ -708,6 +754,37 @@ class Locales {
     //attendance
     'attendance': 'Attendance',
     'attendanceSubTitle': 'Here is your attendance dashboard.',
+    'attendanceTeacherSubTitle': 'Track teacher attendance and scan activity.',
+    'attendanceRecordTeacherSubTitle':
+        'View teacher attendance logs and scan records.',
+    'scheduleTeacherSubTitle':
+        'View your teaching schedule and class sessions.',
+    'requestLeaveTeacherSubTitle':
+        'Submit and manage teacher leave requests.',
+    'allRequestedLeaveTeacherSubTitle':
+        'Review your submitted teacher leave requests.',
+    'activityTeacherSubTitle':
+        'View class activities shared for teachers.',
+    'onlineCoursesTeacherSubTitle':
+        'View online courses and teaching resources.',
+    'studentDocumentTeacherSubTitle':
+        'Review student profile and document information.',
+    'standingsTeacherSubTitle':
+        'Review student standings and score results.',
+    'paymentCollectionTeacherSubTitle':
+        'Review student payment collection information.',
+    'monthJanuary': 'January',
+    'monthFebruary': 'February',
+    'monthMarch': 'March',
+    'monthApril': 'April',
+    'monthMay': 'May',
+    'monthJune': 'June',
+    'monthJuly': 'July',
+    'monthAugust': 'August',
+    'monthSeptember': 'September',
+    'monthOctober': 'October',
+    'monthNovember': 'November',
+    'monthDecember': 'December',
     'phoneOrEmail': 'Phone, or email',
     'signingIn': 'Signing in...',
     'signUp': 'Sign Up',
@@ -816,6 +893,9 @@ class Locales {
     'scheduleTitle': 'កាលវិភាគសិក្សា',
     'scheduleSubTitle':
         'លោកអ្នកអាចដឹងពីសកម្មភាពសិក្សារបស់កូនៗពេលកំពុងសិក្សា។',
+    'scheduleStudentRequired': 'ត្រូវការអត្តលេខសិស្ស',
+    'invalidResponseData': 'ទិន្នន័យឆ្លើយតបមិនត្រឹមត្រូវ',
+    'failedToLoadSchedule': 'មិនអាចទាញយកកាលវិភាគបានទេ',
     'studentNameLabel': 'ឈ្មោះ',
     'classLabel': 'ថ្នាក់',
     'dateLabel': 'កាលបរិច្ឆេទ',
@@ -997,6 +1077,38 @@ class Locales {
     'bonus': 'ប្រាក់រង្វាន់',
     'finish': 'បញ្ចប់',
     'attendanceSubTitle': 'តាមដានវត្តមានសិស្ស និងព័ត៌មានចូលចេញ',
+    'attendanceTeacherSubTitle':
+        'តាមដានវត្តមានគ្រូ និងសកម្មភាពស្កេន',
+    'attendanceRecordTeacherSubTitle':
+        'មើលកំណត់ត្រាវត្តមានគ្រូ និងកំណត់ត្រាស្កេន',
+    'scheduleTeacherSubTitle':
+        'មើលកាលវិភាគបង្រៀន និងម៉ោងសិក្សារបស់អ្នក',
+    'requestLeaveTeacherSubTitle':
+        'ដាក់ស្នើ និងគ្រប់គ្រងសំណើសុំច្បាប់របស់គ្រូ',
+    'allRequestedLeaveTeacherSubTitle':
+        'ពិនិត្យសំណើសុំច្បាប់គ្រូដែលបានដាក់ស្នើ',
+    'activityTeacherSubTitle':
+        'មើលសកម្មភាពថ្នាក់ដែលបានចែករំលែកសម្រាប់គ្រូ',
+    'onlineCoursesTeacherSubTitle':
+        'មើលវគ្គសិក្សាអនឡាញ និងធនធានបង្រៀន',
+    'studentDocumentTeacherSubTitle':
+        'ពិនិត្យព័ត៌មានប្រវត្តិរូប និងឯកសារសិស្ស',
+    'standingsTeacherSubTitle':
+        'ពិនិត្យចំណាត់ថ្នាក់សិស្ស និងលទ្ធផលពិន្ទុ',
+    'paymentCollectionTeacherSubTitle':
+        'ពិនិត្យព័ត៌មានប្រមូលការទូទាត់របស់សិស្ស',
+    'monthJanuary': 'មករា',
+    'monthFebruary': 'កុម្ភៈ',
+    'monthMarch': 'មីនា',
+    'monthApril': 'មេសា',
+    'monthMay': 'ឧសភា',
+    'monthJune': 'មិថុនា',
+    'monthJuly': 'កក្កដា',
+    'monthAugust': 'សីហា',
+    'monthSeptember': 'កញ្ញា',
+    'monthOctober': 'តុលា',
+    'monthNovember': 'វិច្ឆិកា',
+    'monthDecember': 'ធ្នូ',
     'returned': 'បានត្រឡប់',
     'choose': 'ជ្រើសរើស',
     'detailOfPayments': 'ព័ត៌មានលម្អិតការទូទាត់',
@@ -1024,6 +1136,13 @@ class Locales {
     'yourBooking': 'ការកក់របស់អ្នក',
     'tracking': 'ការតាមដាន',
     'invoiceId': 'លេខវិក្កយបត្រ',
+    'invoiceDetails': 'ព័ត៌មានលម្អិតវិក្កយបត្រ',
+    'noInvoiceDetailsFound': 'មិនមានព័ត៌មានលម្អិតវិក្កយបត្រ',
+    'studentPaymentInformation': '១. ព័ត៌មានការទូទាត់របស់សិស្ស',
+    'paymentHistorySection': '២. ប្រវត្តិការទូទាត់',
+    'noLabel': 'ល.រ',
+    'typeLabel': 'ប្រភេទ',
+    'invoiceLabel': 'វិក្កយបត្រ',
     'search': 'ស្វែងរក',
     'searchNotFound': 'រកមិនឃើញ',
     'deleteAccount': 'លុបគណនី',

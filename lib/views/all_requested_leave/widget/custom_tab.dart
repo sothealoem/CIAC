@@ -15,65 +15,80 @@ class CustomTopTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      {"icon": Icons.menu, "title": LocaleKeys.all.tr},
-      {"icon": Icons.access_time, "title": LocaleKeys.pending.tr},
-      {"icon": Icons.check, "title": LocaleKeys.approved.tr},
-      {"icon": Icons.close, "title": LocaleKeys.rejected.tr},
+      _TabItem(Icons.list_alt_rounded, LocaleKeys.all.tr),
+      _TabItem(Icons.schedule_rounded, LocaleKeys.pending.tr),
+      _TabItem(Icons.check_circle_outline_rounded, LocaleKeys.approved.tr),
+      _TabItem(Icons.cancel_outlined, LocaleKeys.rejected.tr),
     ];
 
     return Container(
-      color: Colors.white,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F4),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE1EAE8)),
+      ),
       child: Row(
         children: List.generate(tabs.length, (index) {
+          final tab = tabs[index];
           final isSelected = selectedIndex == index;
 
           return Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () => onChanged(index),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 10),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        tabs[index]["icon"] as IconData,
-                        size: 15,
-                        color: isSelected ? Colors.black : Colors.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
+              borderRadius: BorderRadius.circular(11),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 160),
+                curve: Curves.easeOutCubic,
+                height: 42,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(11),
+                  boxShadow:
+                      isSelected
+                          ? const [
+                            BoxShadow(
+                              color: Color(0x14000000),
+                              blurRadius: 8,
+                              offset: Offset(0, 3),
+                            ),
+                          ]
+                          : null,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      tab.icon,
+                      size: 14,
+                      color:
+                          isSelected
+                              ? AppColor.primaryColor
+                              : const Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 3),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
                         child: Text(
-                          tabs[index]["title"] as String,
+                          tab.title,
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
-                            color: isSelected ? Colors.black : Colors.grey,
-                            fontWeight:
+                            color:
                                 isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
+                                    ? AppColor.primaryColor
+                                    : const Color(0xFF64748B),
+                            fontWeight:
+                                isSelected ? FontWeight.w700 : FontWeight.w500,
+                            fontFamily: AppFontFamily.localized,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 80),
-                    height: 3,
-                    width: double.infinity,
-                    color:
-                        isSelected
-                            ? Colors.green
-                            : const Color.fromARGB(92, 200, 217, 226),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -81,4 +96,11 @@ class CustomTopTabBar extends StatelessWidget {
       ),
     );
   }
+}
+
+class _TabItem {
+  final IconData icon;
+  final String title;
+
+  const _TabItem(this.icon, this.title);
 }

@@ -4,6 +4,7 @@ import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/schedule/schedule.dart';
 import 'package:schoolapp/views/schedule/controller.dart';
 import 'package:schoolapp/views/schedule/widgets/schedule_class_item.dart';
+import 'package:schoolapp/views/start/widgets/custom_indicator.dart';
 
 class ScheduleCardWidget extends StatefulWidget {
   const ScheduleCardWidget({super.key});
@@ -69,11 +70,23 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  8,
+                  horizontalPadding,
+                  12,
+                ),
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomIndicator(progress: 1 / 4),
+                ),
+              ),
               if (!isTeacherMode)
                 Padding(
                   padding: EdgeInsets.fromLTRB(
                     horizontalPadding,
-                    16,
+                    0,
                     horizontalPadding,
                     10,
                   ),
@@ -106,7 +119,7 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                     ),
                   ),
                 ),
-              if (isTeacherMode) const SizedBox(height: 16),
+              if (isTeacherMode) const SizedBox(height: 4),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.symmetric(horizontal: dayPadding),
@@ -114,7 +127,7 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                   children: List.generate(_dayLabels.length, (index) {
                     final isSelected = selectedDayIndex == index;
                     return GestureDetector(
-                      onTap: () => setState(() => selectedDayIndex = index),
+                      onTap: () => _changeDay(index),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 3),
                         child: Container(
@@ -162,10 +175,13 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                 child: const Divider(height: 1.2),
               ),
               Expanded(
-                child:
-                    items.isEmpty
-                        ? const NoDataWidget()
-                        : ListView.builder(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onHorizontalDragEnd: _handleDaySwipe,
+                  child:
+                      items.isEmpty
+                          ? const NoDataWidget()
+                          : ListView.builder(
                           padding: EdgeInsets.fromLTRB(
                             horizontalPadding,
                             20,
@@ -191,12 +207,34 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                             );
                           },
                         ),
+                ),
               ),
             ],
           );
         },
       );
     });
+  }
+
+  void _handleDaySwipe(DragEndDetails details) {
+    final velocity = details.primaryVelocity ?? 0;
+    if (velocity.abs() < 120) {
+      return;
+    }
+
+    if (velocity < 0) {
+      _changeDay(selectedDayIndex + 1);
+    } else {
+      _changeDay(selectedDayIndex - 1);
+    }
+  }
+
+  void _changeDay(int index) {
+    final next = index.clamp(0, _dayKeys.length - 1).toInt();
+    if (next == selectedDayIndex) {
+      return;
+    }
+    setState(() => selectedDayIndex = next);
   }
 
   String _classLabelForItem(ScheduleItem item) {

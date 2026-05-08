@@ -19,6 +19,7 @@ class CardScanController extends GetxController {
   static const Duration _duplicateWindow = Duration(seconds: 30);
   DateTime? _lastScanAt;
   String? _lastScanKey;
+  final Set<String> _loggedScanKeys = <String>{};
   bool _teacherDirectFlow = false;
 
   @override
@@ -256,7 +257,8 @@ class CardScanController extends GetxController {
         return;
       }
 
-      if (_isDuplicateWithinWindow(dedupeKey)) {
+      if (_loggedScanKeys.contains(dedupeKey) ||
+          _isDuplicateWithinWindow(dedupeKey)) {
         _handleDuplicateScanAttempt();
         return;
       }
@@ -271,8 +273,13 @@ class CardScanController extends GetxController {
 
       final data = response.data;
       if (data is Map<String, dynamic>) {
-        _handleApiPayload(data, fallbackMessage: "Server error");
-        _markLogged(dedupeKey);
+        final canMarkLogged = _handleApiPayload(
+          data,
+          fallbackMessage: "Server error",
+        );
+        if (canMarkLogged) {
+          _markLogged(dedupeKey);
+        }
       } else {
         _handleFailure("Invalid server response");
       }
@@ -291,7 +298,7 @@ class CardScanController extends GetxController {
     }
   }
 
-  void _handleApiPayload(
+  bool _handleApiPayload(
     Map<String, dynamic> data, {
     required String fallbackMessage,
   }) {
@@ -300,7 +307,7 @@ class CardScanController extends GetxController {
 
     if (staff == null) {
       _handleFailure(message);
-      return;
+      return false;
     }
 
     _cacheScanLogRecord(staffData: staff, message: message);
@@ -327,7 +334,7 @@ class CardScanController extends GetxController {
           Get.toNamed(Routes.attendanceRecord);
         }
       });
-      return;
+      return true;
     }
 
     if (!alreadyScanned) {
@@ -336,12 +343,13 @@ class CardScanController extends GetxController {
           Get.toNamed(Routes.attendanceRecord);
         }
       });
-      return;
+      return true;
     }
 
     Future.delayed(const Duration(seconds: 2), () {
       isScanning.value = true;
     });
+    return true;
   }
 
   Future<void> _cacheScanLogRecord({
@@ -568,6 +576,7 @@ class CardScanController extends GetxController {
   }
 
   void _markLogged(String key) {
+    _loggedScanKeys.add(key);
     _lastScanKey = key;
     _lastScanAt = DateTime.now();
   }

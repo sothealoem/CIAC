@@ -202,16 +202,25 @@ class StudentCard1Widget extends StatelessWidget {
                           ],
                         ),
                         10.height,
-                        TextFormField(
-                          controller:
-                              controller
-                                  .reasonController, // BINDING TO CONTROLLER
-                          style: AppTextStyle.smallPrimaryBoldBlack,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            hintText: LocaleKeys.otherReasonHint.tr,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        Obx(
+                          () => TextFormField(
+                            controller: controller.reasonController,
+                            style: AppTextStyle.smallPrimaryBoldBlack,
+                            maxLines: 5,
+                            onChanged: (value) {
+                              if (value.trim().isNotEmpty) {
+                                controller.reasonError.value = '';
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: LocaleKeys.otherReasonHint.tr,
+                              errorText:
+                                  controller.reasonError.value.isEmpty
+                                      ? null
+                                      : controller.reasonError.value,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/requestleave/model.dart';
 import 'package:schoolapp/views/all_requested_leave/widget/all_requested_leave_status.dart';
@@ -45,13 +46,15 @@ class AllRequestedLeaveItemCard extends StatelessWidget {
     final requestGrade = (item.grade ?? '').trim();
     final displayName =
         _isPlaceholderName(requestName)
-            ? (selectedStudentName.isEmpty ? 'Student' : selectedStudentName)
+            ? (selectedStudentName.isEmpty
+                ? LocaleKeys.student.tr
+                : selectedStudentName)
             : requestName;
     final displayGrade =
         _isValidGrade(requestGrade) ? requestGrade : selectedStudentGrade;
 
     if (!_isValidGrade(displayGrade)) {
-      return displayName.isEmpty ? 'Student' : displayName;
+      return displayName.isEmpty ? LocaleKeys.student.tr : displayName;
     }
     return '$displayName - $displayGrade';
   }
@@ -106,9 +109,10 @@ class _Header extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
+              fontFamily: AppFontFamily.localized,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -126,6 +130,7 @@ class _Header extends StatelessWidget {
               color: statusStyle.color,
               fontSize: 10,
               fontWeight: FontWeight.w700,
+              fontFamily: AppFontFamily.localized,
             ),
           ),
         ),
@@ -148,10 +153,12 @@ class _DateRange extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: Text(
-            '$start  ដល់  $end',
-            style: const TextStyle(
+            '${start.isEmpty ? '-' : start}  ${LocaleKeys.to.tr}  ${end.isEmpty ? '-' : end}',
+            style: TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w500,
+              color: const Color(0xFF6B7280),
+              // fontWeight: FontWeight.w500,
+              fontFamily: AppFontFamily.localized,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -183,7 +190,11 @@ class _ReasonBox extends StatelessWidget {
           ),
           child: Text(
             text,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF374151)),
+            style: TextStyle(
+              fontSize: 13,
+              color: const Color(0xFF374151),
+              fontFamily: AppFontFamily.localized,
+            ),
           ),
         ),
         Positioned(
@@ -196,12 +207,13 @@ class _ReasonBox extends StatelessWidget {
               border: Border.all(color: const Color(0xFF0F8A80)),
               borderRadius: BorderRadius.circular(999),
             ),
-            child: const Text(
-              'មូលហេតុ',
+            child: Text(
+              LocaleKeys.reason.tr,
               style: TextStyle(
                 fontSize: 10,
-                color: Color(0xFF065F5B),
+                color: const Color(0xFF065F5B),
                 fontWeight: FontWeight.w600,
+                fontFamily: AppFontFamily.localized,
               ),
             ),
           ),

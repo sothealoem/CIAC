@@ -46,96 +46,110 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
               _changeTab(selectedIndex - 1);
             }
           },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: CustomTopTabBar(
-                  selectedIndex: selectedIndex,
-                  onChanged: _changeTab,
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  child: CustomTopTabBar(
+                    selectedIndex: selectedIndex,
+                    onChanged: _changeTab,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoadingRequests.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                Expanded(
+                  child: Obx(() {
+                    if (controller.isLoadingRequests.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  List<RequestLeaveModel> list = [];
+                    List<RequestLeaveModel> list = [];
 
-                  if (selectedIndex == 0) {
-                    list = controller.requests.toList();
-                  } else if (selectedIndex == 1) {
-                    list =
-                        controller.requests
-                            .where((e) => requestLeaveStatusOf(e) == 'pending')
-                            .toList();
-                  } else if (selectedIndex == 2) {
-                    list =
-                        controller.requests
-                            .where((e) => requestLeaveStatusOf(e) == 'approved')
-                            .toList();
-                  } else {
-                    list =
-                        controller.requests
-                            .where((e) => requestLeaveStatusOf(e) == 'rejected')
-                            .toList();
-                  }
+                    if (selectedIndex == 0) {
+                      list = controller.requests.toList();
+                    } else if (selectedIndex == 1) {
+                      list =
+                          controller.requests
+                              .where(
+                                (e) => requestLeaveStatusOf(e) == 'pending',
+                              )
+                              .toList();
+                    } else if (selectedIndex == 2) {
+                      list =
+                          controller.requests
+                              .where(
+                                (e) => requestLeaveStatusOf(e) == 'approved',
+                              )
+                              .toList();
+                    } else {
+                      list =
+                          controller.requests
+                              .where(
+                                (e) => requestLeaveStatusOf(e) == 'rejected',
+                              )
+                              .toList();
+                    }
 
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 220),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, animation) {
-                      final beginX = _tabMotion > 0 ? 0.08 : -0.08;
-                      final offset = Tween<Offset>(
-                        begin: Offset(beginX, 0),
-                        end: Offset.zero,
-                      ).animate(animation);
-                      return FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(position: offset, child: child),
-                      );
-                    },
-                    child: KeyedSubtree(
-                      key: ValueKey<int>(selectedIndex),
-                      child: RefreshIndicator(
-                        onRefresh: controller.fetchRequests,
-                        child:
-                            list.isEmpty
-                                ? ListView(
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.only(top: 120),
-                                  children: [
-                                    Center(child: Text(LocaleKeys.noData.tr)),
-                                  ],
-                                )
-                                : ListView.builder(
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(10),
-                                  itemCount: list.length,
-                                  itemBuilder:
-                                      (context, index) =>
-                                          AllRequestedLeaveItemCard(
-                                            item: list[index],
-                                            selectedStudentName:
-                                                controller.studentNameText.value
-                                                    .trim(),
-                                            selectedStudentGrade:
-                                                controller
-                                                    .studentGradeText
-                                                    .value
-                                                    .trim(),
-                                          ),
-                                ),
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        final beginX = _tabMotion > 0 ? 0.08 : -0.08;
+                        final offset = Tween<Offset>(
+                          begin: Offset(beginX, 0),
+                          end: Offset.zero,
+                        ).animate(animation);
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: offset,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: KeyedSubtree(
+                        key: ValueKey<int>(selectedIndex),
+                        child: RefreshIndicator(
+                          onRefresh: controller.fetchRequests,
+                          child:
+                              list.isEmpty
+                                  ? ListView(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.only(top: 120),
+                                    children: [
+                                      Center(child: Text(LocaleKeys.noData.tr)),
+                                    ],
+                                  )
+                                  : ListView.builder(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(10),
+                                    itemCount: list.length,
+                                    itemBuilder:
+                                        (context, index) =>
+                                            AllRequestedLeaveItemCard(
+                                              item: list[index],
+                                              selectedStudentName:
+                                                  controller
+                                                      .studentNameText
+                                                      .value
+                                                      .trim(),
+                                              selectedStudentGrade:
+                                                  controller
+                                                      .studentGradeText
+                                                      .value
+                                                      .trim(),
+                                            ),
+                                  ),
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ],
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -144,6 +158,10 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
           right: 20,
           child: FloatingActionButton.extended(
             backgroundColor: const Color(0xFF0F6B5B),
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             onPressed: () async {
               final result = await Get.to(() => const RequestLeaveView());
               if (!mounted) {
@@ -190,7 +208,7 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
   }
 
   void _changeTab(int index) {
-    final next = index.clamp(0, 3);
+    final next = index.clamp(0, 3).toInt();
     if (next == selectedIndex) {
       return;
     }

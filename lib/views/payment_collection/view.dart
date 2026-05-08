@@ -25,8 +25,8 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
             bottom: false,
             child: SizedBox(
               width: size.width,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,6 +35,8 @@ class PaymentCollectionView extends GetView<PaymentCollectionController> {
                       title: 'ការបង់ថ្លៃសិក្សា',
                       subTitle:
                           'សូមពិនិត្យការបង់ថ្លៃសិក្សាកូនៗ​ របស់លោកអ្នកខាងក្រោមនេះ',
+                      teacherSubTitle:
+                          LocaleKeys.paymentCollectionTeacherSubTitle.tr,
                     ),
                   ],
                 ),

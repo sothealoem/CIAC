@@ -34,7 +34,7 @@ class ScheduleController extends GetxController {
       if (isParent && studentId == null) {
         schedules.clear();
         classInfo.value = null;
-        error.value = 'Student ID is required.';
+        error.value = LocaleKeys.scheduleStudentRequired.tr;
         return;
       }
 
@@ -47,7 +47,7 @@ class ScheduleController extends GetxController {
       if (res.data is! Map) {
         schedules.clear();
         classInfo.value = null;
-        error.value = 'Invalid response data.';
+        error.value = LocaleKeys.invalidResponseData.tr;
         return;
       }
 
@@ -56,7 +56,7 @@ class ScheduleController extends GetxController {
       debugPrint('Failed to load schedule: $e');
       schedules.clear();
       classInfo.value = null;
-      error.value = 'Failed to load schedule.';
+      error.value = LocaleKeys.failedToLoadSchedule.tr;
       ExceptionHandler.handleException(e, alert: false);
     } finally {
       isLoading.value = false;

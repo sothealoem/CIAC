@@ -31,6 +31,7 @@ class RequestLeaveController extends GetxController {
   var startDate = ''.obs;
   var endDate = ''.obs;
   var isloading = false.obs;
+  final RxString reasonError = ''.obs;
 
   @override
   void onInit() {
@@ -233,6 +234,19 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<RequestLeaveModel?> submitRequest() async {
+    final reason = reasonController.text.trim();
+    if (reason.isEmpty) {
+      reasonError.value = LocaleKeys.cannotBeEmpty.tr;
+      Get.snackbar(
+        LocaleKeys.error.tr,
+        '${LocaleKeys.reason.tr} ${LocaleKeys.cannotBeEmpty.tr}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return null;
+    }
+    reasonError.value = '';
+
     if (startDate.value.isEmpty ||
         endDate.value.isEmpty ||
         leaveType.value.isEmpty) {
@@ -272,7 +286,7 @@ class RequestLeaveController extends GetxController {
       'date_start': _formatToApiDate(startDate.value),
       'date_end': _formatToApiDate(endDate.value),
       'leave_type': _mappedLeaveType,
-      'reason': reasonController.text.trim(),
+      'reason': reason,
     };
 
     try {
@@ -300,7 +314,7 @@ class RequestLeaveController extends GetxController {
         dateStart: startDate.value,
         dateEnd: endDate.value,
         leaveType: _mappedLeaveType,
-        reason: reasonController.text.trim(),
+        reason: reason,
         status: 'pending',
       );
       requests.insert(0, pendingRequest);

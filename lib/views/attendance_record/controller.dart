@@ -22,6 +22,7 @@ class AttendanceRecordController extends GetxController {
   final RxInt perPage = 0.obs;
 
   final List<StaffAttendanceItem> _allLogs = <StaffAttendanceItem>[];
+  bool get isParentMode => UserRepository.shared.isDriver;
 
   @override
   void onInit() {
@@ -45,7 +46,6 @@ class AttendanceRecordController extends GetxController {
   Future<void> loadAttendanceLogs() async {
     try {
       isLoading.value = true;
-      final isParentMode = UserRepository.shared.isDriver;
       final selectedStudentId = await _selectedStudentId();
       final params = <String, dynamic>{};
       if (selectedDate.value.trim().isNotEmpty) {

@@ -14,7 +14,7 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Invoice Details')),
+      appBar: AppBar(title: Text(LocaleKeys.invoiceDetails.tr)),
       body: Obx(() {
         if (controller.isLoadingInvoice.value) {
           return const Center(child: CircularProgressIndicator());
@@ -29,7 +29,7 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
         }
         final data = controller.selectedInvoice.value?.data;
         if (data == null) {
-          return const Center(child: Text('No invoice details found.'));
+          return Center(child: Text(LocaleKeys.noInvoiceDetailsFound.tr));
         }
 
         return SingleChildScrollView(
@@ -37,15 +37,15 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '1. Student payment information',
+              Text(
+                LocaleKeys.studentPaymentInformation.tr,
                 style: AppTextStyle.mediumPrimaryBoldText,
               ),
               10.height,
               _studentCard(data),
               18.height,
-              const Text(
-                '2. Payment history',
+              Text(
+                LocaleKeys.paymentHistorySection.tr,
                 style: AppTextStyle.mediumPrimaryBoldText,
               ),
               8.height,
@@ -77,19 +77,18 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
                           child: Row(
                             children: [
                               _buildCell('${index + 1}', 1, textColor, true),
-                              _buildCell(line.itemName, 4, textColor, false),
+                              _buildCell(line.itemName, 5, textColor, false),
                               _buildCell(
                                 _formatDate(line.paidDate),
-                                2,
+                                3,
                                 textColor,
-                                false,
-                                shiftX: -15,
+                                true,
                               ),
                               _buildCell(
                                 _statusText(data.invoice),
-                                2,
+                                3,
                                 textColor,
-                                false,
+                                true,
                               ),
                               Expanded(
                                 flex: 2,
@@ -118,7 +117,7 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
                 ),
                 child: Center(
                   child: Text(
-                    'Total amount: ${data.invoice.grandTotal}\$',
+                    '${LocaleKeys.totalAmount.tr}: ${data.invoice.grandTotal}\$',
                     style: AppTextStyle.mendiumPrimaryBoldwhite,
                   ),
                 ),
@@ -161,7 +160,10 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
               ),
               const SizedBox(height: 6),
               Text(studentName, style: AppTextStyle.regularPrimaryBoldblack),
-              const Text('Student', style: AppTextStyle.smallPrimarytextgrey),
+              Text(
+                LocaleKeys.student.tr,
+                style: AppTextStyle.smallPrimarytextgrey,
+              ),
             ],
           ),
           const SizedBox(width: 10),
@@ -250,51 +252,43 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
       color: Colors.white,
       child: Row(
         children: [
-          _headerCell('No', 1, true),
-          _headerCell('Type', 4, false),
-          _headerCell('Date', 2, false, shiftX: -6),
-          _headerCell('Status', 2, false),
-          _headerCell('Invoice', 2, true),
+          _headerCell(LocaleKeys.noLabel.tr, 1, true),
+          _headerCell(LocaleKeys.typeLabel.tr, 5, false),
+          _headerCell(LocaleKeys.date.tr, 3, true),
+          _headerCell(LocaleKeys.status.tr, 3, true),
+          _headerCell(LocaleKeys.invoiceLabel.tr, 2, true),
         ],
       ),
     );
   }
 
-  Widget _headerCell(String text, int flex, bool center, {double shiftX = 0}) {
+  Widget _headerCell(String text, int flex, bool center) {
     return Expanded(
       flex: flex,
-      child: Transform.translate(
-        offset: Offset(shiftX, 0),
-        child: Text(
-          text,
-          textAlign: center ? TextAlign.center : TextAlign.left,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: center ? Alignment.center : Alignment.centerLeft,
+          child: Text(
+            text,
+            textAlign: center ? TextAlign.center : TextAlign.left,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCell(
-    String text,
-    int flex,
-    Color color,
-    bool center, {
-    double shiftX = 0,
-  }) {
+  Widget _buildCell(String text, int flex, Color color, bool center) {
     return Expanded(
       flex: flex,
-      child: Transform.translate(
-        offset: Offset(shiftX, 0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
         child: Text(
           text,
           textAlign: center ? TextAlign.center : TextAlign.left,
-          style: TextStyle(
-            color: color,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: color, fontSize: 11),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -304,7 +298,7 @@ class InvoiceDetailView extends GetView<PaymentHistoryController> {
 
   String _statusText(ParentInvoice invoice) {
     final due = num.tryParse(invoice.dueAmount.trim()) ?? 0;
-    return due <= 0 ? 'Paid' : 'Unpaid';
+    return due <= 0 ? LocaleKeys.paid.tr : LocaleKeys.unpaid.tr;
   }
 
   String _formatDate(String raw) {

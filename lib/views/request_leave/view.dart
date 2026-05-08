@@ -27,6 +27,7 @@ class RequestLeaveView extends GetView<RequestLeaveController> {
             CustomizeAppBar(
               title: LocaleKeys.requestLeaveTitle.tr,
               subTitle: LocaleKeys.requestLeaveSubTitle.tr,
+              teacherSubTitle: LocaleKeys.requestLeaveTeacherSubTitle.tr,
             ),
             UIConstants.spacingSmall.height,
             CustomIndicator(progress: 1 / 4),

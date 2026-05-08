@@ -18,6 +18,7 @@ class AllRequestedLeaveView extends GetView<RequestLeaveController> {
             CustomizeAppBar(
               title: LocaleKeys.requestLeaveTitle.tr,
               subTitle: '',
+              teacherSubTitle: LocaleKeys.allRequestedLeaveTeacherSubTitle.tr,
             ),
             const Expanded(child: AllRequestedCard()),
           ],

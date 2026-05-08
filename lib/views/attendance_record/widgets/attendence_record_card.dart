@@ -102,10 +102,14 @@ class _AttendenceRecordCardWidgetState
             }
 
             if (controller.attendanceList.isEmpty) {
+              final emptyMessage =
+                  controller.isParentMode
+                      ? LocaleKeys.noAttendanceLogsFound.tr
+                      : LocaleKeys.noStaffAttendanceLogsFound.tr;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Text(
-                  LocaleKeys.noStaffAttendanceLogsFound.tr,
+                  emptyMessage,
                   style: const TextStyle(color: Colors.grey),
                 ),
               );

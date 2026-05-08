@@ -25,6 +25,7 @@ class AttendanceRecordView extends GetView<AttendanceRecordController> {
             child: CustomizeAppBar(
               title: LocaleKeys.attendanceRecordTitle.tr,
               subTitle: LocaleKeys.attendanceRecordSubTitle.tr,
+              teacherSubTitle: LocaleKeys.attendanceRecordTeacherSubTitle.tr,
             ),
           ),
           UIConstants.spacingSmall.height,

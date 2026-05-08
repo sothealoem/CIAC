@@ -61,6 +61,8 @@ class Data {
   String? totalLate;
   String? totalAbsent;
   String? totalPermission;
+  String? attendanceDate;
+  String? createdAt;
 
   Data({
     this.studentId,
@@ -72,6 +74,8 @@ class Data {
     this.totalLate,
     this.totalAbsent,
     this.totalPermission,
+    this.attendanceDate,
+    this.createdAt,
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -93,6 +97,12 @@ class Data {
     totalLate = _asCount(json['total_late']);
     totalAbsent = _asCount(json['total_absent']);
     totalPermission = _asCount(json['total_permission']);
+    attendanceDate = _readString(json, const [
+      'attendance_date',
+      'date',
+      'attendanceDate',
+    ]);
+    createdAt = _readString(json, const ['created_at', 'createdAt']);
   }
 
   Map<String, dynamic> toJson() {
@@ -106,6 +116,8 @@ class Data {
     data['total_late'] = totalLate;
     data['total_absent'] = totalAbsent;
     data['total_permission'] = totalPermission;
+    data['attendance_date'] = attendanceDate;
+    data['created_at'] = createdAt;
     return data;
   }
 }
@@ -113,17 +125,32 @@ class Data {
 class AttendanceListPage {
   int? currentPage;
   List<Data>? data;
+  int? lastPage;
+  int? perPage;
+  int? total;
 
-  AttendanceListPage({this.currentPage, this.data});
+  AttendanceListPage({
+    this.currentPage,
+    this.data,
+    this.lastPage,
+    this.perPage,
+    this.total,
+  });
 
   AttendanceListPage.fromJson(Map<String, dynamic> json) {
     currentPage = _toInt(json['current_page']);
     data = _parseDataList(json['data']);
+    lastPage = _toInt(json['last_page']);
+    perPage = _toInt(json['per_page']);
+    total = _toInt(json['total']);
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'current_page': currentPage,
+      'last_page': lastPage,
+      'per_page': perPage,
+      'total': total,
       'data': data?.map((e) => e.toJson()).toList() ?? <Map<String, dynamic>>[],
     };
   }

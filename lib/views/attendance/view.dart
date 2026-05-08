@@ -30,6 +30,7 @@ class AttendanceView extends GetView<AttendanceController> {
             child: CustomizeAppBar(
               title: LocaleKeys.attendance.tr,
               subTitle: LocaleKeys.attendanceSubTitle.tr,
+              teacherSubTitle: LocaleKeys.attendanceTeacherSubTitle.tr,
               trailing: MonthFilterWidget(controller: controller),
             ),
           ),
@@ -39,6 +40,7 @@ class AttendanceView extends GetView<AttendanceController> {
             child: RefreshIndicator(
               onRefresh: controller.fetchAttendanceSummary,
               child: SingleChildScrollView(
+                controller: controller.attendanceScrollCtl,
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
                   decoration: const BoxDecoration(),
