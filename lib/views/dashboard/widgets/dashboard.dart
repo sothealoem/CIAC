@@ -194,7 +194,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   ? 4
                   : 3;
 
-          final rows = (_catName.length / crossAxisCount).ceil();
+          final rows = (visibleCount / crossAxisCount).ceil();
 
           final sliderHeight =
               usableHeight < 620
@@ -205,8 +205,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           const topGap = 10.0;
           const middleGap = 8.0;
           const bottomPadding = 10.0;
-          const gridPaddingVertical = 20.0;
-          const mainSpacing = 12.0;
+          final horizontalPadding = width >= 700 ? 20.0 : 12.0;
+          final crossSpacing = width >= 700 ? 16.0 : 12.0;
+          final mainSpacing = width >= 700 ? 16.0 : 12.0;
+          const gridTopPadding = 4.0;
+          const gridBottomPadding = 16.0;
+          final gridBottomInset = gridBottomPadding + bottomNavOverlay;
+          final gridPaddingVertical = gridTopPadding + gridBottomInset;
           final spacingTotal = (rows - 1) * mainSpacing;
           final remaining =
               usableHeight -
@@ -216,7 +221,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               bottomPadding -
               gridPaddingVertical -
               spacingTotal;
-          final tileHeight = (remaining / rows).clamp(102.0, 165.0);
+          final tileHeight = (remaining / rows).clamp(98.0, 165.0);
+          final gridContentHeight =
+              (rows * tileHeight) + spacingTotal + gridPaddingVertical;
+          final availableGridHeight =
+              usableHeight -
+              sliderHeight -
+              topGap -
+              middleGap -
+              bottomPadding;
+          final shouldScrollGrid = gridContentHeight > availableGridHeight;
           final iconSize = (tileHeight * 0.42).clamp(48.0, 62.0);
           final labelFontSize = (tileHeight * 0.108).clamp(12.0, 15.0);
 
@@ -245,18 +259,21 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                     ],
                   ),
                   child: GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics:
+                        shouldScrollGrid
+                            ? const BouncingScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(
-                      12,
-                      4,
-                      12,
-                      16 + bottomNavOverlay,
+                      horizontalPadding,
+                      gridTopPadding,
+                      horizontalPadding,
+                      gridBottomInset,
                     ),
                     itemCount: visibleCount,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
                       mainAxisExtent: tileHeight,
-                      crossAxisSpacing: 12,
+                      crossAxisSpacing: crossSpacing,
                       mainAxisSpacing: mainSpacing,
                     ),
                     itemBuilder: (context, index) {

@@ -23,6 +23,7 @@ class RequestLeaveController extends GetxController {
   final RxString studentGradeText = ''.obs;
   final RxString studentImageUrl = ''.obs;
   final RxBool isLoadingRequests = true.obs;
+  final Map<String, Student> _studentsById = <String, Student>{};
 
   bool isDone = false;
   var selectedClass = 'Grade 5'.obs;
@@ -134,38 +135,24 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<void> fetchRequests() async {
+    await _ensureStudentLookup();
     final selectedRaw = await _selectedStudentId();
     final selectedResolved = await _resolveStudentIdForRequest(selectedRaw);
-    final scope =
-        selectedRaw.isEmpty
-            ? (selectedResolved.isEmpty ? 'all' : selectedResolved)
-            : selectedRaw;
+    final cacheScopes = _requestCacheScopes(selectedRaw, selectedResolved);
 
     var cachedPending = <RequestLeaveModel>[];
     isLoadingRequests.value = true;
     try {
-      cachedPending = await _loadCachedPending(scope);
-
-      final query = <String, dynamic>{};
-      if (selectedResolved.isNotEmpty) {
-        query['student_id'] = selectedResolved;
-      } else if (selectedRaw.isNotEmpty) {
-        query['student_id'] = selectedRaw;
-      }
+      cachedPending = await _loadCachedPendingForScopes(cacheScopes);
 
       final res = await Get.find<ApiService>().get(
         _allRequestsPath,
-        queryParameters: query.isEmpty ? null : query,
         isShowLoading: false,
       );
 
       var rows = _extractRows(res.data);
-      rows = _filterRowsBySelectedStudent(
-        rows: rows,
-        selectedRaw: selectedRaw,
-        selectedResolved: selectedResolved,
-      );
-      final backend = rows.map(RequestLeaveModel.fromJson).toList();
+      final backend =
+          rows.map(RequestLeaveModel.fromJson).map(_withStudentInfo).toList();
       final merged = _mergeRequests(backend, cachedPending);
       requests.assignAll(merged);
 
@@ -174,13 +161,13 @@ class RequestLeaveController extends GetxController {
           cachedPending
               .where((p) => !backend.any((b) => _sameRequestKey(b, p)))
               .toList();
-      await _saveCachedPending(scope, unsynced);
+      await _saveCachedPendingForScopes(unsynced);
     } catch (e) {
       // Preserve pending items on transient failures.
       final fallback =
           cachedPending.isNotEmpty
               ? cachedPending
-              : await _loadCachedPending(scope);
+              : await _loadCachedPendingForScopes(cacheScopes);
       if (fallback.isNotEmpty) {
         requests.assignAll(fallback);
       }
@@ -204,6 +191,7 @@ class RequestLeaveController extends GetxController {
         Map<String, dynamic>.from(res.data),
       );
       final students = model.data?.student ?? const <Student>[];
+      _updateStudentLookup(students);
       if (students.isEmpty) {
         return;
       }
@@ -309,6 +297,7 @@ class RequestLeaveController extends GetxController {
               ? ''
               : rawGrade;
       final pendingRequest = RequestLeaveModel(
+        studentId: studentId,
         name: submitName.isEmpty ? 'Student' : submitName,
         grade: submitGrade,
         dateStart: startDate.value,
@@ -351,6 +340,71 @@ class RequestLeaveController extends GetxController {
     } catch (e) {
       ExceptionHandler.handleException(e);
     }
+  }
+
+  Future<void> _ensureStudentLookup() async {
+    if (_studentsById.isNotEmpty) {
+      return;
+    }
+    await fetchSelectedStudentInfo();
+  }
+
+  void _updateStudentLookup(List<Student> students) {
+    _studentsById.clear();
+    for (final student in students) {
+      final id = (student.id?.toString() ?? '').trim();
+      final admissionNo = (student.admissionNo ?? '').trim();
+      if (id.isNotEmpty) {
+        _studentsById[id] = student;
+      }
+      if (admissionNo.isNotEmpty) {
+        _studentsById[admissionNo] = student;
+      }
+    }
+  }
+
+  RequestLeaveModel _withStudentInfo(RequestLeaveModel item) {
+    final studentKey = (item.studentId ?? '').trim();
+    final student = studentKey.isEmpty ? null : _studentsById[studentKey];
+    if (student == null) {
+      return item;
+    }
+
+    final name = (item.name ?? '').trim();
+    final grade = (item.grade ?? '').trim();
+    return RequestLeaveModel(
+      studentId: item.studentId,
+      name: _isPlaceholderName(name) ? _studentDisplayName(student) : name,
+      grade: _isValidText(grade) ? grade : (student.className ?? '').trim(),
+      dateStart: item.dateStart,
+      dateEnd: item.dateEnd,
+      leaveType: item.leaveType,
+      reason: item.reason,
+      status: item.status,
+    );
+  }
+
+  String _studentDisplayName(Student student) {
+    final khmerName = (student.nameKh ?? '').trim();
+    if (khmerName.isNotEmpty) {
+      return khmerName;
+    }
+    return (student.name ?? '').trim();
+  }
+
+  bool _isValidText(String value) {
+    final text = value.trim().toLowerCase();
+    return text.isNotEmpty && text != 'n/a' && text != 'na' && text != 'null' && text != '-';
+  }
+
+  bool _isPlaceholderName(String value) {
+    final text = value.trim().toLowerCase();
+    return text.isEmpty ||
+        text == 'student' ||
+        text == 'n/a' ||
+        text == 'na' ||
+        text == 'null' ||
+        text == '-';
   }
 
   Future<String> _selectedStudentId() async {
@@ -434,6 +488,12 @@ class RequestLeaveController extends GetxController {
   }
 
   bool _sameRequestKey(RequestLeaveModel a, RequestLeaveModel b) {
+    final aStudent = (a.studentId ?? '').trim();
+    final bStudent = (b.studentId ?? '').trim();
+    if (aStudent.isNotEmpty && bStudent.isNotEmpty && aStudent != bStudent) {
+      return false;
+    }
+
     final aStart = _normalizeDateKey(a.dateStart);
     final bStart = _normalizeDateKey(b.dateStart);
     final aEnd = _normalizeDateKey(a.dateEnd);
@@ -511,6 +571,7 @@ class RequestLeaveController extends GetxController {
             return null;
           })
           .whereType<RequestLeaveModel>()
+          .map(_withStudentInfo)
           .toList();
     } catch (_) {
       return <RequestLeaveModel>[];
@@ -526,6 +587,7 @@ class RequestLeaveController extends GetxController {
           .map(
             (e) => <String, dynamic>{
               'name': e.name ?? '',
+              'student_id': e.studentId ?? '',
               'grade': e.grade ?? '',
               'date_start': e.dateStart ?? '',
               'date_end': e.dateEnd ?? '',
@@ -540,6 +602,55 @@ class RequestLeaveController extends GetxController {
   }
 
   String _cacheKey(String studentId) => '$_pendingCachePrefix$studentId';
+
+  List<String> _requestCacheScopes(String selectedRaw, String selectedResolved) {
+    final scopes = <String>{};
+    scopes.addAll(_studentsById.keys);
+    if (selectedRaw.trim().isNotEmpty) {
+      scopes.add(selectedRaw.trim());
+    }
+    if (selectedResolved.trim().isNotEmpty) {
+      scopes.add(selectedResolved.trim());
+    }
+    if (scopes.isEmpty) {
+      scopes.add('all');
+    }
+    return scopes.toList();
+  }
+
+  Future<List<RequestLeaveModel>> _loadCachedPendingForScopes(
+    List<String> scopes,
+  ) async {
+    final result = <RequestLeaveModel>[];
+    for (final scope in scopes) {
+      final rows = await _loadCachedPending(scope);
+      for (final row in rows) {
+        if (!result.any((e) => _sameRequestKey(e, row))) {
+          result.add(row);
+        }
+      }
+    }
+    return result;
+  }
+
+  Future<void> _saveCachedPendingForScopes(
+    List<RequestLeaveModel> pending,
+  ) async {
+    final grouped = <String, List<RequestLeaveModel>>{};
+    for (final item in pending) {
+      final scope = (item.studentId ?? '').trim();
+      final key = scope.isEmpty ? 'all' : scope;
+      grouped.putIfAbsent(key, () => <RequestLeaveModel>[]).add(item);
+    }
+
+    final scopes = <String>{..._studentsById.keys, ...grouped.keys};
+    if (scopes.isEmpty) {
+      scopes.add('all');
+    }
+    for (final scope in scopes) {
+      await _saveCachedPending(scope, grouped[scope] ?? <RequestLeaveModel>[]);
+    }
+  }
 
   List<Map<String, dynamic>> _filterRowsBySelectedStudent({
     required List<Map<String, dynamic>> rows,

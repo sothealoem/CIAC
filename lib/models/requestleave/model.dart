@@ -1,4 +1,5 @@
 class RequestLeaveModel {
+  final String? studentId;
   final String? name;
   final String? grade;
   final String? dateStart;
@@ -8,6 +9,7 @@ class RequestLeaveModel {
   final String? status;
 
   RequestLeaveModel({
+    this.studentId,
     this.name,
     this.grade,
     this.dateStart,
@@ -21,6 +23,25 @@ class RequestLeaveModel {
     String read(List<String> keys) {
       for (final key in keys) {
         final value = json[key];
+        if (value == null) {
+          continue;
+        }
+        final text = value.toString().trim();
+        if (text.isNotEmpty && text.toLowerCase() != 'null') {
+          return text;
+        }
+      }
+      return '';
+    }
+
+    String readNested(String objectKey, List<String> keys) {
+      final raw = json[objectKey];
+      if (raw is! Map) {
+        return '';
+      }
+      final map = Map<String, dynamic>.from(raw);
+      for (final key in keys) {
+        final value = map[key];
         if (value == null) {
           continue;
         }
@@ -47,10 +68,41 @@ class RequestLeaveModel {
       approvedAt: read(<String>['approved_at', 'approvedAt']),
       rejectedAt: read(<String>['rejected_at', 'rejectedAt']),
     );
+    final directStudentId = read(<String>[
+      'student_id',
+      'studentId',
+      'admission_no',
+      'student_code',
+    ]);
+    final directName = read(<String>[
+      'student_name',
+      'name',
+      'fullname',
+      'full_name',
+    ]);
+    final directGrade = read(<String>['class', 'class_name', 'grade']);
 
     return RequestLeaveModel(
-      name: read(<String>['student_name', 'name', 'fullname', 'full_name']),
-      grade: read(<String>['class', 'class_name', 'grade']),
+      studentId:
+          directStudentId.isNotEmpty
+              ? directStudentId
+              : readNested('student', <String>['id', 'admission_no']),
+      name:
+          directName.isNotEmpty
+              ? directName
+              : readNested('student', <String>[
+                'name_kh',
+                'fullname_kh',
+                'fullname_khmer',
+                'name',
+                'student_name',
+                'fullname',
+                'full_name',
+              ]),
+      grade:
+          directGrade.isNotEmpty
+              ? directGrade
+              : readNested('student', <String>['class', 'class_name', 'grade']),
       dateStart: read(<String>['date_start', 'start_date', 'from_date']),
       dateEnd: read(<String>['date_end', 'end_date', 'to_date']),
       leaveType: read(<String>['leave_type', 'type']),
@@ -62,6 +114,7 @@ class RequestLeaveModel {
   // For API Submission
   Map<String, dynamic> toJson() {
     return {
+      "student_id": studentId,
       "date_start": dateStart,
       "date_end": dateEnd,
       "leave_type": leaveType,

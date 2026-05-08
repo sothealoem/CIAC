@@ -89,7 +89,6 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
                               )
                               .toList();
                     }
-
                     return AnimatedSwitcher(
                       duration: const Duration(milliseconds: 220),
                       switchInCurve: Curves.easeOutCubic,
@@ -193,6 +192,12 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
 
   bool _hasSameRequest(RequestLeaveModel target) {
     for (final item in controller.requests) {
+      final itemStudent = (item.studentId ?? '').trim();
+      final targetStudent = (target.studentId ?? '').trim();
+      final sameStudent =
+          itemStudent.isEmpty ||
+          targetStudent.isEmpty ||
+          itemStudent == targetStudent;
       final sameDate =
           (item.dateStart ?? '') == (target.dateStart ?? '') &&
           (item.dateEnd ?? '') == (target.dateEnd ?? '');
@@ -200,7 +205,7 @@ class _AllRequestedCardState extends State<AllRequestedCard> {
           (item.reason ?? '').trim() == (target.reason ?? '').trim();
       final sameStatus =
           requestLeaveStatusOf(item) == requestLeaveStatusOf(target);
-      if (sameDate && sameReason && sameStatus) {
+      if (sameStudent && sameDate && sameReason && sameStatus) {
         return true;
       }
     }

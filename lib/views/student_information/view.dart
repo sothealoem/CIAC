@@ -12,22 +12,16 @@ class StudentInformationView extends GetView<StudentInformationController> {
       backgroundColor: const Color(0xFFF5F5F5),
       body: Column(
         children: [
-          Obx(
-            () => _ProfileActionBar(
-              title: _profileTitle(),
-            ),
-          ),
-          Obx(
-            () {
-              if (controller.isTeacherMode.value) {
-                return const TeacherProfileWidget();
-              }
-              if (controller.showParentProfile.value) {
-                return const ParentProfileWidget();
-              }
-              return const StudentProfileWidget();
-            },
-          ),
+          Obx(() => _ProfileActionBar(title: _profileTitle())),
+          Obx(() {
+            if (controller.isTeacherMode.value) {
+              return const TeacherProfileWidget();
+            }
+            if (controller.showParentProfile.value) {
+              return const ParentProfileWidget();
+            }
+            return const StudentProfileWidget();
+          }),
         ],
       ),
     );
