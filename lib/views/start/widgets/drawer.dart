@@ -7,7 +7,10 @@ import 'package:schoolapp/models/child_profile/child_profile.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/schedule/controller.dart';
+<<<<<<< HEAD
 import 'package:schoolapp/views/start/widgets/child_card.dart';
+=======
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});

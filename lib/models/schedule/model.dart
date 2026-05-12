@@ -54,8 +54,13 @@ class ScheduleClassInfo {
 
   factory ScheduleClassInfo.fromJson(Map<String, dynamic> json) {
     return ScheduleClassInfo(
+<<<<<<< HEAD
       className: (json['class_name'] ?? json['class'] ?? '').toString(),
       sectionName: (json['section_name'] ?? json['section'] ?? '').toString(),
+=======
+      className: (json['class_name'] ?? '').toString(),
+      sectionName: (json['section_name'] ?? '').toString(),
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
     );
   }
 }
@@ -66,8 +71,11 @@ class ScheduleItem {
     required this.time,
     required this.subject,
     required this.teacher,
+<<<<<<< HEAD
     required this.className,
     required this.sectionName,
+=======
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
     required this.room,
   });
 
@@ -75,8 +83,11 @@ class ScheduleItem {
   final String time;
   final String subject;
   final String teacher;
+<<<<<<< HEAD
   final String className;
   final String sectionName;
+=======
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
   final String room;
 
   factory ScheduleItem.fromJson(Map<String, dynamic> json) {
@@ -95,6 +106,7 @@ class ScheduleItem {
         'course',
         'course_name',
       ]),
+<<<<<<< HEAD
       teacher: _teacherName(json),
       className: _pick(json, [
         'class_name',
@@ -111,12 +123,23 @@ class ScheduleItem {
       room: _pick(json, [
         'room',
         'room_no',
+=======
+      teacher: _pick(json, [
+        'teacher',
+        'teacher_name',
+        'staff',
+        'staff_name',
+      ]),
+      room: _pick(json, [
+        'room',
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
         'room_name',
         'classroom',
       ]),
     );
   }
 
+<<<<<<< HEAD
   static String _teacherName(Map<String, dynamic> json) {
     final direct = _pick(json, [
       'teacher',
@@ -132,6 +155,8 @@ class ScheduleItem {
     return [firstName, lastName].where((part) => part.isNotEmpty).join(' ');
   }
 
+=======
+>>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
   static String _time(Map<String, dynamic> json) {
     final direct = _pick(json, [
       'time',
