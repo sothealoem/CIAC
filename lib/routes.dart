@@ -18,8 +18,7 @@ import 'package:schoolapp/views/login/forgot_password_view.dart';
 import 'package:schoolapp/views/login/view.dart';
 import 'package:schoolapp/views/notification/binding.dart';
 import 'package:schoolapp/views/notification/view.dart';
-import 'package:schoolapp/views/online_courses/binding.dart';
-import 'package:schoolapp/views/online_courses/view.dart';
+import 'package:schoolapp/views/online_class_dashboard/view.dart';
 import 'package:schoolapp/views/payment_collection/binding.dart';
 import 'package:schoolapp/views/payment_collection/view.dart';
 import 'package:schoolapp/views/payment_history/binding.dart';
@@ -170,8 +169,7 @@ class Routes {
     ),
     GetPage(
       name: onlineCourses,
-      page: () => const OnlineCoursesView(),
-      binding: OnlineCoursesBinding(),
+      page: () => const OnlineClassDashboardView(),
     ),
     GetPage(
       name: activity,

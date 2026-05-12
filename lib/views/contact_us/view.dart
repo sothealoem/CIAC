@@ -7,8 +7,8 @@ import 'package:schoolapp/views/views.dart';
 class ContactUsView extends GetView<ContactUsController> {
   const ContactUsView({super.key});
 
-  static const Color _accentRed = Color(0xFFD83232);
-  static const Color _softRed = Color(0xFFFFEEF0);
+  static const Color _accentRed = AppColor.red;
+  static const Color _softRed = Color(0xFFFFF3F3);
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +37,17 @@ class ContactUsView extends GetView<ContactUsController> {
         );
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(LocaleKeys.contactUs.tr),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  LocaleKeys.contactUs.tr,
+                  style: AppTextStyle.midPrimaryBold,
+                ),
+              ),
               12.height,
               const CustomIndicator(progress: 1 / 4),
               18.height,
@@ -81,7 +87,7 @@ class ContactUsView extends GetView<ContactUsController> {
                       label: LocaleKeys.callNow.tr,
                       onTap:
                           phone.isEmpty
-                              ? () {}
+                              ? null
                               : () => UrlLauncherManager.call(phone),
                     ),
                   ),
@@ -100,8 +106,8 @@ class ContactUsView extends GetView<ContactUsController> {
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _accentRed.withOpacity(0.35)),
+        borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
+        border: Border.all(color: AppColor.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,20 +138,23 @@ class ContactUsView extends GetView<ContactUsController> {
           const SizedBox(height: 12),
           Material(
             color: _softRed,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
             child: InkWell(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
               onTap: () => UrlLauncherManager.launch(mapUrl),
               child: SizedBox(
-                height: 42,
+                height: UIConstants.btnHeight,
                 width: double.infinity,
-                child: Center(
-                  child: Text(
-                    LocaleKeys.address.tr,
-                    style: AppTextStyle.regularPrimarytextPrimary.copyWith(
-                      color: _accentRed,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.map_outlined, color: _accentRed, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      LocaleKeys.openMap.tr,
+                      style: AppTextStyle.normalRedBold,
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -163,16 +172,16 @@ class ContactUsView extends GetView<ContactUsController> {
   }) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
         onTap: onTap,
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _accentRed.withOpacity(0.35)),
+            borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
+            border: Border.all(color: AppColor.divider),
           ),
           child: Row(
             children: [
@@ -181,7 +190,7 @@ class ContactUsView extends GetView<ContactUsController> {
                 height: 50,
                 decoration: BoxDecoration(
                   color: _softRed,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
                 ),
                 child: Icon(icon, color: _accentRed, size: 28),
               ),
@@ -218,7 +227,7 @@ class ContactUsView extends GetView<ContactUsController> {
   Widget _actionBtn({
     required IconData icon,
     required String label,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return OutlinedButton.icon(
       onPressed: onTap,
@@ -235,9 +244,13 @@ class ContactUsView extends GetView<ContactUsController> {
       style: OutlinedButton.styleFrom(
         backgroundColor: _softRed,
         foregroundColor: _accentRed,
+        disabledForegroundColor: AppColor.greyTextColor,
         side: BorderSide(color: _accentRed.withOpacity(0.45)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        minimumSize: const Size.fromHeight(UIConstants.btnHeight),
       ),
     );
   }

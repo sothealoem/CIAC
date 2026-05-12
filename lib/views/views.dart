@@ -18,5 +18,6 @@ export 'standings/standings.dart';
 export 'schedule/schedule.dart';
 export 'attendance/attendance.dart';
 export 'student_information/studentInformation.dart';
+export 'online_class_dashboard/online_class_dashboard.dart';
 export 'online_courses/onlinecourses.dart';
 export 'event_gallery/EventGallery.dart';

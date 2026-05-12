@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:schoolapp/views/dashboard/widgets/slide_image.dart';
 
@@ -36,8 +35,9 @@ class _DashboardSliderSectionState extends State<DashboardSliderSection> {
       if (isLoading && images.isEmpty) {
         return SizedBox(
           height: widget.height,
-          child: const Center(
-            child: CircularProgressIndicator(color: AppColor.red),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: const ShimmerPreloader(),
           ),
         );
       }

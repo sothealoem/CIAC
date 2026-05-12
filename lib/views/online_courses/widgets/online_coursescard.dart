@@ -19,7 +19,8 @@ class OnlineCoursesCardWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: Colors.white,
               image: const DecorationImage(
-                image: AssetImage("assets/images/banner1.png"),
+                image: AssetImage('assets/images/banner1.png'),
+                fit: BoxFit.cover,
               ),
             ),
             child: Center(
@@ -38,14 +39,14 @@ class OnlineCoursesCardWidget extends StatelessWidget {
             ),
           ),
           5.height,
-          const Text("មេរៀនទី១", style: AppTextStyle.midSecondaryBold),
+          const Text('Lesson 1', style: AppTextStyle.midSecondaryBold),
           2.height,
           const Text(
-            "បង្រៀនដោយ លោកគ្រូ ទុយ រ៉ាវី",
+            'Teacher: Demo',
             style: AppTextStyle.normalPrimarySemiBold,
           ),
           2.height,
-          const Text("55 video", style: AppTextStyle.normalPrimarySemiBold),
+          const Text('55 video', style: AppTextStyle.normalPrimarySemiBold),
           2.height,
           VideoSectionWidget(),
         ],

@@ -296,6 +296,86 @@ class LocaleKeys {
       'allRequestedLeaveTeacherSubTitle';
   static const activityTeacherSubTitle = 'activityTeacherSubTitle';
   static const onlineCoursesTeacherSubTitle = 'onlineCoursesTeacherSubTitle';
+  static const onlineClassTitle = 'onlineClassTitle';
+  static const onlineClassParentSubtitle = 'onlineClassParentSubtitle';
+  static const onlineClassTeacherSubtitle = 'onlineClassTeacherSubtitle';
+  static const onlineClassTeacherWorkbench = 'onlineClassTeacherWorkbench';
+  static const onlineClassTeacherWorkbenchSubtitle =
+      'onlineClassTeacherWorkbenchSubtitle';
+  static const onlineClassParentOverview = 'onlineClassParentOverview';
+  static const onlineClassParentOverviewSubtitle =
+      'onlineClassParentOverviewSubtitle';
+  static const onlineClassSubmissions = 'onlineClassSubmissions';
+  static const onlineClassTotalClass = 'onlineClassTotalClass';
+  static const onlineClassStudents = 'onlineClassStudents';
+  static const onlineClassDueToday = 'onlineClassDueToday';
+  static const onlineClassActivities = 'onlineClassActivities';
+  static const onlineClassTeachingTools = 'onlineClassTeachingTools';
+  static const onlineClassQuickActions = 'onlineClassQuickActions';
+  static const onlineClassSubmissionReview = 'onlineClassSubmissionReview';
+  static const onlineClassLatestUpdates = 'onlineClassLatestUpdates';
+  static const onlineClassStudentSubmissionReview =
+      'onlineClassStudentSubmissionReview';
+  static const onlineClassHomeworkFilesWaiting =
+      'onlineClassHomeworkFilesWaiting';
+  static const onlineClassHomeworkDeadlineSetting =
+      'onlineClassHomeworkDeadlineSetting';
+  static const onlineClassSetDueDate = 'onlineClassSetDueDate';
+  static const onlineClassReceiveNotifications =
+      'onlineClassReceiveNotifications';
+  static const onlineClassNewAnnouncement = 'onlineClassNewAnnouncement';
+  static const onlineClassUploadHomeworkSubmission =
+      'onlineClassUploadHomeworkSubmission';
+  static const onlineClassReadyToUpload = 'onlineClassReadyToUpload';
+  static const onlineClassHomeworkStatus = 'onlineClassHomeworkStatus';
+  static const onlineClassHomeworkDone = 'onlineClassHomeworkDone';
+  static const onlineClassHomeworkNeedsSubmission =
+      'onlineClassHomeworkNeedsSubmission';
+  static const onlineClassActionClassActivity =
+      'onlineClassActionClassActivity';
+  static const onlineClassActionClassDetail = 'onlineClassActionClassDetail';
+  static const onlineClassActionViewClassInfo =
+      'onlineClassActionViewClassInfo';
+  static const onlineClassActionPostUpdate = 'onlineClassActionPostUpdate';
+  static const onlineClassActionAssignHomework =
+      'onlineClassActionAssignHomework';
+  static const onlineClassActionCreateTask = 'onlineClassActionCreateTask';
+  static const onlineClassActionNotifyClass = 'onlineClassActionNotifyClass';
+  static const onlineClassActionSendMessage = 'onlineClassActionSendMessage';
+  static const onlineClassActionAllSubmit = 'onlineClassActionAllSubmit';
+  static const onlineClassActionReviewSubmissions =
+      'onlineClassActionReviewSubmissions';
+  static const onlineClassActionUploadFiles = 'onlineClassActionUploadFiles';
+  static const onlineClassActionAddMaterials = 'onlineClassActionAddMaterials';
+  static const onlineClassActionActivities = 'onlineClassActionActivities';
+  static const onlineClassActionClassMoments = 'onlineClassActionClassMoments';
+  static const onlineClassActionHomework = 'onlineClassActionHomework';
+  static const onlineClassActionViewTasks = 'onlineClassActionViewTasks';
+  static const onlineClassActionComplete = 'onlineClassActionComplete';
+  static const onlineClassActionDoHomework = 'onlineClassActionDoHomework';
+  static const onlineClassActionSubmit = 'onlineClassActionSubmit';
+  static const onlineClassActionUploadWork = 'onlineClassActionUploadWork';
+  static const onlineClassActionNotifications =
+      'onlineClassActionNotifications';
+  static const onlineClassActionMessages = 'onlineClassActionMessages';
+  static const onlineClassSelectClass = 'onlineClassSelectClass';
+  static const onlineClassStudentList = 'onlineClassStudentList';
+  static const onlineClassHomeworkTitle = 'onlineClassHomeworkTitle';
+  static const onlineClassHomeworkDescription =
+      'onlineClassHomeworkDescription';
+  static const onlineClassUploadFile = 'onlineClassUploadFile';
+  static const onlineClassUploadPicture = 'onlineClassUploadPicture';
+  static const onlineClassMessageToStudents = 'onlineClassMessageToStudents';
+  static const onlineClassNotificationStudents =
+      'onlineClassNotificationStudents';
+  static const onlineClassAllStudentSubmissions =
+      'onlineClassAllStudentSubmissions';
+  static const onlineClassViewEachStudent = 'onlineClassViewEachStudent';
+  static const onlineClassSubmitted = 'onlineClassSubmitted';
+  static const onlineClassPending = 'onlineClassPending';
+  static const onlineClassView = 'onlineClassView';
+  static const onlineClassDeadline = 'onlineClassDeadline';
+  static const onlineClassEdit = 'onlineClassEdit';
   static const studentDocumentTeacherSubTitle =
       'studentDocumentTeacherSubTitle';
   static const standingsTeacherSubTitle = 'standingsTeacherSubTitle';
@@ -534,7 +614,7 @@ class Locales {
     'dashboardMenuAttendanceLogTeacher': 'Attendance log',
     'dashboardMenuStudentReport': 'Student Report',
     'dashboardMenuClassActivity': 'Class Activity',
-    'dashboardMenuOnlineCourse': 'Online Course',
+    'dashboardMenuOnlineCourse': 'Online Class',
     'welcomeParentPrefix': 'Welcome Parent, ',
     'welcomeTeacherPrefix': 'Welcome Teacher, ',
     'welcomeParentSubtitle': 'here is your parent dashboard.',
@@ -766,7 +846,76 @@ class Locales {
     'activityTeacherSubTitle':
         'View class activities shared for teachers.',
     'onlineCoursesTeacherSubTitle':
-        'View online courses and teaching resources.',
+        'Manage class activities, homework, notifications, and submissions.',
+    'onlineClassTitle': 'Online Class',
+    'onlineClassParentSubtitle':
+        'View activities, homework, and notifications.',
+    'onlineClassTeacherSubtitle':
+        'Manage class activities, homework, notifications, and submissions.',
+    'onlineClassTeacherWorkbench': 'Teacher Workbench',
+    'onlineClassTeacherWorkbenchSubtitle':
+        'Create activities, assign homework, and review student work.',
+    'onlineClassParentOverview': 'Parent Overview',
+    'onlineClassParentOverviewSubtitle':
+        'Track homework, notifications, and class activities.',
+    'onlineClassSubmissions': 'Submissions',
+    'onlineClassTotalClass': 'Total Class',
+    'onlineClassStudents': 'Students',
+    'onlineClassDueToday': 'Due Today',
+    'onlineClassActivities': 'Activities',
+    'onlineClassTeachingTools': 'Teaching Tools',
+    'onlineClassQuickActions': 'Quick Actions',
+    'onlineClassSubmissionReview': 'Submission Review',
+    'onlineClassLatestUpdates': 'Latest Updates',
+    'onlineClassStudentSubmissionReview': 'Student Submission Review',
+    'onlineClassHomeworkFilesWaiting': '8 homework files waiting',
+    'onlineClassHomeworkDeadlineSetting': 'Homework Deadline Setting',
+    'onlineClassSetDueDate': 'Set due date for new assignment',
+    'onlineClassReceiveNotifications': 'Receive Notifications',
+    'onlineClassNewAnnouncement': 'New class announcement available',
+    'onlineClassUploadHomeworkSubmission': 'Upload Homework Submission',
+    'onlineClassReadyToUpload': 'Ready after homework is complete',
+    'onlineClassHomeworkStatus': 'Homework Status',
+    'onlineClassHomeworkDone': '2/3 done',
+    'onlineClassHomeworkNeedsSubmission':
+        'One homework assignment still needs submission.',
+    'onlineClassActionClassActivity': 'Class Activity',
+    'onlineClassActionClassDetail': 'Class Detail',
+    'onlineClassActionViewClassInfo': 'View class info',
+    'onlineClassActionPostUpdate': 'Post update',
+    'onlineClassActionAssignHomework': 'Assign Homework',
+    'onlineClassActionCreateTask': 'Create task',
+    'onlineClassActionNotifyClass': 'Notify Class',
+    'onlineClassActionSendMessage': 'Send message',
+    'onlineClassActionAllSubmit': 'All Submit',
+    'onlineClassActionReviewSubmissions': 'Review submissions',
+    'onlineClassActionUploadFiles': 'Upload Files',
+    'onlineClassActionAddMaterials': 'Add materials',
+    'onlineClassActionActivities': 'Activities',
+    'onlineClassActionClassMoments': 'Class moments',
+    'onlineClassActionHomework': 'Homework',
+    'onlineClassActionViewTasks': 'View tasks',
+    'onlineClassActionComplete': 'Complete',
+    'onlineClassActionDoHomework': 'Do homework',
+    'onlineClassActionSubmit': 'Submit',
+    'onlineClassActionUploadWork': 'Upload work',
+    'onlineClassActionNotifications': 'Notifications',
+    'onlineClassActionMessages': 'Messages',
+    'onlineClassSelectClass': 'Select class',
+    'onlineClassStudentList': 'Student list',
+    'onlineClassHomeworkTitle': 'Homework title',
+    'onlineClassHomeworkDescription': 'Homework instruction or description',
+    'onlineClassUploadFile': 'Upload file',
+    'onlineClassUploadPicture': 'Upload picture',
+    'onlineClassMessageToStudents': 'Message to students',
+    'onlineClassNotificationStudents': 'Show students who will receive this',
+    'onlineClassAllStudentSubmissions': 'All student submissions',
+    'onlineClassViewEachStudent': 'View each student submission',
+    'onlineClassSubmitted': 'Submitted',
+    'onlineClassPending': 'Pending',
+    'onlineClassView': 'View',
+    'onlineClassDeadline': 'Deadline',
+    'onlineClassEdit': 'Edit',
     'studentDocumentTeacherSubTitle':
         'Review student profile and document information.',
     'standingsTeacherSubTitle':
@@ -953,7 +1102,7 @@ class Locales {
     'dashboardMenuAttendanceLogTeacher': 'កំណត់ត្រាវត្តមានគ្រូ',
     'dashboardMenuStudentReport': 'របាយការណ៍សិស្ស',
     'dashboardMenuClassActivity': 'សកម្មភាពថ្នាក់',
-    'dashboardMenuOnlineCourse': 'វគ្គសិក្សាអនឡាញ',
+    'dashboardMenuOnlineCourse': 'ថ្នាក់អនឡាញ',
     'welcomeParentPrefix': 'សូមស្វាគមន៍ អាណាព្យាបាល, ',
     'welcomeTeacherPrefix': 'សូមស្វាគមន៍ លោកគ្រូ/អ្នកគ្រូ, ',
     'welcomeParentSubtitle': 'នេះគឺជាផ្ទាំងគ្រប់គ្រងសម្រាប់អាណាព្យាបាល',
@@ -1091,6 +1240,74 @@ class Locales {
         'មើលសកម្មភាពថ្នាក់ដែលបានចែករំលែកសម្រាប់គ្រូ',
     'onlineCoursesTeacherSubTitle':
         'មើលវគ្គសិក្សាអនឡាញ និងធនធានបង្រៀន',
+    'onlineClassTitle': 'ថ្នាក់អនឡាញ',
+    'onlineClassParentSubtitle': 'មើលសកម្មភាព កិច្ចការផ្ទះ និងការជូនដំណឹង',
+    'onlineClassTeacherSubtitle':
+        'គ្រប់គ្រងសកម្មភាពថ្នាក់ កិច្ចការផ្ទះ ការជូនដំណឹង និងការបញ្ជូនការងារ',
+    'onlineClassTeacherWorkbench': 'ផ្ទាំងការងារគ្រូ',
+    'onlineClassTeacherWorkbenchSubtitle':
+        'បង្កើតសកម្មភាព ផ្តល់កិច្ចការផ្ទះ និងពិនិត្យការងារសិស្ស',
+    'onlineClassParentOverview': 'ទិដ្ឋភាពមាតាបិតា',
+    'onlineClassParentOverviewSubtitle':
+        'តាមដានកិច្ចការផ្ទះ ការជូនដំណឹង និងសកម្មភាពថ្នាក់',
+    'onlineClassSubmissions': 'ការបញ្ជូន',
+    'onlineClassTotalClass': 'ថ្នាក់សរុប',
+    'onlineClassStudents': 'សិស្ស',
+    'onlineClassDueToday': 'ដល់ថ្ងៃនេះ',
+    'onlineClassActivities': 'សកម្មភាព',
+    'onlineClassTeachingTools': 'ឧបករណ៍បង្រៀន',
+    'onlineClassQuickActions': 'សកម្មភាពរហ័ស',
+    'onlineClassSubmissionReview': 'ពិនិត្យការបញ្ជូន',
+    'onlineClassLatestUpdates': 'បច្ចុប្បន្នភាពថ្មីៗ',
+    'onlineClassStudentSubmissionReview': 'ពិនិត្យការបញ្ជូនរបស់សិស្ស',
+    'onlineClassHomeworkFilesWaiting': 'មានឯកសារកិច្ចការផ្ទះ ៨ កំពុងរង់ចាំ',
+    'onlineClassHomeworkDeadlineSetting': 'កំណត់ថ្ងៃផុតកំណត់កិច្ចការផ្ទះ',
+    'onlineClassSetDueDate': 'កំណត់ថ្ងៃផុតកំណត់សម្រាប់កិច្ចការថ្មី',
+    'onlineClassReceiveNotifications': 'ទទួលការជូនដំណឹង',
+    'onlineClassNewAnnouncement': 'មានសេចក្តីជូនដំណឹងថ្នាក់ថ្មី',
+    'onlineClassUploadHomeworkSubmission': 'បញ្ចូលការបញ្ជូនកិច្ចការផ្ទះ',
+    'onlineClassReadyToUpload': 'រួចរាល់បញ្ចូលបន្ទាប់ពីធ្វើកិច្ចការរួច',
+    'onlineClassHomeworkStatus': 'ស្ថានភាពកិច្ចការផ្ទះ',
+    'onlineClassHomeworkDone': 'រួច ២/៣',
+    'onlineClassHomeworkNeedsSubmission':
+        'នៅមានកិច្ចការផ្ទះមួយត្រូវបញ្ជូន',
+    'onlineClassActionClassActivity': 'សកម្មភាពថ្នាក់',
+    'onlineClassActionClassDetail': 'ព័ត៌មានថ្នាក់',
+    'onlineClassActionViewClassInfo': 'មើលព័ត៌មានថ្នាក់',
+    'onlineClassActionPostUpdate': 'បង្ហោះបច្ចុប្បន្នភាព',
+    'onlineClassActionAssignHomework': 'ផ្តល់កិច្ចការផ្ទះ',
+    'onlineClassActionCreateTask': 'បង្កើតកិច្ចការ',
+    'onlineClassActionNotifyClass': 'ជូនដំណឹងថ្នាក់',
+    'onlineClassActionSendMessage': 'ផ្ញើសារ',
+    'onlineClassActionAllSubmit': 'ការបញ្ជូនទាំងអស់',
+    'onlineClassActionReviewSubmissions': 'ពិនិត្យការបញ្ជូន',
+    'onlineClassActionUploadFiles': 'បញ្ចូលឯកសារ',
+    'onlineClassActionAddMaterials': 'បន្ថែមសម្ភារៈ',
+    'onlineClassActionActivities': 'សកម្មភាព',
+    'onlineClassActionClassMoments': 'រូបភាពថ្នាក់',
+    'onlineClassActionHomework': 'កិច្ចការផ្ទះ',
+    'onlineClassActionViewTasks': 'មើលកិច្ចការ',
+    'onlineClassActionComplete': 'បំពេញ',
+    'onlineClassActionDoHomework': 'ធ្វើកិច្ចការផ្ទះ',
+    'onlineClassActionSubmit': 'បញ្ជូន',
+    'onlineClassActionUploadWork': 'បញ្ចូលការងារ',
+    'onlineClassActionNotifications': 'ការជូនដំណឹង',
+    'onlineClassActionMessages': 'សារ',
+    'onlineClassSelectClass': 'ជ្រើសរើសថ្នាក់',
+    'onlineClassStudentList': 'បញ្ជីសិស្ស',
+    'onlineClassHomeworkTitle': 'ចំណងជើងកិច្ចការផ្ទះ',
+    'onlineClassHomeworkDescription': 'សេចក្តីណែនាំ ឬការពិពណ៌នាកិច្ចការផ្ទះ',
+    'onlineClassUploadFile': 'បញ្ចូលឯកសារ',
+    'onlineClassUploadPicture': 'បញ្ចូលរូបភាព',
+    'onlineClassMessageToStudents': 'សារទៅកាន់សិស្ស',
+    'onlineClassNotificationStudents': 'បង្ហាញសិស្សដែលនឹងទទួលបានសារ',
+    'onlineClassAllStudentSubmissions': 'ការបញ្ជូនរបស់សិស្សទាំងអស់',
+    'onlineClassViewEachStudent': 'មើលការបញ្ជូនរបស់សិស្សម្នាក់ៗ',
+    'onlineClassSubmitted': 'បានបញ្ជូន',
+    'onlineClassPending': 'កំពុងរង់ចាំ',
+    'onlineClassView': 'មើល',
+    'onlineClassDeadline': 'ថ្ងៃផុតកំណត់',
+    'onlineClassEdit': 'កែប្រែ',
     'studentDocumentTeacherSubTitle':
         'ពិនិត្យព័ត៌មានប្រវត្តិរូប និងឯកសារសិស្ស',
     'standingsTeacherSubTitle':

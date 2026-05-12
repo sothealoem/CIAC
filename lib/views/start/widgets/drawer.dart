@@ -442,6 +442,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             _divider(),
             _parentMenuItem(
+              icon: Icons.contact_support,
+              label: LocaleKeys.contactUs.tr,
+              onTap: contactUsHandleTap,
+            ),
+            _divider(),
+            _parentMenuItem(
               icon: Icons.logout,
               label: LocaleKeys.logout.tr,
               onTap: logOutHandleTap,

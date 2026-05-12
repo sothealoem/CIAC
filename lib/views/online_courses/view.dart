@@ -22,8 +22,8 @@ class OnlineCoursesView extends GetView<OnlineCoursesController> {
         children: [
           SafeArea(
             child: CustomizeAppBar(
-              title: 'កម្មវិធីសិក្សាផ្សេងៗ',
-              subTitle: 'សូមរៀនដោយយកចិត្តទុកដាក់',
+              title: 'Online Courses',
+              subTitle: 'Learn from video lessons and course materials.',
               teacherSubTitle: LocaleKeys.onlineCoursesTeacherSubTitle.tr,
             ),
           ),

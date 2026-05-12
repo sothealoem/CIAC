@@ -3,8 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../core/configs/app_style.dart';
-
 class PremiumSlider extends StatefulWidget {
   const PremiumSlider({super.key, required this.imagesList});
   final List<String> imagesList;
@@ -13,9 +11,6 @@ class PremiumSlider extends StatefulWidget {
 }
 
 class _PremiumSliderState extends State<PremiumSlider> {
-  int _current = 0;
-  final CarouselSliderController _sliderRef = CarouselSliderController();
-
   @override
   Widget build(BuildContext context) {
     List<Widget> imageSliders =
@@ -75,71 +70,25 @@ class _PremiumSliderState extends State<PremiumSlider> {
       builder: (context, constraints) {
         final maxHeight =
             constraints.maxHeight.isFinite ? constraints.maxHeight : 180.0;
-        const indicatorHeight = 12.0;
-        const indicatorGap = 6.0;
-        final sliderHeight = (maxHeight - indicatorHeight - indicatorGap).clamp(
-          90.0,
-          2000.0,
-        );
+        final sliderHeight = maxHeight.clamp(90.0, 2000.0);
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: sliderHeight,
-              child: ClipRRect(
-                child: CarouselSlider(
-                  items: imageSliders,
-                  carouselController: _sliderRef,
-                  options: CarouselOptions(
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 10),
-                    initialPage: 0,
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: true,
-                    aspectRatio: 16 / 9,
-                    pauseAutoPlayOnTouch: true,
-                    height: sliderHeight,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _current = index;
-                      });
-                    },
-                  ),
-                ),
+        return SizedBox(
+          height: sliderHeight,
+          child: ClipRRect(
+            child: CarouselSlider(
+              items: imageSliders,
+              options: CarouselOptions(
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 10),
+                initialPage: 0,
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                aspectRatio: 16 / 9,
+                pauseAutoPlayOnTouch: true,
+                height: sliderHeight,
               ),
             ),
-            const SizedBox(height: indicatorGap),
-            SizedBox(
-              height: indicatorHeight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                    widget.imagesList.asMap().entries.map((entry) {
-                      int curSlide = entry.key;
-                      return GestureDetector(
-                        onTap: () => _sliderRef.animateToPage(curSlide),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeOut,
-                          width: _current == curSlide ? 22 : 10,
-                          height: 8,
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 2.0,
-                            horizontal: 3.0,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: AppColor.red.withValues(
-                              alpha: _current == curSlide ? 0.9 : 0.2,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ),
-          ],
+          ),
         );
       },
     );
