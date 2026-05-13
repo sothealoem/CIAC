@@ -1,4 +1,4 @@
-part of 'online_class_dashboard_widget.dart';
+part of 'homework_widget.dart';
 
 class _HeroPanel extends StatelessWidget {
   const _HeroPanel({
@@ -16,22 +16,22 @@ class _HeroPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF3FF),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _onlineClassBorder),
+        color: _onlineClassAccentSoft,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFFFE2E7)),
       ),
       child: Row(
         children: [
           Container(
-            width: 54,
-            height: 54,
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
-              color: _onlineClassAccent,
-              borderRadius: BorderRadius.circular(14),
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(18),
             ),
-            child: Icon(icon, color: Colors.white, size: 30),
+            child: Icon(icon, color: _onlineClassAccent, size: 38),
           ),
-          const SizedBox(width: 13),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,17 +39,18 @@ class _HeroPanel extends StatelessWidget {
                 Text(
                   title,
                   style: AppTextStyle.mediumPrimaryBold.copyWith(
-                    color: _onlineClassAccent,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   subtitle,
                   style: AppTextStyle.normalPrimaryRegular.copyWith(
-                    color: const Color(0xFF486176),
+                    color: _homeworkMutedText,
                     height: 1.25,
                   ),
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -80,13 +81,13 @@ class _MetricBox extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: _onlineClassAccentLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: _onlineClassBorder),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF305B8D).withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -94,13 +95,13 @@ class _MetricBox extends StatelessWidget {
         children: [
           if (icon != null) ...[
             Container(
-              width: 34,
-              height: 34,
+              height: 44,
+              width: 44,
               decoration: BoxDecoration(
                 color: accentColor.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(9),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: accentColor, size: 20),
+              child: Icon(icon, color: accentColor, size: 25),
             ),
             const SizedBox(width: 10),
           ],
@@ -116,7 +117,8 @@ class _MetricBox extends StatelessWidget {
                 Text(
                   value,
                   style: AppTextStyle.mediumPrimaryBold.copyWith(
-                    color: accentColor,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -154,14 +156,14 @@ class _ActionTile extends StatelessWidget {
 
     return Material(
       color: isFilled ? _onlineClassAccent : Colors.white,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Container(
           padding: EdgeInsets.all(isPrimary ? 14 : 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isSelected ? _onlineClassAccent : _onlineClassBorder,
               width: isSelected ? 1.4 : 1,
@@ -228,25 +230,33 @@ class _ActionTile extends StatelessWidget {
   Widget _compactContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _IconBox(
-          icon: action.icon,
-          backgroundColor:
-              isSelected ? _onlineClassAccent : const Color(0xFFF0F6FF),
-          iconColor: isSelected ? Colors.white : _onlineClassAccent,
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: isSelected ? _onlineClassAccent : action.iconColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            action.icon,
+            color: isSelected ? Colors.white : action.iconColor,
+            size: 20,
+          ),
         ),
-        const Spacer(),
+        const SizedBox(height: 8),
         Text(
           action.titleKey.tr,
-          style: AppTextStyle.normalPrimaryBold.copyWith(fontSize: 13),
+          style: AppTextStyle.normalPrimaryBold.copyWith(fontSize: 12),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           action.subtitleKey.tr,
           style: AppTextStyle.smallGreyRegular.copyWith(fontSize: 11),
-          maxLines: 2,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
       ],
@@ -309,37 +319,46 @@ class _WideActionTile extends StatelessWidget {
 }
 
 class _Panel extends StatelessWidget {
-  const _Panel({required this.title, required this.children});
+  const _Panel({
+    required this.title,
+    required this.children,
+    this.showTitle = true,
+  });
 
   final String title;
   final List<Widget> children;
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _onlineClassAccentLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _onlineClassBorder),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF305B8D).withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: AppTextStyle.mediumPrimaryBold.copyWith(
-              color: _onlineClassAccent,
+          if (showTitle) ...[
+            Text(
+              title,
+              style: AppTextStyle.mediumPrimaryBold.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+          ],
           ...children,
         ],
       ),
@@ -411,9 +430,15 @@ class _IconBox extends StatelessWidget {
 }
 
 class _DashboardAction {
-  const _DashboardAction(this.icon, this.titleKey, this.subtitleKey);
+  const _DashboardAction(
+    this.icon,
+    this.titleKey,
+    this.subtitleKey, {
+    this.iconColor = _onlineClassAccent,
+  });
 
   final IconData icon;
   final String titleKey;
   final String subtitleKey;
+  final Color iconColor;
 }

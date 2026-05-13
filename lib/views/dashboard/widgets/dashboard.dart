@@ -97,7 +97,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         Get.toNamed(Routes.activity);
         break;
       case 8:
-        Get.toNamed(Routes.onlineCourses);
+        Get.toNamed(Routes.homework);
         break;
     }
   }

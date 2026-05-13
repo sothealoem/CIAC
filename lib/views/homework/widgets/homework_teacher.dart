@@ -1,7 +1,7 @@
-part of 'online_class_dashboard_widget.dart';
+part of 'homework_widget.dart';
 
-class _TeacherClassDashboard extends StatelessWidget {
-  const _TeacherClassDashboard();
+class _TeacherHomeworkDashboard extends StatelessWidget {
+  const _TeacherHomeworkDashboard();
 
   static const _actions = [
     _DashboardAction(
@@ -11,39 +11,39 @@ class _TeacherClassDashboard extends StatelessWidget {
     ),
     _DashboardAction(
       Icons.assignment_add,
-      LocaleKeys.onlineClassActionAssignHomework,
+      LocaleKeys.onlineClassActionAllAssignHomework,
       LocaleKeys.onlineClassActionCreateTask,
-    ),
-    _DashboardAction(
-      Icons.notifications_active_rounded,
-      LocaleKeys.onlineClassActionNotifyClass,
-      LocaleKeys.onlineClassActionSendMessage,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
       children: [
-        const Padding(padding: EdgeInsets.only(top: 15)),
         _HeroPanel(
           title: LocaleKeys.onlineClassTeacherWorkbench.tr,
           subtitle: LocaleKeys.onlineClassTeacherWorkbenchSubtitle.tr,
           icon: Icons.school_rounded,
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         const _TeacherMetricGrid(),
-        const SizedBox(height: 18),
-        Text(
-          LocaleKeys.onlineClassTeachingTools.tr,
-          style: AppTextStyle.mediumPrimaryBold.copyWith(
-            color: _onlineClassAccent,
-          ),
+        const SizedBox(height: 22),
+        Row(
+          children: [
+            Text(
+              LocaleKeys.onlineClassTeachingTools.tr,
+              style: AppTextStyle.mediumPrimaryBold.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: 10),
+          ],
         ),
         const SizedBox(height: 10),
         SizedBox(
-          height: 132,
+          height: 120,
           child: Row(
             children: [
               Expanded(
@@ -64,28 +64,14 @@ class _TeacherClassDashboard extends StatelessWidget {
                   onTap:
                       () => _openDetail(
                         context,
-                        title: LocaleKeys.onlineClassActionAssignHomework.tr,
-                        child: const _AssignHomeworkPanel(),
-                      ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ActionTile(
-                  action: _actions[2],
-                  onTap:
-                      () => _openDetail(
-                        context,
-                        title: LocaleKeys.onlineClassActionNotifyClass.tr,
-                        child: const _NotificationSubmissionPanel(),
+                        title: LocaleKeys.onlineClassActionAllAssignHomework.tr,
+                        child: const _AllAssignedHomeworkPanel(),
                       ),
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 18),
-        const _AllSubmitPanel(),
       ],
     );
   }
@@ -96,8 +82,8 @@ class _TeacherClassDashboard extends StatelessWidget {
     required Widget child,
   }) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => _TeacherActionDetailScreen(title: title, child: child),
+      _homeworkRoute(
+        _TeacherActionDetailScreen(title: title, child: child),
       ),
     );
   }
@@ -110,9 +96,9 @@ class _TeacherMetricGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.count(
       crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      childAspectRatio: 2.05,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 1.9,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
@@ -120,16 +106,19 @@ class _TeacherMetricGrid extends StatelessWidget {
           icon: Icons.fact_check_rounded,
           value: '56',
           label: LocaleKeys.onlineClassSubmissions.tr,
+          accentColor: const Color(0xFFD80F23),
         ),
         _MetricBox(
-          icon: Icons.class_rounded,
+          icon: Icons.bookmark_rounded,
           value: '4',
           label: LocaleKeys.onlineClassTotalClass.tr,
+          accentColor: const Color(0xFFF3B51B),
         ),
         _MetricBox(
           icon: Icons.groups_rounded,
           value: '180',
           label: LocaleKeys.onlineClassStudents.tr,
+          accentColor: const Color(0xFF10A850),
         ),
         _MetricBox(
           icon: Icons.today_rounded,
@@ -151,24 +140,50 @@ class _TeacherActionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
+      backgroundColor: _homeworkPageBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 10),
+              child: Row(
+                children: [
+                  Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    elevation: 5,
+                    shadowColor: const Color(0x12000000),
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: _onlineClassAccent,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.largePrimaryBold.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+                children: [child],
+              ),
+            ),
+          ],
         ),
-        title: Text(title),
-        backgroundColor: _onlineClassAccent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: _onlineClassAccent,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        children: [child],
       ),
     );
   }

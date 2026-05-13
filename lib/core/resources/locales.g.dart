@@ -339,6 +339,8 @@ class LocaleKeys {
   static const onlineClassActionPostUpdate = 'onlineClassActionPostUpdate';
   static const onlineClassActionAssignHomework =
       'onlineClassActionAssignHomework';
+  static const onlineClassActionAllAssignHomework =
+      'onlineClassActionAllAssignHomework';
   static const onlineClassActionCreateTask = 'onlineClassActionCreateTask';
   static const onlineClassActionNotifyClass = 'onlineClassActionNotifyClass';
   static const onlineClassActionSendMessage = 'onlineClassActionSendMessage';
@@ -614,7 +616,7 @@ class Locales {
     'dashboardMenuAttendanceLogTeacher': 'Attendance log',
     'dashboardMenuStudentReport': 'Student Report',
     'dashboardMenuClassActivity': 'Class Activity',
-    'dashboardMenuOnlineCourse': 'Online Class',
+    'dashboardMenuOnlineCourse': 'Homework',
     'welcomeParentPrefix': 'Welcome Parent, ',
     'welcomeTeacherPrefix': 'Welcome Teacher, ',
     'welcomeParentSubtitle': 'here is your parent dashboard.',
@@ -839,15 +841,13 @@ class Locales {
         'View teacher attendance logs and scan records.',
     'scheduleTeacherSubTitle':
         'View your teaching schedule and class sessions.',
-    'requestLeaveTeacherSubTitle':
-        'Submit and manage teacher leave requests.',
+    'requestLeaveTeacherSubTitle': 'Submit and manage teacher leave requests.',
     'allRequestedLeaveTeacherSubTitle':
         'Review your submitted teacher leave requests.',
-    'activityTeacherSubTitle':
-        'View class activities shared for teachers.',
+    'activityTeacherSubTitle': 'View class activities shared for teachers.',
     'onlineCoursesTeacherSubTitle':
         'Manage class activities, homework, notifications, and submissions.',
-    'onlineClassTitle': 'Online Class',
+    'onlineClassTitle': 'Homework',
     'onlineClassParentSubtitle':
         'View activities, homework, and notifications.',
     'onlineClassTeacherSubtitle':
@@ -884,6 +884,7 @@ class Locales {
     'onlineClassActionViewClassInfo': 'View class info',
     'onlineClassActionPostUpdate': 'Post update',
     'onlineClassActionAssignHomework': 'Assign Homework',
+    'onlineClassActionAllAssignHomework': 'All Assign Homework',
     'onlineClassActionCreateTask': 'Create task',
     'onlineClassActionNotifyClass': 'Notify Class',
     'onlineClassActionSendMessage': 'Send message',
@@ -903,7 +904,7 @@ class Locales {
     'onlineClassActionMessages': 'Messages',
     'onlineClassSelectClass': 'Select class',
     'onlineClassStudentList': 'Student list',
-    'onlineClassHomeworkTitle': 'Homework title',
+    'onlineClassHomeworkTitle': 'Homework:',
     'onlineClassHomeworkDescription': 'Homework instruction or description',
     'onlineClassUploadFile': 'Upload file',
     'onlineClassUploadPicture': 'Upload picture',
@@ -918,8 +919,7 @@ class Locales {
     'onlineClassEdit': 'Edit',
     'studentDocumentTeacherSubTitle':
         'Review student profile and document information.',
-    'standingsTeacherSubTitle':
-        'Review student standings and score results.',
+    'standingsTeacherSubTitle': 'Review student standings and score results.',
     'paymentCollectionTeacherSubTitle':
         'Review student payment collection information.',
     'monthJanuary': 'January',
@@ -1040,8 +1040,7 @@ class Locales {
     'afternoonOut': 'រសៀល ចេញ',
     'scanQrCodeToLogAttendance': 'ស្កេន QR កូដ ដើម្បីកត់ត្រាវត្តមាន',
     'scheduleTitle': 'កាលវិភាគសិក្សា',
-    'scheduleSubTitle':
-        'លោកអ្នកអាចដឹងពីសកម្មភាពសិក្សារបស់កូនៗពេលកំពុងសិក្សា។',
+    'scheduleSubTitle': 'លោកអ្នកអាចដឹងពីសកម្មភាពសិក្សារបស់កូនៗពេលកំពុងសិក្សា។',
     'scheduleStudentRequired': 'ត្រូវការអត្តលេខសិស្ស',
     'invalidResponseData': 'ទិន្នន័យឆ្លើយតបមិនត្រឹមត្រូវ',
     'failedToLoadSchedule': 'មិនអាចទាញយកកាលវិភាគបានទេ',
@@ -1102,7 +1101,7 @@ class Locales {
     'dashboardMenuAttendanceLogTeacher': 'កំណត់ត្រាវត្តមានគ្រូ',
     'dashboardMenuStudentReport': 'របាយការណ៍សិស្ស',
     'dashboardMenuClassActivity': 'សកម្មភាពថ្នាក់',
-    'dashboardMenuOnlineCourse': 'ថ្នាក់អនឡាញ',
+    'dashboardMenuOnlineCourse': 'កិច្ចការផ្ទះ',
     'welcomeParentPrefix': 'សូមស្វាគមន៍ អាណាព្យាបាល, ',
     'welcomeTeacherPrefix': 'សូមស្វាគមន៍ លោកគ្រូ/អ្នកគ្រូ, ',
     'welcomeParentSubtitle': 'នេះគឺជាផ្ទាំងគ្រប់គ្រងសម្រាប់អាណាព្យាបាល',
@@ -1226,21 +1225,16 @@ class Locales {
     'bonus': 'ប្រាក់រង្វាន់',
     'finish': 'បញ្ចប់',
     'attendanceSubTitle': 'តាមដានវត្តមានសិស្ស និងព័ត៌មានចូលចេញ',
-    'attendanceTeacherSubTitle':
-        'តាមដានវត្តមានគ្រូ និងសកម្មភាពស្កេន',
+    'attendanceTeacherSubTitle': 'តាមដានវត្តមានគ្រូ និងសកម្មភាពស្កេន',
     'attendanceRecordTeacherSubTitle':
         'មើលកំណត់ត្រាវត្តមានគ្រូ និងកំណត់ត្រាស្កេន',
-    'scheduleTeacherSubTitle':
-        'មើលកាលវិភាគបង្រៀន និងម៉ោងសិក្សារបស់អ្នក',
-    'requestLeaveTeacherSubTitle':
-        'ដាក់ស្នើ និងគ្រប់គ្រងសំណើសុំច្បាប់របស់គ្រូ',
+    'scheduleTeacherSubTitle': 'មើលកាលវិភាគបង្រៀន និងម៉ោងសិក្សារបស់អ្នក',
+    'requestLeaveTeacherSubTitle': 'ដាក់ស្នើ និងគ្រប់គ្រងសំណើសុំច្បាប់របស់គ្រូ',
     'allRequestedLeaveTeacherSubTitle':
         'ពិនិត្យសំណើសុំច្បាប់គ្រូដែលបានដាក់ស្នើ',
-    'activityTeacherSubTitle':
-        'មើលសកម្មភាពថ្នាក់ដែលបានចែករំលែកសម្រាប់គ្រូ',
-    'onlineCoursesTeacherSubTitle':
-        'មើលវគ្គសិក្សាអនឡាញ និងធនធានបង្រៀន',
-    'onlineClassTitle': 'ថ្នាក់អនឡាញ',
+    'activityTeacherSubTitle': 'មើលសកម្មភាពថ្នាក់ដែលបានចែករំលែកសម្រាប់គ្រូ',
+    'onlineCoursesTeacherSubTitle': 'មើលវគ្គសិក្សាអនឡាញ និងធនធានបង្រៀន',
+    'onlineClassTitle': 'កិច្ចការផ្ទះ',
     'onlineClassParentSubtitle': 'មើលសកម្មភាព កិច្ចការផ្ទះ និងការជូនដំណឹង',
     'onlineClassTeacherSubtitle':
         'គ្រប់គ្រងសកម្មភាពថ្នាក់ កិច្ចការផ្ទះ ការជូនដំណឹង និងការបញ្ជូនការងារ',
@@ -1269,13 +1263,13 @@ class Locales {
     'onlineClassReadyToUpload': 'រួចរាល់បញ្ចូលបន្ទាប់ពីធ្វើកិច្ចការរួច',
     'onlineClassHomeworkStatus': 'ស្ថានភាពកិច្ចការផ្ទះ',
     'onlineClassHomeworkDone': 'រួច ២/៣',
-    'onlineClassHomeworkNeedsSubmission':
-        'នៅមានកិច្ចការផ្ទះមួយត្រូវបញ្ជូន',
+    'onlineClassHomeworkNeedsSubmission': 'នៅមានកិច្ចការផ្ទះមួយត្រូវបញ្ជូន',
     'onlineClassActionClassActivity': 'សកម្មភាពថ្នាក់',
     'onlineClassActionClassDetail': 'ព័ត៌មានថ្នាក់',
     'onlineClassActionViewClassInfo': 'មើលព័ត៌មានថ្នាក់',
     'onlineClassActionPostUpdate': 'បង្ហោះបច្ចុប្បន្នភាព',
     'onlineClassActionAssignHomework': 'ផ្តល់កិច្ចការផ្ទះ',
+    'onlineClassActionAllAssignHomework': 'កិច្ចការផ្ទះដែលបានដាក់',
     'onlineClassActionCreateTask': 'បង្កើតកិច្ចការ',
     'onlineClassActionNotifyClass': 'ជូនដំណឹងថ្នាក់',
     'onlineClassActionSendMessage': 'ផ្ញើសារ',
@@ -1295,7 +1289,7 @@ class Locales {
     'onlineClassActionMessages': 'សារ',
     'onlineClassSelectClass': 'ជ្រើសរើសថ្នាក់',
     'onlineClassStudentList': 'បញ្ជីសិស្ស',
-    'onlineClassHomeworkTitle': 'ចំណងជើងកិច្ចការផ្ទះ',
+    'onlineClassHomeworkTitle': 'កិច្ចការផ្ទះ:',
     'onlineClassHomeworkDescription': 'សេចក្តីណែនាំ ឬការពិពណ៌នាកិច្ចការផ្ទះ',
     'onlineClassUploadFile': 'បញ្ចូលឯកសារ',
     'onlineClassUploadPicture': 'បញ្ចូលរូបភាព',
@@ -1308,10 +1302,8 @@ class Locales {
     'onlineClassView': 'មើល',
     'onlineClassDeadline': 'ថ្ងៃផុតកំណត់',
     'onlineClassEdit': 'កែប្រែ',
-    'studentDocumentTeacherSubTitle':
-        'ពិនិត្យព័ត៌មានប្រវត្តិរូប និងឯកសារសិស្ស',
-    'standingsTeacherSubTitle':
-        'ពិនិត្យចំណាត់ថ្នាក់សិស្ស និងលទ្ធផលពិន្ទុ',
+    'studentDocumentTeacherSubTitle': 'ពិនិត្យព័ត៌មានប្រវត្តិរូប និងឯកសារសិស្ស',
+    'standingsTeacherSubTitle': 'ពិនិត្យចំណាត់ថ្នាក់សិស្ស និងលទ្ធផលពិន្ទុ',
     'paymentCollectionTeacherSubTitle':
         'ពិនិត្យព័ត៌មានប្រមូលការទូទាត់របស់សិស្ស',
     'monthJanuary': 'មករា',

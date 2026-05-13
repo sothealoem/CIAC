@@ -58,10 +58,6 @@ class MyApp extends StatelessWidget {
       getPages: Routes.pages,
       builder: (context, child) {
         final mediaQueryData = MediaQuery.of(context);
-        final constrainedTextScaleFactor = mediaQueryData.textScaler.clamp(
-          minScaleFactor: 1.1,
-          maxScaleFactor: 1.125,
-        );
 
         return UpgradeAlert(
           barrierDismissible: false,
@@ -75,7 +71,9 @@ class MyApp extends StatelessWidget {
             onTap: () => KeyboardHelper.dismissKeyboard(),
             child: MediaQuery(
               data: mediaQueryData.copyWith(
-                textScaler: constrainedTextScaleFactor,
+                textScaler: TextScaler.linear(
+                  mediaQueryData.textScaler.scale(1.0).clamp(1.0, 1.125),
+                ),
               ),
               child: child!,
             ),

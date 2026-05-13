@@ -147,10 +147,18 @@ class RequestLeaveController extends GetxController {
 
       final res = await Get.find<ApiService>().get(
         _allRequestsPath,
+        queryParameters:
+            selectedResolved.isNotEmpty
+                ? <String, dynamic>{'student_id': selectedResolved}
+                : null,
         isShowLoading: false,
       );
 
-      var rows = _extractRows(res.data);
+      final rows = _filterRowsBySelectedStudent(
+        rows: _extractRows(res.data),
+        selectedRaw: selectedRaw,
+        selectedResolved: selectedResolved,
+      );
       final backend =
           rows.map(RequestLeaveModel.fromJson).map(_withStudentInfo).toList();
       final merged = _mergeRequests(backend, cachedPending);
@@ -605,7 +613,6 @@ class RequestLeaveController extends GetxController {
 
   List<String> _requestCacheScopes(String selectedRaw, String selectedResolved) {
     final scopes = <String>{};
-    scopes.addAll(_studentsById.keys);
     if (selectedRaw.trim().isNotEmpty) {
       scopes.add(selectedRaw.trim());
     }
@@ -682,9 +689,6 @@ class RequestLeaveController extends GetxController {
     }
 
     final filtered = rows.where(matches).toList();
-    if (filtered.isEmpty && rows.isNotEmpty) {
-      return rows;
-    }
     return filtered;
   }
 

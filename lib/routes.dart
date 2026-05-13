@@ -18,7 +18,7 @@ import 'package:schoolapp/views/login/forgot_password_view.dart';
 import 'package:schoolapp/views/login/view.dart';
 import 'package:schoolapp/views/notification/binding.dart';
 import 'package:schoolapp/views/notification/view.dart';
-import 'package:schoolapp/views/online_class_dashboard/view.dart';
+import 'package:schoolapp/views/homework/homework.dart';
 import 'package:schoolapp/views/payment_collection/binding.dart';
 import 'package:schoolapp/views/payment_collection/view.dart';
 import 'package:schoolapp/views/payment_history/binding.dart';
@@ -69,7 +69,7 @@ class Routes {
   static const String attendanceRecord = '/attendanceRecord';
   static const String studentInforation = '/studentInforation';
   static const String studentDocument = '/studentDocument';
-  static const String onlineCourses = '/onlineCourses';
+  static const String homework = '/homework';
   static const String activity = '/activity';
   static const String dashbord = '/dashbord';
 
@@ -168,8 +168,9 @@ class Routes {
       binding: StudentInformationBinding(),
     ),
     GetPage(
-      name: onlineCourses,
-      page: () => const OnlineClassDashboardView(),
+      name: homework,
+      page: () => const HomeworkView(),
+      binding: HomeworkBinding(),
     ),
     GetPage(
       name: activity,

@@ -19,10 +19,7 @@ class EndPoints {
   static String get contactUs => 'support';
   static String get tracking => '/api/v1/student/attendance/trackings';
   static String get studentTimeSheet => '/api/v1/time-sheet/parent';
-<<<<<<< HEAD
   static String get teacherTimeSheet => '/api/v1/time-sheet/teacher';
-=======
->>>>>>> d40f443f6abd648abf33b013d71b0d2ff622a576
   static String get sliders => '/api/v1/setting/sliders';
   static String get generalSetting => '/api/v1/setting/general';
   static String get classActivities => '/api/v1/setting/class/activities';
