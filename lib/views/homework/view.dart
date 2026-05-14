@@ -178,7 +178,6 @@ class _HeaderCircleButton extends StatelessWidget {
 
   final IconData icon;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     return Material(

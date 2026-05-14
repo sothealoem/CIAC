@@ -166,7 +166,6 @@ class _StudentHomeworkCard extends StatelessWidget {
   final HomeworkAssignment item;
   final bool isSubmitted;
   final VoidCallback onSubmit;
-
   @override
   Widget build(BuildContext context) {
     final accentColor = _homeworkAccentFor(item.id);
@@ -193,10 +192,7 @@ class _StudentHomeworkCard extends StatelessWidget {
               left: 0,
               top: 0,
               bottom: 0,
-              child: SizedBox(
-                width: 8,
-                child: ColoredBox(color: accentColor),
-              ),
+              child: SizedBox(width: 8, child: ColoredBox(color: accentColor)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),

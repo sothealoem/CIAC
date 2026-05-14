@@ -61,12 +61,15 @@ class _TeacherHomeworkDashboard extends StatelessWidget {
               Expanded(
                 child: _ActionTile(
                   action: _actions[1],
-                  onTap:
-                      () => _openDetail(
-                        context,
-                        title: LocaleKeys.onlineClassActionAllAssignHomework.tr,
-                        child: const _AllAssignedHomeworkPanel(),
-                      ),
+                  onTap: () {
+                    final controller = Get.find<HomeworkController>();
+                    controller.requestAssignmentsLoading();
+                    _openDetail(
+                      context,
+                      title: LocaleKeys.onlineClassActionAllAssignHomework.tr,
+                      child: const _AllAssignedHomeworkPanel(),
+                    );
+                  },
                 ),
               ),
             ],
@@ -89,44 +92,39 @@ class _TeacherHomeworkDashboard extends StatelessWidget {
   }
 }
 
-class _TeacherMetricGrid extends StatelessWidget {
+class _TeacherMetricGrid extends GetView<HomeworkController> {
   const _TeacherMetricGrid();
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.9,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        _MetricBox(
-          icon: Icons.fact_check_rounded,
-          value: '56',
-          label: LocaleKeys.onlineClassSubmissions.tr,
-          accentColor: const Color(0xFFD80F23),
-        ),
-        _MetricBox(
-          icon: Icons.bookmark_rounded,
-          value: '4',
-          label: LocaleKeys.onlineClassTotalClass.tr,
-          accentColor: const Color(0xFFF3B51B),
-        ),
-        _MetricBox(
-          icon: Icons.groups_rounded,
-          value: '180',
-          label: LocaleKeys.onlineClassStudents.tr,
-          accentColor: const Color(0xFF10A850),
-        ),
-        _MetricBox(
-          icon: Icons.today_rounded,
-          value: '3',
-          label: LocaleKeys.onlineClassDueToday.tr,
-          accentColor: _onlineClassWarmRed,
-        ),
-      ],
+    return Obx(
+      () {
+        final dashboard = controller.teacherDashboard.value;
+        final isLoading = controller.isTeacherDashboardLoading.value;
+
+        return GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.9,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            _MetricBox(
+              icon: Icons.bookmark_rounded,
+              value: isLoading ? '...' : '${dashboard?.totalClasses ?? 0}',
+              label: LocaleKeys.onlineClassTotalClass.tr,
+              accentColor: const Color(0xFFF3B51B),
+            ),
+            _MetricBox(
+              icon: Icons.groups_rounded,
+              value: isLoading ? '...' : '${dashboard?.totalStudents ?? 0}',
+              label: LocaleKeys.onlineClassStudents.tr,
+              accentColor: const Color(0xFF10A850),
+            ),
+          ],
+        );
+      },
     );
   }
 }

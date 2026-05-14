@@ -12,10 +12,12 @@ class EndPoints {
       '/api/v1/attendance-log/parent/children-log';
   static String get attendanceSummary => '/api/v1/parent/attendance-summary';
   static String get parentProfile => '/api/v1/parent/profile';
-  static String get sampleBooking => 'customer/booking-listing';
-  static String get createBooking => 'customer/booking';
-  static String get zone => 'customer/zone-listing';
-  static String get bookingDetails => 'customer/booking';
+
+  // static String get sampleBooking => 'customer/booking-listing';
+  // static String get createBooking => 'customer/booking';
+  // static String get zone => 'customer/zone-listing';
+  //static String get bookingDetails => 'customer/booking';
+
   static String get contactUs => 'support';
   static String get tracking => '/api/v1/student/attendance/trackings';
   static String get studentTimeSheet => '/api/v1/time-sheet/parent';
@@ -23,6 +25,12 @@ class EndPoints {
   static String get sliders => '/api/v1/setting/sliders';
   static String get generalSetting => '/api/v1/setting/general';
   static String get classActivities => '/api/v1/setting/class/activities';
+
+  static String teacherDashboard(dynamic teacherId) =>
+      '/api/v1/teacher/dashboard/$teacherId';
+  static String get teacherHomeworks => '/api/v1/teacher/homeworks';
+  static String teacherHomeworkDetail(dynamic id) =>
+      '/api/v1/teacher/homeworks/$id';
   static String paymentHistory(int studentId) =>
       '/api/v1/parent/payment-history/$studentId';
   static String parentInvoiceDetails(int id) =>

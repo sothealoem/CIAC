@@ -96,6 +96,8 @@ class LoginController extends GetxController {
         data['photo'],
         data['image'],
       ]);
+      final String userId =
+          (data['user_id'] ?? data['id'] ?? '').toString().trim();
       final String staffCode =
           (data['staff_code'] ?? data['code'] ?? data['id'] ?? '')
               .toString()
@@ -147,6 +149,7 @@ class LoginController extends GetxController {
       await SharedPreferencesManager.setValue('password', password);
       await SharedPreferencesManager.setValue('name', name);
       await SharedPreferencesManager.setValue('profile', profile);
+      await SharedPreferencesManager.setValue('user_id', userId);
       await SharedPreferencesManager.setValue('staff_code', staffCode);
       await SharedPreferencesManager.setValue('user_role', role);
       await SharedPreferencesManager.setValue(

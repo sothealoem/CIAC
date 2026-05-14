@@ -33,6 +33,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
   late final TextEditingController _deadlineCtl;
   static const _classOptions = ['Grade 3A', 'Grade 4A', 'Grade 5B'];
   late String _selectedClass;
+  final List<XFile> _selectedImages = <XFile>[];
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<HomeworkController>();
     return _Panel(
       title: LocaleKeys.onlineClassActionAssignHomework.tr,
       showTitle: widget.showTitle,
@@ -95,50 +97,70 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
               child: _UploadButton(
                 icon: Icons.attach_file_rounded,
                 label: LocaleKeys.onlineClassUploadFile.tr,
+                onPressed: () {},
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _UploadButton(
                 icon: Icons.add_photo_alternate_rounded,
-                label: LocaleKeys.onlineClassUploadPicture.tr,
+                label:
+                    _selectedImages.isEmpty
+                        ? LocaleKeys.onlineClassUploadPicture.tr
+                        : '${_selectedImages.length} image(s) selected',
+                onPressed: _pickImages,
               ),
             ),
           ],
         ),
         const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          height: 66,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF3345), Color(0xFFD80F23)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x33D80F23),
-                  blurRadius: 16,
-                  offset: Offset(0, 8),
+        Obx(
+          () => SizedBox(
+            width: double.infinity,
+            height: 66,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF3345), Color(0xFFD80F23)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-              ],
-            ),
-            child: ElevatedButton.icon(
-              onPressed: _submit,
-              icon: const Icon(Icons.send_rounded, size: 22),
-              label: Text(
-                LocaleKeys.submit.tr,
-                style: const TextStyle(fontWeight: FontWeight.w700),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x33D80F23),
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
+                  ),
+                ],
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                shadowColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+              child: ElevatedButton.icon(
+                onPressed:
+                    controller.isSubmittingAssignment.value ? null : _submit,
+                icon:
+                    controller.isSubmittingAssignment.value
+                        ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                        : const Icon(Icons.send_rounded, size: 22),
+                label: Text(
+                  controller.isSubmittingAssignment.value
+                      ? 'Submitting...'
+                      : LocaleKeys.submit.tr,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ),
@@ -161,16 +183,32 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     }
 
     final controller = Get.find<HomeworkController>();
-    final item = controller.buildAssignment(
-      id: widget.id,
-      title: title,
-      className: _selectedClass,
-      deadline: _deadlineCtl.text,
-      description: _descriptionCtl.text.trim(),
-      submitted: widget.submitted,
-      total: widget.total,
-    );
-    widget.onSubmit?.call(item);
+    HomeworkAssignment item;
+    try {
+      if ((widget.id ?? '').trim().isEmpty) {
+        item = await controller.createAssignment(
+          title: title,
+          className: _selectedClass,
+          deadline: _deadlineCtl.text,
+          description: _descriptionCtl.text.trim(),
+          imagePaths: _selectedImages.map((image) => image.path).toList(),
+        );
+      } else {
+        item = controller.buildAssignment(
+          id: widget.id,
+          title: title,
+          className: _selectedClass,
+          deadline: _deadlineCtl.text,
+          description: _descriptionCtl.text.trim(),
+          submitted: widget.submitted,
+          total: widget.total,
+        );
+        widget.onSubmit?.call(item);
+      }
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+      return;
+    }
 
     if (widget.showTitle) {
       controller.requestAssignmentsLoading();
@@ -185,8 +223,8 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
       return;
     }
 
+    controller.requestAssignmentsLoading();
     Navigator.of(context).pop(item);
-    controller.showAssignmentsLoading();
   }
 
   Future<void> _pickDeadline() async {
@@ -199,6 +237,21 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     if (picked == null) return;
 
     _deadlineCtl.text = Get.find<HomeworkController>().formatDeadline(picked);
+  }
+
+  Future<void> _pickImages() async {
+    try {
+      final picker = ImagePicker();
+      final images = await picker.pickMultiImage(imageQuality: 90);
+      if (!mounted || images.isEmpty) return;
+      setState(() {
+        _selectedImages
+          ..clear()
+          ..addAll(images);
+      });
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+    }
   }
 }
 
@@ -272,7 +325,8 @@ class _AllAssignedHomeworkPanel extends GetView<HomeworkController> {
   Widget build(BuildContext context) {
     if (controller.shouldShowAssignmentsLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.showAssignmentsLoading();
+        controller.shouldShowAssignmentsLoading = false;
+        controller.fetchTeacherHomeworks();
       });
     }
 
@@ -466,62 +520,118 @@ class _AssignedHomeworkDetailPanel extends StatefulWidget {
 class _AssignedHomeworkDetailPanelState
     extends State<_AssignedHomeworkDetailPanel> {
   String _selectedStatus = LocaleKeys.onlineClassSubmitted;
+  late final Future<HomeworkAssignmentDetail> _detailFuture;
 
-  static const _submissions = [
-    _SubmissionPreview('Sokha', LocaleKeys.onlineClassSubmitted),
-    _SubmissionPreview('Dara', LocaleKeys.onlineClassPending),
-    _SubmissionPreview('Malis', LocaleKeys.onlineClassSubmitted),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _detailFuture = Get.find<HomeworkController>().fetchTeacherHomeworkDetail(
+      widget.item.id,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
-    final filtered =
-        _submissions
-            .where((submission) => submission.statusKey == _selectedStatus)
-            .toList();
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _AssignedHomeworkSummaryPanel(item: item),
-        const SizedBox(height: 14),
-        _Panel(
-          title: LocaleKeys.onlineClassAllStudentSubmissions.tr,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _submissionMetricBox(
-                    value: '${item.submitted}',
-                    label: LocaleKeys.onlineClassSubmitted.tr,
-                    statusKey: LocaleKeys.onlineClassSubmitted,
-                  ),
+    return FutureBuilder<HomeworkAssignmentDetail>(
+      future: _detailFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(
+            height: 320,
+            child: Center(
+              child: SizedBox(
+                width: 42,
+                height: 42,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: _onlineClassAccent,
+                  backgroundColor: _onlineClassAccentSoft,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _submissionMetricBox(
-                    value: '${item.total - item.submitted}',
-                    label: LocaleKeys.onlineClassPending.tr,
-                    statusKey: LocaleKeys.onlineClassPending,
-                  ),
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: 12),
-            ...filtered.expand(
-              (submission) => [
-                _StudentSubmissionRow(
-                  name: submission.name,
-                  statusKey: submission.statusKey,
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return _Panel(
+            title: widget.item.title,
+            children: [
+              Text(
+                'Unable to load homework detail',
+                style: AppTextStyle.smallGreyRegular.copyWith(
+                  color: _homeworkMutedText,
                 ),
-                if (submission != filtered.last) const Divider(height: 16),
+              ),
+            ],
+          );
+        }
+
+        final detail = snapshot.data!;
+        final item = detail.assignment;
+        final filtered =
+            detail.students
+                .where(
+                  (submission) =>
+                      _statusKeyFor(submission.status) == _selectedStatus,
+                )
+                .toList();
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _AssignedHomeworkSummaryPanel(item: item),
+            const SizedBox(height: 14),
+            _Panel(
+              title: LocaleKeys.onlineClassAllStudentSubmissions.tr,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _submissionMetricBox(
+                        value: '${item.submitted}',
+                        label: LocaleKeys.onlineClassSubmitted.tr,
+                        statusKey: LocaleKeys.onlineClassSubmitted,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _submissionMetricBox(
+                        value: '${item.total - item.submitted}',
+                        label: LocaleKeys.onlineClassPending.tr,
+                        statusKey: LocaleKeys.onlineClassPending,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (filtered.isEmpty)
+                  Text(
+                    'No student submissions',
+                    style: AppTextStyle.smallGreyRegular.copyWith(
+                      color: _homeworkMutedText,
+                    ),
+                  ),
+                ...filtered.expand(
+                  (submission) => [
+                    _StudentSubmissionRow(
+                      name: submission.name,
+                      statusKey: _statusKeyFor(submission.status),
+                    ),
+                    if (submission != filtered.last) const Divider(height: 16),
+                  ],
+                ),
               ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
+  }
+
+  String _statusKeyFor(String status) {
+    return status.toLowerCase() == 'submitted'
+        ? LocaleKeys.onlineClassSubmitted
+        : LocaleKeys.onlineClassPending;
   }
 
   Widget _submissionMetricBox({
@@ -693,13 +803,6 @@ class _HomeworkDetailText extends StatelessWidget {
       ],
     );
   }
-}
-
-class _SubmissionPreview {
-  const _SubmissionPreview(this.name, this.statusKey);
-
-  final String name;
-  final String statusKey;
 }
 
 class _AssignedHomeworkAttendanceCard extends StatelessWidget {
@@ -1130,15 +1233,20 @@ class _DeadlinePickerField extends StatelessWidget {
 }
 
 class _UploadButton extends StatelessWidget {
-  const _UploadButton({required this.icon, required this.label});
+  const _UploadButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
 
   final IconData icon;
   final String label;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
-      onPressed: () {},
+      onPressed: onPressed,
       icon: Icon(icon, size: 18),
       label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       style: OutlinedButton.styleFrom(
