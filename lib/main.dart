@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,13 +18,17 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
       await dotenv.load(fileName: '.env');
       print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
+      await Firebase.initializeApp();
+      await FirebaseMessaging.instance.requestPermission();
 
       await _initEnvironment();
       await _setAppSystemPreferences();
       await _initServices();
+      await HomeworkNotificationService.instance.initialize();
 
       if (kDebugMode) {
         Logger.root.level = Level.ALL;
@@ -31,6 +37,7 @@ Future<void> main() async {
         Logger.root.level = Level.OFF;
       }
       runApp(const MyApp());
+      unawaited(HomeworkNotificationService.instance.handleInitialMessage());
     },
     (exception, trace) {
       ExceptionHandler.handleException(exception);

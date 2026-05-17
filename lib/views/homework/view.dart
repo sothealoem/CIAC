@@ -21,7 +21,7 @@ class HomeworkView extends GetView<HomeworkController> {
               title: LocaleKeys.onlineClassTitle.tr,
               subTitle: LocaleKeys.onlineClassParentSubtitle.tr,
               teacherSubTitle: LocaleKeys.onlineClassTeacherSubtitle.tr,
-              showMenu: isParent,
+              showMenu: false,
             ),
           ),
           const Expanded(child: HomeworkWidget()),

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "816026667938",
-    "project_id": "ciacschool-2ca9d",
-    "storage_bucket": "ciacschool-2ca9d.firebasestorage.app"
+    "project_number": "478573598288",
+    "project_id": "ciac-school",
+    "storage_bucket": "ciac-school.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:816026667938:android:d5ef0239c5c7b4eda580fb",
+        "mobilesdk_app_id": "1:478573598288:android:8c0fc906d5d0d7e6186355",
         "android_client_info": {
           "package_name": "com.kh.ciacschool"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDvRPgHTFpEcN2ghN-TX8-0zK23novfpq8"
+          "current_key": "AIzaSyD7Popu-gCSuJ1egdGKgv08sMtV5z2nZfc"
         }
       ],
       "services": {

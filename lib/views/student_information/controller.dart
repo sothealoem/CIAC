@@ -205,6 +205,7 @@ class StudentInformationController extends GetxController {
           if (d != null && _hasStudentProfileData(d)) {
             selectedStudent.value = parent_model.Student(
               id: d.id,
+              classId: d.classId,
               admissionNo: d.admissionNo,
               name: d.fullnameEnglish,
               nameKh: d.fullnameKhmer,
@@ -350,6 +351,14 @@ class StudentInformationController extends GetxController {
     await SharedPreferencesManager.setValue(
       'student_info_id',
       ((s.id?.toString() ?? s.admissionNo ?? '').trim()),
+    );
+    await SharedPreferencesManager.setValue(
+      'selected_child_class_id',
+      ((s.classId?.toString() ?? '').trim()),
+    );
+    await SharedPreferencesManager.setValue(
+      'student_info_class_id',
+      ((s.classId?.toString() ?? '').trim()),
     );
     await SharedPreferencesManager.setValue(
       'student_info_profile',

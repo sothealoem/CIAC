@@ -112,6 +112,7 @@ class Parent {
 
 class Student {
   int? id;
+  int? classId;
   String? admissionNo;
   String? name;
   String? nameKh;
@@ -128,6 +129,7 @@ class Student {
 
   Student({
     this.id,
+    this.classId,
     this.admissionNo,
     this.name,
     this.nameKh,
@@ -145,16 +147,22 @@ class Student {
 
   Student.fromJson(Map<String, dynamic> json) {
     id = _toInt(json['id']);
+    classId = _readClassId(json);
     admissionNo = _readString(json, const <String>['admission_no']);
-    name = _readString(
-      json,
-      const <String>['name', 'student_name', 'fullname_english'],
-    );
-    nameKh = _readString(
-      json,
-      const <String>['name_kh', 'fullname_kh', 'fullname_khmer'],
-    );
+    name = _readString(json, const <String>[
+      'name',
+      'student_name',
+      'fullname_english',
+    ]);
+
+    nameKh = _readString(json, const <String>[
+      'name_kh',
+      'fullname_kh',
+      'fullname_khmer',
+    ]);
+
     phone = _readString(json, const <String>['phone']);
+
     profile = _readString(json, const <String>[
       'profile',
       'profile_path',
@@ -167,34 +175,41 @@ class Student {
       'image_url',
       'student_photo',
     ]);
-    className = _readString(json, const <String>['class']);
-    section = _readString(json, const <String>['section']);
+
+    className = _readClassName(json);
+    section = _readString(json, const <String>['section', 'section_name']);
     feeCategory = _readString(json, const <String>['fee_category']);
-    dob = _readString(json, const <String>['dob', 'date_of_birth', 'birth_date']);
-    pob = _readString(
-      json,
-      const <String>['pob', 'pod', 'place_of_birth', 'birth_place'],
-    );
+    dob = _readString(json, const <String>[
+      'dob',
+      'date_of_birth',
+      'birth_date',
+    ]);
+    pob = _readString(json, const <String>[
+      'pob',
+      'pod',
+      'place_of_birth',
+      'birth_place',
+    ]);
     sex = _readString(json, const <String>['sex', 'gender']);
-    profession = _readString(
-      json,
-      const <String>['profession', 'occupation', 'job', 'parent_occupation'],
-    );
-    parentName = _readString(
-      json,
-      const <String>[
-        'parent_name',
-        'guardian_name',
-        'father_name',
-        'mother_name',
-        'teacher',
-      ],
-    );
+    profession = _readString(json, const <String>[
+      'profession',
+      'occupation',
+      'job',
+      'parent_occupation',
+    ]);
+    parentName = _readString(json, const <String>[
+      'parent_name',
+      'guardian_name',
+      'father_name',
+      'mother_name',
+      'teacher',
+    ]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data['class_id'] = classId;
     data['admission_no'] = admissionNo;
     data['name'] = name;
     data['name_kh'] = nameKh;
@@ -216,9 +231,63 @@ int? _toInt(dynamic value) {
   if (value is int) {
     return value;
   }
+  if (value is num) {
+    return value.toInt();
+  }
   if (value is String) {
     return int.tryParse(value.trim());
   }
+  return null;
+}
+
+int? _readClassId(Map<String, dynamic> json) {
+  final direct = _toInt(json['class_id'] ?? json['classId']);
+  if (direct != null) {
+    return direct;
+  }
+
+  final rawClass = json['class'];
+  if (rawClass is Map<String, dynamic>) {
+    return _toInt(rawClass['id'] ?? rawClass['class_id'] ?? rawClass['value']);
+  }
+  if (rawClass is Map) {
+    final map = Map<String, dynamic>.from(rawClass);
+    return _toInt(map['id'] ?? map['class_id'] ?? map['value']);
+  }
+
+  return null;
+}
+
+String? _readClassName(Map<String, dynamic> json) {
+  final direct = _readString(json, const <String>[
+    'class_name',
+    'class',
+    'grade',
+    'grade_name',
+  ]);
+  if (direct != null && direct.isNotEmpty) {
+    return direct;
+  }
+
+  final rawClass = json['class'];
+  if (rawClass is Map<String, dynamic>) {
+    return _readString(rawClass, const <String>[
+      'name',
+      'class_name',
+      'title',
+      'label',
+    ]);
+  }
+  if (rawClass is Map) {
+    final map = Map<String, dynamic>.from(rawClass);
+    return _readString(map, const <String>[
+      'name',
+      'class_name',
+      'title',
+      'label',
+    ]);
+  }
+
   return null;
 }
 

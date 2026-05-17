@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' as d;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/resources/resources.dart';
 import 'package:schoolapp/core/services/end_points.dart';
@@ -54,10 +55,12 @@ class LoginController extends GetxController {
 
     try {
       isLoading.value = true;
+      final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
 
       final response = await _loginByRole(
         loginIdentity: loginIdentity,
         password: password,
+        fcmToken: fcmToken,
       );
       if (response == null) {
         DialogManager.showDialog(
@@ -225,16 +228,26 @@ class LoginController extends GetxController {
   Future<dynamic> _loginByRole({
     required String loginIdentity,
     required String password,
+    required String fcmToken,
   }) async {
     if (selectedLoginRole.value == UserType.parent) {
-      return _loginWithPhone(loginIdentity: loginIdentity, password: password);
+      return _loginWithPhone(
+        loginIdentity: loginIdentity,
+        password: password,
+        fcmToken: fcmToken,
+      );
     }
-    return _loginTeacher(loginIdentity: loginIdentity, password: password);
+    return _loginTeacher(
+      loginIdentity: loginIdentity,
+      password: password,
+      fcmToken: fcmToken,
+    );
   }
 
   Future<dynamic> _loginWithPhone({
     required String loginIdentity,
     required String password,
+    required String fcmToken,
   }) async {
     final api = Get.find<ApiService>();
     final rawPhone = loginIdentity.trim();
@@ -248,18 +261,32 @@ class LoginController extends GetxController {
     }
 
     final attempts = <Map<String, dynamic>>[
-      {"phone": rawPhone, "password": password},
-      {"phone": normalizedPhone, "password": password},
-      {"phone_number": rawPhone, "password": password},
-      {"phone_number": normalizedPhone, "password": password},
-      {"phone": rawPhone, "phone_number": rawPhone, "password": password},
+      {"phone": rawPhone, "password": password, "fcm_token": fcmToken},
+      {"phone": normalizedPhone, "password": password, "fcm_token": fcmToken},
+      {"phone_number": rawPhone, "password": password, "fcm_token": fcmToken},
+      {
+        "phone_number": normalizedPhone,
+        "password": password,
+        "fcm_token": fcmToken,
+      },
+      {
+        "phone": rawPhone,
+        "phone_number": rawPhone,
+        "password": password,
+        "fcm_token": fcmToken,
+      },
       {
         "phone": normalizedPhone,
         "phone_number": normalizedPhone,
         "password": password,
+        "fcm_token": fcmToken,
       },
-      {"username": rawPhone, "password": password},
-      {"username": normalizedPhone, "password": password},
+      {"username": rawPhone, "password": password, "fcm_token": fcmToken},
+      {
+        "username": normalizedPhone,
+        "password": password,
+        "fcm_token": fcmToken,
+      },
     ];
 
     dynamic latestResponse = {
@@ -294,6 +321,7 @@ class LoginController extends GetxController {
   Future<dynamic> _loginTeacher({
     required String loginIdentity,
     required String password,
+    required String fcmToken,
   }) async {
     final api = Get.find<ApiService>();
     final attempts = <Map<String, dynamic>>[];
@@ -301,20 +329,41 @@ class LoginController extends GetxController {
     final normalizedPhone = _normalizePhone(loginIdentity);
 
     if (_isLikelyPhone(loginIdentity)) {
-      attempts.add({"phone": rawIdentity, "password": password});
-      attempts.add({"phone": normalizedPhone, "password": password});
-      attempts.add({"phone_number": rawIdentity, "password": password});
-      attempts.add({"phone_number": normalizedPhone, "password": password});
+      attempts.add({
+        "phone": rawIdentity,
+        "password": password,
+        "fcm_token": fcmToken,
+      });
+      attempts.add({
+        "phone": normalizedPhone,
+        "password": password,
+        "fcm_token": fcmToken,
+      });
+      attempts.add({
+        "phone_number": rawIdentity,
+        "password": password,
+        "fcm_token": fcmToken,
+      });
+      attempts.add({
+        "phone_number": normalizedPhone,
+        "password": password,
+        "fcm_token": fcmToken,
+      });
     }
 
     if (_isLikelyEmail(loginIdentity)) {
       attempts.add({
         "email": loginIdentity.toLowerCase(),
         "password": password,
+        "fcm_token": fcmToken,
       });
     }
 
-    attempts.add({"username": rawIdentity, "password": password});
+    attempts.add({
+      "username": rawIdentity,
+      "password": password,
+      "fcm_token": fcmToken,
+    });
 
     dynamic latestResponse;
     for (final payload in attempts) {

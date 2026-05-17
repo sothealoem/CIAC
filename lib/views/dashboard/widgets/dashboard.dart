@@ -304,26 +304,51 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
                             return Column(
                               children: [
-                                Container(
-                                  height: itemIconSize,
-                                  width: itemIconSize,
-                                  decoration: BoxDecoration(
-                                    color: _iconBgColor,
-                                    shape: BoxShape.circle,
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x14000000),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 2),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
+                                      height: itemIconSize,
+                                      width: itemIconSize,
+                                      decoration: BoxDecoration(
+                                        color: _iconBgColor,
+                                        shape: BoxShape.circle,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0x14000000),
+                                            blurRadius: 8,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: _menuIcon(
-                                      catIconPaths[itemIndex],
-                                      (itemIconSize * 0.52).clamp(34.0, 42.0),
+                                      child: Center(
+                                        child: _menuIcon(
+                                          catIconPaths[itemIndex],
+                                          (itemIconSize * 0.52).clamp(
+                                            34.0,
+                                            42.0,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    if (itemIndex == 8)
+                                      Positioned(
+                                        top: 6,
+                                        right: 6,
+                                        child: Container(
+                                          width: 12,
+                                          height: 12,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFD80F23),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                                 SizedBox(height: itemGap),
                                 Expanded(

@@ -324,6 +324,18 @@ class StartController extends GetxController {
         selectedName,
       );
       await SharedPreferencesManager.setValue(
+        'selected_child_class_id',
+        (selected.classId?.toString() ?? '').trim(),
+      );
+      await SharedPreferencesManager.setValue(
+        'selected_child_class_name',
+        (selected.className ?? '').trim(),
+      );
+      await SharedPreferencesManager.setValue(
+        'student_info_class_name',
+        (selected.className ?? '').trim(),
+      );
+      await SharedPreferencesManager.setValue(
         'selected_child_avatar',
         selected.profile ?? '',
       );

@@ -6,6 +6,9 @@ import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/models/child_profile/child_profile.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/views/homework/controller.dart';
+import 'package:schoolapp/views/payment_collection/controller.dart';
+import 'package:schoolapp/views/payment_history/controller.dart';
 import 'package:schoolapp/views/schedule/controller.dart';
 import 'package:schoolapp/views/start/widgets/child_card.dart';
 
@@ -18,6 +21,8 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   static const String _childrenPath = '/api/v1/parent/student-info';
+  static List<ChildProfile> _cachedChildren = const <ChildProfile>[];
+  static String _cachedSelectedChildId = '';
 
   bool _isLoadingChildren = false;
   List<ChildProfile> _children = const <ChildProfile>[];
@@ -30,7 +35,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     super.initState();
     _loadSelectedChild();
     if (_isParentRole) {
-      _fetchParentChildren();
+      if (_cachedChildren.isNotEmpty) {
+        _children = _cachedChildren;
+        _selectedChildId = _cachedSelectedChildId;
+      } else {
+        _fetchParentChildren();
+      }
     }
   }
 
@@ -82,6 +92,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         _children = list;
         _selectedChildId = selected;
       });
+      _cachedChildren = list;
+      _cachedSelectedChildId = selected;
 
       if (selected.isNotEmpty) {
         await SharedPreferencesManager.setValue('selected_child_id', selected);
@@ -100,6 +112,22 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           await SharedPreferencesManager.setValue(
             'selected_child_avatar',
             current.avatar,
+          );
+          await SharedPreferencesManager.setValue(
+            'selected_child_class_id',
+            current.classId,
+          );
+          await SharedPreferencesManager.setValue(
+            'student_info_class_id',
+            current.classId,
+          );
+          await SharedPreferencesManager.setValue(
+            'selected_child_class_name',
+            current.className,
+          );
+          await SharedPreferencesManager.setValue(
+            'student_info_class_name',
+            current.className,
           );
         }
       }
@@ -138,6 +166,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             '')
                         .trim(),
                 avatar: (student.profile ?? '').trim(),
+                classId: (student.classId?.toString() ?? '').trim(),
+                className: (student.className ?? '').trim(),
               ),
             )
             .where((child) => child.id.isNotEmpty || child.name.isNotEmpty)
@@ -173,43 +203,82 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     setState(() {
       _selectedChildId = child.id;
     });
-    await SharedPreferencesManager.setValue('selected_child_id', child.id);
-    await SharedPreferencesManager.setValue('selected_child_name', child.name);
-    await SharedPreferencesManager.setValue(
-      'selected_child_avatar',
-      child.avatar,
-    );
-    if (Get.isRegistered<ScheduleController>()) {
-      await Get.find<ScheduleController>().fetchStudentTimeSheet();
-    }
+    _cachedSelectedChildId = child.id;
     Get.back();
-    Get.snackbar(
-      LocaleKeys.student.tr,
-      child.name.isEmpty ? LocaleKeys.student.tr : child.name,
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      borderRadius: 18,
-      backgroundColor: Colors.white,
-      colorText: AppColor.primaryText,
-      duration: const Duration(milliseconds: 1300),
-      boxShadows: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.12),
-          blurRadius: 18,
-          offset: const Offset(0, 8),
+    try {
+      await SharedPreferencesManager.setValue('selected_child_id', child.id);
+      await SharedPreferencesManager.setValue(
+        'selected_child_name',
+        child.name,
+      );
+      await SharedPreferencesManager.setValue(
+        'selected_child_avatar',
+        child.avatar,
+      );
+      await SharedPreferencesManager.setValue(
+        'selected_child_class_id',
+        child.classId,
+      );
+      await SharedPreferencesManager.setValue(
+        'student_info_class_id',
+        child.classId,
+      );
+      await SharedPreferencesManager.setValue(
+        'selected_child_class_name',
+        child.className,
+      );
+      await SharedPreferencesManager.setValue(
+        'student_info_class_name',
+        child.className,
+      );
+      if (Get.isRegistered<ScheduleController>()) {
+        await Get.find<ScheduleController>().fetchStudentTimeSheet();
+      }
+      if (Get.isRegistered<HomeworkController>()) {
+        await Get.find<HomeworkController>().fetchStudentHomeworks(
+          resetBeforeLoad: true,
+        );
+      }
+      if (Get.isRegistered<PaymentHistoryController>()) {
+        await Get.find<PaymentHistoryController>().fetchPaymentHistory(
+          resetBeforeLoad: true,
+        );
+      }
+      if (Get.isRegistered<PaymentCollectionController>()) {
+        await Get.find<PaymentCollectionController>().fetchTracking();
+      }
+      Get.snackbar(
+        LocaleKeys.student.tr,
+        child.name.isEmpty ? LocaleKeys.student.tr : child.name,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        borderRadius: 14,
+        backgroundColor: const Color(0xFFF8F8F8),
+        colorText: const Color(0xFF333333),
+        duration: const Duration(milliseconds: 500),
+        boxShadows: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        icon: Container(
+          width: 30,
+          height: 30,
+          margin: const EdgeInsets.only(left: 8),
+          decoration: const BoxDecoration(
+            color: Color(0xFFF1F1F1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.check_rounded,
+            color: Color(0xFF666666),
+            size: 18,
+          ),
         ),
-      ],
-      icon: Container(
-        width: 38,
-        height: 38,
-        margin: const EdgeInsets.only(left: 12),
-        decoration: const BoxDecoration(
-          color: Color(0xFFEAF6F3),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(Icons.check_rounded, color: AppColor.primary),
-      ),
-    );
+      );
+    } finally {}
   }
 
   void languageHandleTap() {

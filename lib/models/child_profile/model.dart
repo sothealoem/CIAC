@@ -3,11 +3,14 @@ class ChildProfile {
     required this.id,
     required this.name,
     required this.avatar,
+    this.classId = '',
+    this.className = '',
   });
-
   final String id;
   final String name;
   final String avatar;
+  final String classId;
+  final String className;
 
   factory ChildProfile.fromDynamic(dynamic raw) {
     if (raw is Map<String, dynamic>) {
@@ -33,7 +36,19 @@ class ChildProfile {
                   '')
               .toString()
               .trim();
-      return ChildProfile(id: id, name: name, avatar: avatar);
+      final classId =
+          (raw['class_id'] ?? raw['classId'] ?? '').toString().trim();
+      final className =
+          (raw['class_name'] ?? raw['class'] ?? raw['grade'] ?? '')
+              .toString()
+              .trim();
+      return ChildProfile(
+        id: id,
+        name: name,
+        avatar: avatar,
+        classId: classId,
+        className: className,
+      );
     }
     if (raw is Map) {
       return ChildProfile.fromDynamic(Map<String, dynamic>.from(raw));

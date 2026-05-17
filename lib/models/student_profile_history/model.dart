@@ -32,6 +32,7 @@ class StudentProfileHistory {
 
 class StudentProfileData {
   int? id;
+  int? classId;
   String? admissionNo;
   String? fullnameEnglish;
   String? fullnameKhmer;
@@ -46,6 +47,7 @@ class StudentProfileData {
 
   StudentProfileData({
     this.id,
+    this.classId,
     this.admissionNo,
     this.fullnameEnglish,
     this.fullnameKhmer,
@@ -61,6 +63,7 @@ class StudentProfileData {
 
   StudentProfileData.fromJson(Map<String, dynamic> json) {
     id = _toInt(json['id']);
+    classId = _readClassId(json);
     admissionNo = _first(json, const ['admission_no']);
     fullnameEnglish = _first(json, const ['fullname_english', 'name_english']);
     fullnameKhmer = _first(json, const ['fullname_khmer', 'name_khmer']);
@@ -70,13 +73,14 @@ class StudentProfileData {
     phone = _first(json, const ['phone']);
     pod = _first(json, const ['pod', 'pob', 'place_of_birth']);
     address = _first(json, const ['address']);
-    className = _first(json, const ['class', 'class_name']);
+    className = _readClassName(json);
     teacher = _first(json, const ['teacher', 'teacher_name']);
   }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['id'] = id;
+    map['class_id'] = classId;
     map['admission_no'] = admissionNo;
     map['fullname_english'] = fullnameEnglish;
     map['fullname_khmer'] = fullnameKhmer;
@@ -94,7 +98,26 @@ class StudentProfileData {
 
 int? _toInt(dynamic value) {
   if (value is int) return value;
+  if (value is num) return value.toInt();
   if (value is String) return int.tryParse(value.trim());
+  return null;
+}
+
+int? _readClassId(Map<String, dynamic> json) {
+  final direct = _toInt(json['class_id'] ?? json['classId']);
+  if (direct != null) {
+    return direct;
+  }
+
+  final rawClass = json['class'];
+  if (rawClass is Map<String, dynamic>) {
+    return _toInt(rawClass['id'] ?? rawClass['class_id'] ?? rawClass['value']);
+  }
+  if (rawClass is Map) {
+    final map = Map<String, dynamic>.from(rawClass);
+    return _toInt(map['id'] ?? map['class_id'] ?? map['value']);
+  }
+
   return null;
 }
 
@@ -114,5 +137,26 @@ String? _first(Map<String, dynamic> json, List<String> keys) {
       return value;
     }
   }
+  return null;
+}
+
+String? _readClassName(Map<String, dynamic> json) {
+  final direct = _first(
+    json,
+    const ['class_name', 'class', 'grade', 'grade_name'],
+  );
+  if (direct != null && direct.isNotEmpty && !direct.startsWith('{')) {
+    return direct;
+  }
+
+  final rawClass = json['class'];
+  if (rawClass is Map<String, dynamic>) {
+    return _first(rawClass, const ['name', 'class_name', 'title', 'label']);
+  }
+  if (rawClass is Map) {
+    final map = Map<String, dynamic>.from(rawClass);
+    return _first(map, const ['name', 'class_name', 'title', 'label']);
+  }
+
   return null;
 }
