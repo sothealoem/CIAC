@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:logging/logging.dart';
@@ -28,6 +29,7 @@ Future<void> main() async {
       await _initEnvironment();
       await _setAppSystemPreferences();
       await _initServices();
+      await FcmTokenSyncService.instance.initialize();
       await HomeworkNotificationService.instance.initialize();
 
       if (kDebugMode) {

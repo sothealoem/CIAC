@@ -1,0 +1,28 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "ciac-school",
+          "appId": "1:478573598288:android:8c0fc906d5d0d7e6186355",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "ciac-school",
+          "configurations": {
+            "android": "1:478573598288:android:8c0fc906d5d0d7e6186355",
+            "ios": "1:478573598288:ios:344ba48e53f8cd84186355",
+            "macos": "1:478573598288:ios:344ba48e53f8cd84186355",
+            "web": "1:478573598288:web:9ce1234610bdc74d186355",
+            "windows": "1:478573598288:web:870e51cebd11db90186355"
+          }
+        }
+      }
+    }
+  }
+}

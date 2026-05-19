@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/resources/resources.dart';
 import 'package:schoolapp/core/services/end_points.dart';
+import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 import 'package:schoolapp/core/utils/exception_manager.dart';
 import 'package:schoolapp/core/utils/form_validator.dart';
 import 'package:schoolapp/core/constants/constants.dart';
@@ -146,6 +147,9 @@ class LoginController extends GetxController {
         await dashboardController.fetchSliders();
       }
       AppConfig.shared.token = token;
+      await FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
+        force: true,
+      );
 
       await SharedPreferencesManager.setValue('token', token);
       await SharedPreferencesManager.setValue('username', loginIdentity);

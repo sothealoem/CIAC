@@ -226,7 +226,7 @@ class StudentInformationController extends GetxController {
 
       if (!mappedFromParentProfile) {
         final res = await Get.find<ApiService>().get(
-          '/api/v1/parent/student-info',
+          EndPoints.parentStudentInfo,
           isShowLoading: false,
         );
         if (res.data is! Map) {

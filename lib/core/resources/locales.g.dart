@@ -378,6 +378,37 @@ class LocaleKeys {
   static const onlineClassView = 'onlineClassView';
   static const onlineClassDeadline = 'onlineClassDeadline';
   static const onlineClassEdit = 'onlineClassEdit';
+  static const onlineClassDelete = 'onlineClassDelete';
+  static const onlineClassDeleteConfirm = 'onlineClassDeleteConfirm';
+  static const onlineClassDeletedSuccessfully =
+      'onlineClassDeletedSuccessfully';
+  static const onlineClassUpdatedSuccessfully =
+      'onlineClassUpdatedSuccessfully';
+  static const onlineClassNoHomeworkHereYet = 'onlineClassNoHomeworkHereYet';
+  static const onlineClassLoadingHomework = 'onlineClassLoadingHomework';
+  static const onlineClassLoadingHomeworkSubtitle =
+      'onlineClassLoadingHomeworkSubtitle';
+  static const onlineClassSubmitting = 'onlineClassSubmitting';
+  static const onlineClassAttachHomework = 'onlineClassAttachHomework';
+  static const onlineClassSuccessTitle = 'onlineClassSuccessTitle';
+  static const onlineClassHomeworkSubmittedSuccessfully =
+      'onlineClassHomeworkSubmittedSuccessfully';
+  static const onlineClassSubmitHomework = 'onlineClassSubmitHomework';
+  static const onlineClassSubmitHomeworkSubtitle =
+      'onlineClassSubmitHomeworkSubtitle';
+  static const onlineClassYourAnswer = 'onlineClassYourAnswer';
+  static const onlineClassWriteAnswerHint = 'onlineClassWriteAnswerHint';
+  static const onlineClassAttachment = 'onlineClassAttachment';
+  static const onlineClassAttachImage = 'onlineClassAttachImage';
+  static const onlineClassImageReadyToUpload = 'onlineClassImageReadyToUpload';
+  static const onlineClassOptionalChooseImage =
+      'onlineClassOptionalChooseImage';
+  static const onlineClassPreviewUnavailable = 'onlineClassPreviewUnavailable';
+  static const onlineClassReadyToSubmit = 'onlineClassReadyToSubmit';
+  static const onlineClassAddedAnswer = 'onlineClassAddedAnswer';
+  static const onlineClassNoWrittenAnswer = 'onlineClassNoWrittenAnswer';
+  static const onlineClassAndImage = 'onlineClassAndImage';
+  static const onlineClassAddAnswerOrImage = 'onlineClassAddAnswerOrImage';
   static const studentDocumentTeacherSubTitle =
       'studentDocumentTeacherSubTitle';
   static const standingsTeacherSubTitle = 'standingsTeacherSubTitle';
@@ -917,6 +948,37 @@ class Locales {
     'onlineClassView': 'View',
     'onlineClassDeadline': 'Deadline',
     'onlineClassEdit': 'Edit',
+    'onlineClassDelete': 'Delete',
+    'onlineClassDeleteConfirm':
+        'Are you sure you want to delete this homework?',
+    'onlineClassDeletedSuccessfully': 'Homework deleted successfully.',
+    'onlineClassUpdatedSuccessfully': 'Homework updated successfully.',
+    'onlineClassNoHomeworkHereYet': 'No homework here yet.',
+    'onlineClassLoadingHomework': 'Loading homework...',
+    'onlineClassLoadingHomeworkSubtitle':
+        'Please wait while we load assigned homework.',
+    'onlineClassSubmitting': 'Submitting...',
+    'onlineClassAttachHomework': 'Open',
+    'onlineClassSuccessTitle': 'Success',
+    'onlineClassHomeworkSubmittedSuccessfully':
+        'Homework submitted successfully.',
+    'onlineClassSubmitHomework': 'Submit Homework',
+    'onlineClassSubmitHomeworkSubtitle':
+        'Answer the question and attach an image if needed.',
+    'onlineClassYourAnswer': 'Your Answer',
+    'onlineClassWriteAnswerHint': 'Write your answer here...',
+    'onlineClassAttachment': 'Attachment',
+    'onlineClassAttachImage': 'Attach an image',
+    'onlineClassImageReadyToUpload': 'Image selected and ready to upload.',
+    'onlineClassOptionalChooseImage':
+        'Optional. Choose one image from the gallery.',
+    'onlineClassPreviewUnavailable': 'Preview unavailable',
+    'onlineClassReadyToSubmit': 'Ready to submit. You have added',
+    'onlineClassAddedAnswer': 'an answer',
+    'onlineClassNoWrittenAnswer': 'no written answer',
+    'onlineClassAndImage': 'and an image.',
+    'onlineClassAddAnswerOrImage':
+        'Add a written answer or attach an image before submitting.',
     'studentDocumentTeacherSubTitle':
         'Review student profile and document information.',
     'standingsTeacherSubTitle': 'Review student standings and score results.',
@@ -1302,6 +1364,35 @@ class Locales {
     'onlineClassView': 'មើល',
     'onlineClassDeadline': 'ថ្ងៃផុតកំណត់',
     'onlineClassEdit': 'កែប្រែ',
+    'onlineClassDelete': 'លុប',
+    'onlineClassDeleteConfirm': 'តើអ្នកប្រាកដថាចង់លុបកិច្ចការផ្ទះនេះមែនទេ?',
+    'onlineClassDeletedSuccessfully': 'បានលុបកិច្ចការផ្ទះដោយជោគជ័យ។',
+    'onlineClassUpdatedSuccessfully': 'បានកែប្រែកិច្ចការផ្ទះដោយជោគជ័យ។',
+    'onlineClassNoHomeworkHereYet': 'មិនទាន់មានកិច្ចការផ្ទះនៅទីនេះទេ។',
+    'onlineClassLoadingHomework': 'កំពុងផ្ទុកកិច្ចការផ្ទះ...',
+    'onlineClassLoadingHomeworkSubtitle':
+        'សូមរង់ចាំខណៈដែលយើងកំពុងផ្ទុកកិច្ចការផ្ទះដែលបានផ្តល់។',
+    'onlineClassSubmitting': 'កំពុងបញ្ជូន...',
+    'onlineClassAttachHomework': 'បើក',
+    'onlineClassSuccessTitle': 'ជោគជ័យ',
+    'onlineClassHomeworkSubmittedSuccessfully':
+        'បានបញ្ជូនកិច្ចការផ្ទះដោយជោគជ័យ។',
+    'onlineClassSubmitHomework': 'បញ្ជូនកិច្ចការផ្ទះ',
+    'onlineClassSubmitHomeworkSubtitle':
+        'ឆ្លើយសំណួរ ហើយភ្ជាប់រូបភាពប្រសិនបើចាំបាច់។',
+    'onlineClassYourAnswer': 'ចម្លើយរបស់អ្នក',
+    'onlineClassWriteAnswerHint': 'សរសេរចម្លើយរបស់អ្នកនៅទីនេះ...',
+    'onlineClassAttachment': 'ឯកសារភ្ជាប់',
+    'onlineClassAttachImage': 'ភ្ជាប់រូបភាព',
+    'onlineClassImageReadyToUpload': 'បានជ្រើសរូបភាពរួចរាល់សម្រាប់បញ្ជូន។',
+    'onlineClassOptionalChooseImage': 'ជាជម្រើស។ ជ្រើសរូបភាពមួយពីវិចិត្រសាល។',
+    'onlineClassPreviewUnavailable': 'មិនអាចមើលជាមុនបានទេ',
+    'onlineClassReadyToSubmit': 'រួចរាល់សម្រាប់បញ្ជូន។ អ្នកបានបន្ថែម',
+    'onlineClassAddedAnswer': 'ចម្លើយមួយ',
+    'onlineClassNoWrittenAnswer': 'មិនមានចម្លើយជាលាយលក្ខណ៍អក្សរ',
+    'onlineClassAndImage': 'និងរូបភាពមួយ។',
+    'onlineClassAddAnswerOrImage':
+        'សូមបន្ថែមចម្លើយជាលាយលក្ខណ៍អក្សរ ឬភ្ជាប់រូបភាព មុនពេលបញ្ជូន។',
     'studentDocumentTeacherSubTitle': 'ពិនិត្យព័ត៌មានប្រវត្តិរូប និងឯកសារសិស្ស',
     'standingsTeacherSubTitle': 'ពិនិត្យចំណាត់ថ្នាក់សិស្ស និងលទ្ធផលពិន្ទុ',
     'paymentCollectionTeacherSubTitle':

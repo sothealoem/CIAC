@@ -1,4 +1,36 @@
-# CIA APP
+# CIAC APP
+
+## Push notifications
+
+This app already collects the device `fcm_token` during login and now also
+syncs refreshed Firebase tokens to the backend automatically.
+
+Use your existing backend to send notifications. Do not send FCM requests
+directly from Flutter and do not put a Firebase service account inside the app.
+
+Backend endpoint expected by the app:
+
+- `POST /api/v1/notifications/fcm-token`
+- Header: `Authorization: Bearer <user_token>`
+- Body:
+
+```json
+{
+  "fcm_token": "DEVICE_FCM_TOKEN",
+  "platform": "android"
+}
+```
+
+Recommended notification sending flow:
+
+1. App logs in and sends `fcm_token` to your backend.
+2. Backend stores the token for that user.
+3. Admin panel or backend logic calls FCM HTTP v1 using the Firebase service
+   account on the server.
+4. Firebase delivers the push notification to the device.
+
+Full backend contract and sample payloads are in
+[docs/backend-notifications.md](docs/backend-notifications.md).
 
 
 

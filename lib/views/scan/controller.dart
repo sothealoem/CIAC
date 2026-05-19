@@ -80,7 +80,7 @@ class ScanController extends GetxController {
       mobileScannerCtl.stop();
 
       final response = await Get.find<ApiService>().post(
-        "https://demo.school.softcreative.online/api/v1/student/scan-card",
+        EndPoints.studentScanCard,
         {"card_uid": uid},
         isShowLoading: true,
       );

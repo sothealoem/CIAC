@@ -99,6 +99,7 @@ class _HomeworkHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitle = showMenu ? subTitle : teacherSubTitle;
+    final controller = Get.find<HomeworkController>();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
@@ -146,9 +147,29 @@ class _HomeworkHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _HeaderCircleButton(
-                    icon: Icons.notifications_rounded,
-                    onTap: () {},
+                  Obx(
+                    () => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        _HeaderCircleButton(
+                          icon: Icons.notifications_rounded,
+                          onTap: controller.markHomeworkNotificationsSeen,
+                        ),
+                        if (controller.hasHomeworkNotification.value)
+                          Positioned(
+                            right: 2,
+                            top: 2,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),

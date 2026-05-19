@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -67,7 +68,7 @@ class HomeworkWidget extends GetView<HomeworkController> {
       _homeworkRoute(
         _TeacherActionDetailScreen(
           title: LocaleKeys.onlineClassActionAssignHomework.tr,
-          child: _AssignHomeworkPanel(onSubmit: controller.addAssignment),
+          child: const _AssignHomeworkPanel(),
         ),
       ),
     );

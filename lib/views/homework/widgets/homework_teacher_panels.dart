@@ -9,7 +9,6 @@ class _AssignHomeworkPanel extends StatefulWidget {
     this.deadline,
     this.submitted = 0,
     this.total = 0,
-    this.onSubmit,
     this.showTitle = true,
   });
 
@@ -20,7 +19,6 @@ class _AssignHomeworkPanel extends StatefulWidget {
   final String? deadline;
   final int submitted;
   final int total;
-  final ValueChanged<HomeworkAssignment>? onSubmit;
   final bool showTitle;
 
   @override
@@ -246,8 +244,8 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           imagePaths: _selectedImages.map((image) => image.path).toList(),
         );
       } else {
-        item = controller.buildAssignment(
-          id: widget.id,
+        item = await controller.updateAssignment(
+          id: widget.id ?? '',
           classId: selectedOption.id,
           title: title,
           className: _selectedClass,
@@ -255,13 +253,24 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           description: _descriptionCtl.text.trim(),
           submitted: widget.submitted,
           total: widget.total,
+          imagePaths: _selectedImages.map((image) => image.path).toList(),
         );
-        widget.onSubmit?.call(item);
       }
     } catch (e) {
       ExceptionHandler.handleException(e);
       return;
     }
+
+    await controller.fetchTeacherHomeworks();
+    Get.snackbar(
+      LocaleKeys.onlineClassSuccessTitle.tr,
+      (widget.id ?? '').trim().isEmpty
+          ? LocaleKeys.youHaveSuccessfullyCreated.tr
+          : LocaleKeys.onlineClassUpdatedSuccessfully.tr,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF14925A),
+      colorText: Colors.white,
+    );
 
     if (widget.showTitle) {
       controller.requestAssignmentsLoading();
@@ -574,7 +583,6 @@ class _AssignedHomeworkDetailPanelState
     extends State<_AssignedHomeworkDetailPanel> {
   String _selectedStatus = LocaleKeys.onlineClassSubmitted;
   late final Future<HomeworkAssignmentDetail> _detailFuture;
-
   @override
   void initState() {
     super.initState();
@@ -726,7 +734,6 @@ class _AssignedHomeworkEditPanel extends StatelessWidget {
       submitted: item.submitted,
       total: item.total,
       showTitle: false,
-      onSubmit: Get.find<HomeworkController>().updateAssignment,
     );
   }
 }
@@ -875,86 +882,75 @@ class _AssignedHomeworkAttendanceCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _onlineClassBorder),
-        boxShadow: const [
+      child: _HomeworkAccentCardFrame(
+        accentColor: accentColor,
+        stripWidth: 18,
+        cardRadius: 14,
+        shadow: const [
           BoxShadow(
             color: Color(0x0F000000),
             blurRadius: 18,
             offset: Offset(0, 8),
           ),
         ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              child: SizedBox(width: 8, child: ColoredBox(color: accentColor)),
-            ),
-            Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(14),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: onTap,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle.normalPrimaryBold.copyWith(
+                      color: Colors.black,
+                      fontSize: 15,
+                      height: 1.25,
+                    ),
+                  ),
+                  if (item.description.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      item.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.smallGreyRegular.copyWith(
+                        color: _homeworkMutedText,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 5),
+                  _infoRow(
+                    Icons.bookmark_rounded,
+                    LocaleKeys.classLabel.tr,
+                    item.className,
+                  ),
+                  const SizedBox(height: 5),
+                  _infoRow(
+                    Icons.calendar_month_rounded,
+                    LocaleKeys.onlineClassDeadline.tr,
+                    item.deadline,
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
                     children: [
-                      Text(
-                        item.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyle.normalPrimaryBold.copyWith(
-                          color: Colors.black,
-                          fontSize: 15,
-                          height: 1.25,
-                        ),
-                      ),
-                      if (item.description.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          item.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyle.smallGreyRegular.copyWith(
-                            color: _homeworkMutedText,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 5),
-                      _infoRow(
-                        Icons.bookmark_rounded,
-                        LocaleKeys.classLabel.tr,
-                        item.className,
-                      ),
-                      const SizedBox(height: 5),
-                      _infoRow(
-                        Icons.calendar_month_rounded,
-                        LocaleKeys.onlineClassDeadline.tr,
-                        item.deadline,
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          _submissionChip,
-                          const Spacer(),
-                          _AssignedHomeworkEditButton(onTap: onEdit),
-                        ],
-                      ),
+                      _submissionChip,
+                      const Spacer(),
+                      _AssignedHomeworkDeleteButton(item: item),
+                      const SizedBox(width: 6),
+                      _AssignedHomeworkEditButton(onTap: onEdit),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -1011,6 +1007,86 @@ class _AssignedHomeworkEditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _HomeworkActionButton(
+      onTap: onTap,
+      icon: Icons.edit_rounded,
+      label: LocaleKeys.onlineClassEdit.tr,
+      color: _onlineClassAccent,
+    );
+  }
+}
+
+class _AssignedHomeworkDeleteButton extends StatelessWidget {
+  const _AssignedHomeworkDeleteButton({required this.item});
+
+  final HomeworkAssignment item;
+
+  @override
+  Widget build(BuildContext context) {
+    return _HomeworkActionButton(
+      onTap: () => _confirmDelete(context),
+      icon: Icons.delete_outline_rounded,
+      label: LocaleKeys.onlineClassDelete.tr,
+      color: const Color(0xFFD80F23),
+    );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final shouldDelete =
+        await showDialog<bool>(
+          context: context,
+          builder:
+              (dialogContext) => AlertDialog(
+                title: Text(LocaleKeys.onlineClassDelete.tr),
+                content: Text(LocaleKeys.onlineClassDeleteConfirm.tr),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(LocaleKeys.cancel.tr),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(
+                      LocaleKeys.onlineClassDelete.tr,
+                      style: const TextStyle(color: Color(0xFFD80F23)),
+                    ),
+                  ),
+                ],
+              ),
+        ) ??
+        false;
+
+    if (!shouldDelete) return;
+
+    try {
+      await Get.find<HomeworkController>().deleteAssignment(item.id);
+      if (!context.mounted) return;
+      Get.snackbar(
+        LocaleKeys.onlineClassDelete.tr,
+        LocaleKeys.onlineClassDeletedSuccessfully.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+    }
+  }
+}
+
+class _HomeworkActionButton extends StatelessWidget {
+  const _HomeworkActionButton({
+    required this.onTap,
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final VoidCallback onTap;
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(10),
@@ -1018,25 +1094,22 @@ class _AssignedHomeworkEditButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         onTap: onTap,
         child: Container(
-          height: 42,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            border: Border.all(color: _onlineClassAccent),
+            border: Border.all(color: color),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.edit_rounded,
-                color: _onlineClassAccent,
-                size: 16,
-              ),
-              const SizedBox(width: 7),
+              Icon(icon, color: color, size: 14),
+              const SizedBox(width: 5),
               Text(
-                LocaleKeys.onlineClassEdit.tr,
+                label,
                 style: AppTextStyle.smallPrimaryBold.copyWith(
-                  color: _onlineClassAccent,
+                  color: color,
+                  fontSize: 12,
                 ),
               ),
             ],

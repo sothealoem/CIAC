@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as d;
 import 'package:schoolapp/core/core.dart';
@@ -15,6 +17,7 @@ class HomeworkController extends GetxController {
       <HomeworkAssignment>[].obs;
   final RxList<HomeworkClassOption> teacherClassOptions =
       <HomeworkClassOption>[].obs;
+  final RxBool hasHomeworkNotification = false.obs;
   final RxSet<String> submittedAssignmentIds = <String>{}.obs;
   final RxSet<String> submittingAssignmentIds = <String>{}.obs;
 
@@ -24,6 +27,14 @@ class HomeworkController extends GetxController {
   int get pendingAssignments => totalAssignments - submittedAssignments;
   double get homeworkProgress =>
       totalAssignments == 0 ? 0 : submittedAssignments / totalAssignments;
+  List<HomeworkAssignment> get pendingHomeworkItems =>
+      assignedHomeworkItems
+          .where((item) => !submittedAssignmentIds.contains(item.id))
+          .toList(growable: false);
+  List<HomeworkAssignment> get submittedHomeworkItems =>
+      assignedHomeworkItems
+          .where((item) => submittedAssignmentIds.contains(item.id))
+          .toList(growable: false);
 
   @override
   void onInit() {
@@ -36,6 +47,7 @@ class HomeworkController extends GetxController {
     }
   }
 
+  // Parent/student homework flow.
   Future<void> fetchStudentHomeworks({bool resetBeforeLoad = false}) async {
     if (isAssignmentsLoading.value) return;
 
@@ -45,6 +57,7 @@ class HomeworkController extends GetxController {
 
     final classId = await _resolveStudentClassId();
     final fallbackClassName = await _resolveStudentClassName();
+    final selectedStudentId = await _resolveSelectedStudentId();
     if (classId == null) {
       assignedHomeworkItems.clear();
       return;
@@ -52,19 +65,38 @@ class HomeworkController extends GetxController {
 
     try {
       isAssignmentsLoading.value = true;
+      final cachedSubmittedIds = await _loadSubmittedHomeworkIds(
+        selectedStudentId,
+      );
       final res = await Get.find<ApiService>().get(
         EndPoints.studentHomeworks(classId),
         isShowLoading: false,
       );
       final rows = _extractHomeworkRows(res.data);
-      assignedHomeworkItems.assignAll(
-        rows.whereType<Map>().map(
-          (row) => _assignmentFromApi(
-            Map<String, dynamic>.from(row),
-            fallbackClassName: fallbackClassName,
-          ),
-        ),
-      );
+      final items = rows
+          .whereType<Map>()
+          .map(
+            (row) => _assignmentFromApi(
+              Map<String, dynamic>.from(row),
+              fallbackClassName: fallbackClassName,
+            ),
+          )
+          .toList(growable: false);
+      assignedHomeworkItems.assignAll(items);
+
+      final refreshedSubmittedIds = <String>{
+        ...cachedSubmittedIds,
+        for (final row in rows.whereType<Map>())
+          if (_isAssignmentSubmittedFromApi(Map<String, dynamic>.from(row)))
+            ((row['id'] ?? row['homework_id'] ?? '').toString().trim()),
+      }..removeWhere((id) => id.isEmpty);
+
+      final validIds = items.map((item) => item.id.trim()).where((id) => id.isNotEmpty).toSet();
+      submittedAssignmentIds
+        ..clear()
+        ..addAll(refreshedSubmittedIds.where(validIds.contains));
+      await _saveSubmittedHomeworkIds(selectedStudentId, submittedAssignmentIds);
+      await _refreshParentHomeworkNotification(selectedStudentId);
     } catch (e) {
       assignedHomeworkItems.clear();
       ExceptionHandler.handleException(e, alert: false);
@@ -73,6 +105,7 @@ class HomeworkController extends GetxController {
     }
   }
 
+  // Teacher dashboard summary flow.
   Future<void> fetchTeacherDashboardStats() async {
     if (isTeacherDashboardLoading.value) return;
 
@@ -121,6 +154,7 @@ class HomeworkController extends GetxController {
     return '';
   }
 
+  // Shared homework model builder used by teacher create/update flows.
   HomeworkAssignment buildAssignment({
     String? id,
     int? classId,
@@ -151,6 +185,7 @@ class HomeworkController extends GetxController {
     assignedHomeworkItems.insert(0, item);
   }
 
+  // Teacher homework list flow.
   Future<void> fetchTeacherHomeworks() async {
     if (isAssignmentsLoading.value) return;
 
@@ -178,6 +213,7 @@ class HomeworkController extends GetxController {
         ),
       );
       _updateTeacherClassOptions();
+      await _refreshTeacherHomeworkNotification();
     } catch (e) {
       assignedHomeworkItems.clear();
       teacherClassOptions.clear();
@@ -187,6 +223,7 @@ class HomeworkController extends GetxController {
     }
   }
 
+  // Teacher homework detail/submission review flow.
   Future<HomeworkAssignmentDetail> fetchTeacherHomeworkDetail(String id) async {
     final res = await Get.find<ApiService>().get(
       EndPoints.teacherHomeworkDetail(id),
@@ -217,6 +254,7 @@ class HomeworkController extends GetxController {
     );
   }
 
+  // Teacher create homework flow.
   Future<HomeworkAssignment> createAssignment({
     required String title,
     required int? classId,
@@ -245,9 +283,12 @@ class HomeworkController extends GetxController {
       'due_date': _deadlineForApi(trimmedDeadline),
     };
     if (imagePaths.isNotEmpty) {
-      formMap['images[]'] = <d.MultipartFile>[
+      final files = <d.MultipartFile>[
         for (final path in imagePaths) await d.MultipartFile.fromFile(path),
       ];
+      formMap['images'] = files;
+      formMap['images[]'] = files;
+      formMap['file'] = files.first;
     }
     final payload = d.FormData.fromMap(formMap);
 
@@ -300,7 +341,121 @@ class HomeworkController extends GetxController {
     }
   }
 
-  void updateAssignment(HomeworkAssignment item) {
+  // Teacher update homework flow.
+  Future<HomeworkAssignment> updateAssignment({
+    required String id,
+    required int? classId,
+    required String title,
+    required String className,
+    required String deadline,
+    required String description,
+    int submitted = 0,
+    int total = 0,
+    List<String> imagePaths = const <String>[],
+  }) async {
+    final trimmedId = id.trim();
+    if (trimmedId.isEmpty) {
+      throw Exception('Homework ID is missing');
+    }
+
+    final trimmedTitle = title.trim();
+    final trimmedClassName = className.trim();
+    final trimmedDescription = description.trim();
+    final trimmedDeadline = deadline.trim();
+
+    final localItem = buildAssignment(
+      id: trimmedId,
+      classId: classId,
+      title: trimmedTitle,
+      className: trimmedClassName,
+      deadline: trimmedDeadline,
+      description: trimmedDescription,
+      submitted: submitted,
+      total: total,
+    );
+
+    final formMap = <String, dynamic>{
+      'class_id': classId,
+      'title': trimmedTitle,
+      'description': trimmedDescription,
+      'due_date': _deadlineForApi(trimmedDeadline),
+    };
+    if (imagePaths.isNotEmpty) {
+      final files = <d.MultipartFile>[
+        for (final path in imagePaths) await d.MultipartFile.fromFile(path),
+      ];
+      formMap['images'] = files;
+      formMap['images[]'] = files;
+      formMap['file'] = files.first;
+    }
+    final payload = d.FormData.fromMap(formMap);
+
+    try {
+      isSubmittingAssignment.value = true;
+      final res = await Get.find<ApiService>().post(
+        EndPoints.teacherHomeworkDetail(trimmedId),
+        payload,
+        isShowLoading: false,
+      );
+      final data = getPropertyFromJson(res.data, 'data');
+      HomeworkAssignment updatedItem = localItem;
+      if (data is Map) {
+        final map = Map<String, dynamic>.from(data);
+        updatedItem = HomeworkAssignment(
+          id: (map['id'] ?? map['homework_id'] ?? localItem.id).toString(),
+          classId: _findClassId(map) ?? classId,
+          title: _readText(map, const [
+            'title',
+            'homework_title',
+          ], trimmedTitle),
+          className: _readHomeworkClassName(map, trimmedClassName),
+          deadline: _displayDeadline(
+            _readText(map, const ['deadline', 'due_date'], trimmedDeadline),
+          ),
+          submitted: _readInt(map, const ['submitted', 'submitted_count']),
+          total: _readInt(map, const [
+            'total',
+            'total_students',
+            'student_count',
+          ]),
+          description: _readText(map, const [
+            'description',
+            'remark',
+            'instructions',
+          ], trimmedDescription),
+        );
+      }
+
+      final index = assignedHomeworkItems.indexWhere(
+        (current) => current.id == trimmedId,
+      );
+      if (index != -1) {
+        assignedHomeworkItems[index] = updatedItem;
+      }
+      _updateTeacherClassOptions();
+      return updatedItem;
+    } finally {
+      isSubmittingAssignment.value = false;
+    }
+  }
+
+  Future<void> deleteAssignment(String id) async {
+    final trimmedId = id.trim();
+    if (trimmedId.isEmpty) {
+      throw Exception('Homework ID is missing');
+    }
+
+    await Get.find<ApiService>().post(
+      EndPoints.teacherHomeworkDelete(trimmedId),
+      <String, dynamic>{},
+      isShowLoading: false,
+    );
+
+    assignedHomeworkItems.removeWhere((item) => item.id == trimmedId);
+    _updateTeacherClassOptions();
+  }
+
+  void replaceAssignment(HomeworkAssignment item) {
     final index = assignedHomeworkItems.indexWhere(
       (current) => current.id == item.id,
     );
@@ -320,6 +475,7 @@ class HomeworkController extends GetxController {
     submittedAssignmentIds.add(assignmentId);
   }
 
+  // Parent/student submission flow.
   Future<void> submitStudentHomeworkAnswer({
     required String homeworkId,
     String answerText = '',
@@ -337,33 +493,70 @@ class HomeworkController extends GetxController {
 
     try {
       submittingAssignmentIds.add(trimmedHomeworkId);
+      final trimmedAnswer = answerText.trim();
+      final trimmedAttachmentPath = attachmentPath?.trim() ?? '';
+      final hasAttachment = trimmedAttachmentPath.isNotEmpty;
       final formMap = <String, dynamic>{
         'homework_id': trimmedHomeworkId,
         'student_id': studentId.toString(),
         'submitted_by': studentId.toString(),
       };
 
-      final trimmedAnswer = answerText.trim();
-      if (trimmedAnswer.isNotEmpty) {
+      // Keep the payload as close as possible to the original attach-only flow.
+      // When a file is attached, prefer the file submission path and avoid
+      // mixing in extra text unless there is no attachment.
+      if (!hasAttachment && trimmedAnswer.isNotEmpty) {
         formMap['answer_text'] = trimmedAnswer;
       }
-      if (attachmentPath != null && attachmentPath.trim().isNotEmpty) {
-        formMap['file'] = await d.MultipartFile.fromFile(attachmentPath.trim());
+      print('Homework submit fields: $formMap');
+      print(
+        'Homework submit debug -> homework_id: $trimmedHomeworkId, '
+        'student_id: $studentId, '
+        'submitted_by: $studentId, '
+        'has_file: $hasAttachment, '
+        'answer_length: ${trimmedAnswer.length}',
+      );
+      if (hasAttachment) {
+        formMap['file'] = await d.MultipartFile.fromFile(trimmedAttachmentPath);
       }
 
       final payload = d.FormData.fromMap(formMap);
-      await Get.find<ApiService>().post(
+      final res = await Get.find<ApiService>().post(
         EndPoints.studentHomeworkSubmit,
         payload,
         isShowLoading: false,
       );
+      _ensureHomeworkSubmitSucceeded(res.data);
       submittedAssignmentIds.add(trimmedHomeworkId);
+      await _saveSubmittedHomeworkIds(
+        studentId.toString(),
+        submittedAssignmentIds,
+      );
       await fetchStudentHomeworks();
+    } on d.DioException catch (e) {
+      print('Homework submit DioException: ${e.message}');
+      print('Homework submit status: ${e.response?.statusCode}');
+      print('Homework submit response: ${e.response?.data}');
+      rethrow;
+    } catch (e) {
+      print('Homework submit error: $e');
+      rethrow;
     } finally {
       submittingAssignmentIds.remove(trimmedHomeworkId);
     }
   }
 
+  Future<void> markHomeworkNotificationsSeen() async {
+    if (isParentRole) {
+      final studentId = await _resolveSelectedStudentId();
+      await _saveSeenHomeworkIds(studentId, _currentHomeworkIds());
+    } else {
+      await _saveSeenTeacherSubmissionCounts(_currentTeacherSubmissionCounts());
+    }
+    hasHomeworkNotification.value = false;
+  }
+
+  // Shared deadline formatting helpers for homework forms and API payloads.
   String formatDeadline(DateTime picked) {
     const months = [
       'Jan',
@@ -574,7 +767,7 @@ class HomeworkController extends GetxController {
 
     try {
       final res = await Get.find<ApiService>().get(
-        '/api/v1/parent/student-info',
+        EndPoints.parentStudentInfo,
         isShowLoading: false,
       );
       final classId = await _findClassIdForSelectedStudent(
@@ -622,6 +815,16 @@ class HomeworkController extends GetxController {
     }
   }
 
+  Future<String> _resolveSelectedStudentId() async {
+    final resolved = await StudentIdResolver.resolve();
+    if (resolved != null) {
+      return resolved.toString().trim();
+    }
+    return (await SharedPreferencesManager.get('selected_child_id') ?? '')
+        .toString()
+        .trim();
+  }
+
   Future<String> _resolveStudentClassName() async {
     final cachedKeys = <String>[
       'selected_child_class_name',
@@ -644,7 +847,7 @@ class HomeworkController extends GetxController {
 
     try {
       final res = await Get.find<ApiService>().get(
-        '/api/v1/parent/student-info',
+        EndPoints.parentStudentInfo,
         isShowLoading: false,
       );
       final className = _findClassNameForSelectedStudent(
@@ -665,6 +868,30 @@ class HomeworkController extends GetxController {
     } catch (_) {}
 
     return 'N/A';
+  }
+
+  void _ensureHomeworkSubmitSucceeded(dynamic raw) {
+    if (raw is String) {
+      final text = raw.trim().toLowerCase();
+      if (text.startsWith('<!doctype html') ||
+          text.startsWith('<html') ||
+          text.contains('<body')) {
+        throw 'Homework submit did not reach the API. Please log in again and try once more.';
+      }
+      return;
+    }
+
+    if (raw is Map) {
+      final map = Map<String, dynamic>.from(raw);
+      final success = map['success'];
+      if (success == false || success == 0 || success == '0') {
+        final message =
+            (map['message'] ?? map['error'] ?? map['detail'] ?? '')
+                .toString()
+                .trim();
+        throw message.isEmpty ? 'Homework submit failed.' : message;
+      }
+    }
   }
 
   Future<int?> _findClassIdForSelectedStudent(
@@ -867,6 +1094,86 @@ class HomeworkController extends GetxController {
     return 'N/A';
   }
 
+  bool _isAssignmentSubmittedFromApi(Map<String, dynamic> map) {
+    final directBoolKeys = <String>[
+      'is_submitted',
+      'submitted',
+      'already_submitted',
+      'has_submitted',
+      'student_submitted',
+    ];
+    for (final key in directBoolKeys) {
+      final value = map[key];
+      if (value is bool) {
+        return value;
+      }
+      final text = (value ?? '').toString().trim().toLowerCase();
+      if (text == '1' || text == 'true' || text == 'yes') {
+        return true;
+      }
+      if (text == '0' || text == 'false' || text == 'no') {
+        return false;
+      }
+    }
+
+    final statusKeys = <String>[
+      'status',
+      'submission_status',
+      'submitted_status',
+      'homework_status',
+    ];
+    for (final key in statusKeys) {
+      final text = (map[key] ?? '').toString().trim().toLowerCase();
+      if (text.contains('submit') ||
+          text == 'done' ||
+          text == 'completed') {
+        return true;
+      }
+      if (text.contains('pending') || text.contains('not submit')) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  String _submittedHomeworkCacheKey(String studentId) {
+    final safeStudentId = studentId.trim().isEmpty ? 'default' : studentId.trim();
+    return 'submitted_homework_ids_$safeStudentId';
+  }
+
+  Future<Set<String>> _loadSubmittedHomeworkIds(String studentId) async {
+    final raw =
+        (await SharedPreferencesManager.get(_submittedHomeworkCacheKey(studentId)) ??
+                '')
+            .toString()
+            .trim();
+    if (raw.isEmpty) {
+      return <String>{};
+    }
+    return raw
+        .split(',')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet();
+  }
+
+  Future<void> _saveSubmittedHomeworkIds(
+    String studentId,
+    Iterable<String> ids,
+  ) async {
+    final normalized = ids
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    await SharedPreferencesManager.setValue(
+      _submittedHomeworkCacheKey(studentId),
+      normalized.join(','),
+    );
+  }
+
   int? _classIdFor(String className) {
     const classIds = <String, int>{
       'K1': 1,
@@ -890,6 +1197,104 @@ class HomeworkController extends GetxController {
     }
 
     return null;
+  }
+
+  Future<void> _refreshParentHomeworkNotification(String studentId) async {
+    final currentIds = _currentHomeworkIds();
+    final seenIds = await _loadSeenHomeworkIds(studentId);
+    hasHomeworkNotification.value = currentIds.any((id) => !seenIds.contains(id));
+  }
+
+  Future<void> _refreshTeacherHomeworkNotification() async {
+    final currentCounts = _currentTeacherSubmissionCounts();
+    final seenCounts = await _loadSeenTeacherSubmissionCounts();
+    hasHomeworkNotification.value = currentCounts.entries.any((entry) {
+      final seen = seenCounts[entry.key] ?? 0;
+      return entry.value > seen;
+    });
+  }
+
+  Iterable<String> _currentHomeworkIds() {
+    return assignedHomeworkItems
+        .map((item) => item.id.trim())
+        .where((id) => id.isNotEmpty);
+  }
+
+  Map<String, int> _currentTeacherSubmissionCounts() {
+    return <String, int>{
+      for (final item in assignedHomeworkItems)
+        if (item.id.trim().isNotEmpty) item.id.trim(): item.submitted,
+    };
+  }
+
+  String _seenHomeworkIdsKey(String studentId) {
+    final safeStudentId = studentId.trim().isEmpty ? 'default' : studentId.trim();
+    return 'seen_homework_ids_$safeStudentId';
+  }
+
+  Future<Set<String>> _loadSeenHomeworkIds(String studentId) async {
+    final raw =
+        (await SharedPreferencesManager.get(_seenHomeworkIdsKey(studentId)) ?? '')
+            .toString()
+            .trim();
+    if (raw.isEmpty) {
+      return <String>{};
+    }
+    return raw
+        .split(',')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet();
+  }
+
+  Future<void> _saveSeenHomeworkIds(
+    String studentId,
+    Iterable<String> ids,
+  ) async {
+    final normalized = ids
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    await SharedPreferencesManager.setValue(
+      _seenHomeworkIdsKey(studentId),
+      normalized.join(','),
+    );
+  }
+
+  String _seenTeacherSubmissionCountsKey() {
+    return 'seen_teacher_homework_submission_counts';
+  }
+
+  Future<Map<String, int>> _loadSeenTeacherSubmissionCounts() async {
+    final raw =
+        (await SharedPreferencesManager.get(_seenTeacherSubmissionCountsKey()) ??
+                '')
+            .toString()
+            .trim();
+    if (raw.isEmpty) {
+      return <String, int>{};
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) {
+        return <String, int>{};
+      }
+      return <String, int>{
+        for (final entry in decoded.entries)
+          entry.key.toString(): int.tryParse(entry.value.toString()) ?? 0,
+      };
+    } catch (_) {
+      return <String, int>{};
+    }
+  }
+
+  Future<void> _saveSeenTeacherSubmissionCounts(Map<String, int> counts) async {
+    await SharedPreferencesManager.setValue(
+      _seenTeacherSubmissionCountsKey(),
+      jsonEncode(counts),
+    );
   }
 }
 

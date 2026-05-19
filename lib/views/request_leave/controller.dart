@@ -11,8 +11,6 @@ import 'package:schoolapp/models/requestleave/model.dart';
 class RequestLeaveController extends GetxController {
   static const String _pendingCachePrefix = 'pending_leave_requests_';
   static const String _lastLeaveStudentKey = 'last_leave_student_id';
-  static const String _allRequestsPath = '/api/v1/parent/leave-requests';
-
   final TextEditingController searchCtl = TextEditingController();
   final TextEditingController reasonController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -146,7 +144,7 @@ class RequestLeaveController extends GetxController {
       cachedPending = await _loadCachedPendingForScopes(cacheScopes);
 
       final res = await Get.find<ApiService>().get(
-        _allRequestsPath,
+        EndPoints.parentLeaveRequests,
         queryParameters:
             selectedResolved.isNotEmpty
                 ? <String, dynamic>{'student_id': selectedResolved}
@@ -189,7 +187,7 @@ class RequestLeaveController extends GetxController {
     try {
       final selectedId = await _selectedStudentId();
       final res = await Get.find<ApiService>().get(
-        '/api/v1/parent/student-info',
+        EndPoints.parentStudentInfo,
         isShowLoading: false,
       );
       if (res.data is! Map) {
@@ -287,7 +285,7 @@ class RequestLeaveController extends GetxController {
 
     try {
       await Get.find<ApiService>().post(
-        '/api/v1/parent/$studentId/leave-request',
+        EndPoints.parentLeaveRequest(studentId),
         basePayload,
         isShowLoading: false,
       );
@@ -703,7 +701,7 @@ class RequestLeaveController extends GetxController {
 
     try {
       final res = await Get.find<ApiService>().get(
-        '/api/v1/parent/student-info',
+        EndPoints.parentStudentInfo,
         isShowLoading: false,
       );
       if (res.data is! Map) {

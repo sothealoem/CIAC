@@ -20,7 +20,6 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  static const String _childrenPath = '/api/v1/parent/student-info';
   static List<ChildProfile> _cachedChildren = const <ChildProfile>[];
   static String _cachedSelectedChildId = '';
 
@@ -64,7 +63,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
     try {
       final res = await Get.find<ApiService>().get(
-        _childrenPath,
+        EndPoints.parentStudentInfo,
         isShowLoading: false,
       );
 

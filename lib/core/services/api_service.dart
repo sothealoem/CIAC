@@ -82,12 +82,19 @@ class ApiService extends GetxService {
       client.options.headers.addEntries(cusHeaders.entries);
     }
 
+    final isMultipart = formData is d.FormData;
+    if (isMultipart) {
+      client.options.contentType = null;
+      client.options.headers.remove('Content-Type');
+      client.options.headers.remove('Content-type');
+    }
+
     print("BASE URL (ApiService): ${client.options.baseUrl}");
 
     return client.post(
       path,
       data:
-          formData is d.FormData
+          isMultipart
               ? formData
               : encode
               ? jsonEncode(formData)
@@ -97,6 +104,12 @@ class ApiService extends GetxService {
 
   Future<d.Response> put(String path, {dynamic formData}) async {
     final client = await _dioClient();
+
+    if (formData is d.FormData) {
+      client.options.contentType = null;
+      client.options.headers.remove('Content-Type');
+      client.options.headers.remove('Content-type');
+    }
 
     return client.put(
       path,
@@ -112,6 +125,12 @@ class ApiService extends GetxService {
 
   Future<d.Response> patch(String path, {dynamic formData}) async {
     final client = await _dioClient();
+
+    if (formData is d.FormData) {
+      client.options.contentType = null;
+      client.options.headers.remove('Content-Type');
+      client.options.headers.remove('Content-type');
+    }
 
     return client.patch(
       path,
