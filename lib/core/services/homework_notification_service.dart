@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/routes.dart';
@@ -59,11 +60,12 @@ class HomeworkNotificationService {
             >();
     await iosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
 
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageTap);
@@ -79,7 +81,15 @@ class HomeworkNotificationService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    if (!_isHomeworkMessage(message)) return;
+    final isHomework = _isHomeworkMessage(message);
+    debugPrint(
+      'Foreground FCM received: '
+      'title="${message.notification?.title ?? message.data['title'] ?? ''}", '
+      'body="${message.notification?.body ?? message.data['body'] ?? ''}", '
+      'data=${message.data}, '
+      'isHomework=$isHomework',
+    );
+    if (!isHomework) return;
 
     await _localNotifications.show(
       message.hashCode,
@@ -109,6 +119,7 @@ class HomeworkNotificationService {
       ),
       payload: 'homework',
     );
+    debugPrint('Foreground local notification shown for homework message.');
   }
 
   void _onNotificationResponse(NotificationResponse response) {

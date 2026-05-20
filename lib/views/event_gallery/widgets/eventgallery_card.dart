@@ -16,45 +16,98 @@ class ActivityCardWidget extends StatelessWidget {
       itemCount: items.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 12,
-        mainAxisExtent: 170,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+        mainAxisExtent: 206,
       ),
       itemBuilder: (context, index) {
         final item = items[index];
+        final description = _descriptionPreview(item.description);
         return InkWell(
           onTap: onTap == null ? null : () => onTap!(item),
           borderRadius: BorderRadius.circular(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: _cardImage(item.image),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                item.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1F2937),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0D000000),
+                  blurRadius: 14,
+                  offset: Offset(0, 6),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _desc10(item.description),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  height: 1.3,
-                  color: Color(0xFF4B5563),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
+                  child: _cardImage(item.image),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            height: 1.25,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Expanded(
+                          child: Text(
+                            description.isEmpty
+                                ? 'Tap to view the full activity details.'
+                                : description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.35,
+                              color:
+                                  description.isEmpty
+                                      ? const Color(0xFF9CA3AF)
+                                      : const Color(0xFF4B5563),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Row(
+                          children: [
+                            Icon(
+                              Icons.open_in_new_rounded,
+                              size: 14,
+                              color: Color(0xFFD80F23),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'View details',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFD80F23),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -71,6 +124,7 @@ class ActivityCardWidget extends StatelessWidget {
         placeholder: (_, __) => Container(color: const Color(0xFFE9EEF2)),
         errorWidget:
             (_, __, ___) => Container(
+              height: 108,
               color: const Color(0xFFE9EEF2),
               alignment: Alignment.center,
               child: const Icon(Icons.broken_image, color: Colors.grey),
@@ -81,11 +135,12 @@ class ActivityCardWidget extends StatelessWidget {
     return Image.asset(
       imagePath,
       width: double.infinity,
-      height: 95,
+      height: 108,
       fit: BoxFit.cover,
       filterQuality: FilterQuality.high,
       errorBuilder:
           (_, __, ___) => Container(
+            height: 108,
             color: const Color(0xFFE9EEF2),
             alignment: Alignment.center,
             child: const Icon(Icons.broken_image, color: Colors.grey),
@@ -93,12 +148,26 @@ class ActivityCardWidget extends StatelessWidget {
     );
   }
 
-  String _desc10(String raw) {
-    final clean = raw.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
-    if (clean.isEmpty) return '';
+  String _descriptionPreview(String rawDescription) {
+    final plainText =
+        rawDescription.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
+
+    if (plainText.isEmpty) {
+      return '';
+    }
+
     final words =
-        clean.split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
-    if (words.length <= 10) return clean;
-    return '${words.take(10).join(' ')}...';
+        plainText
+            .split(RegExp(r'\s+'))
+            .where((word) => word.isNotEmpty)
+            .toList();
+
+    const maxWords = 18;
+
+    if (words.length <= maxWords) {
+      return plainText;
+    }
+
+    return '${words.take(maxWords).join(' ')}...';
   }
 }

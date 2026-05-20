@@ -7,6 +7,7 @@ import 'package:schoolapp/models/models.dart';
 
 class HomeworkController extends GetxController {
   final RxBool isAssignmentsLoading = false.obs;
+  final RxBool isTeacherAssignmentsLoadingMore = false.obs;
   final RxBool isTeacherDashboardLoading = false.obs;
   final RxBool isSubmittingAssignment = false.obs;
   final Rxn<TeacherDashboardModel> teacherDashboard =
@@ -20,8 +21,14 @@ class HomeworkController extends GetxController {
   final RxBool hasHomeworkNotification = false.obs;
   final RxSet<String> submittedAssignmentIds = <String>{}.obs;
   final RxSet<String> submittingAssignmentIds = <String>{}.obs;
+  final RxInt teacherHomeworkCurrentPage = 1.obs;
+  final RxInt teacherHomeworkLastPage = 1.obs;
+  final RxInt teacherHomeworkPerPage = 10.obs;
+  final RxInt teacherHomeworkTotal = 0.obs;
 
   bool get isParentRole => UserRepository.shared.isDriver;
+  bool get hasMoreTeacherHomeworkPages =>
+      teacherHomeworkCurrentPage.value < teacherHomeworkLastPage.value;
   int get totalAssignments => assignedHomeworkItems.length;
   int get submittedAssignments => submittedAssignmentIds.length;
   int get pendingAssignments => totalAssignments - submittedAssignments;
@@ -186,41 +193,95 @@ class HomeworkController extends GetxController {
   }
 
   // Teacher homework list flow.
-  Future<void> fetchTeacherHomeworks() async {
-    if (isAssignmentsLoading.value) return;
+  Future<void> fetchTeacherHomeworks({bool reset = true}) async {
+    if (reset) {
+      if (isAssignmentsLoading.value) return;
+    } else {
+      if (isAssignmentsLoading.value ||
+          isTeacherAssignmentsLoadingMore.value ||
+          !hasMoreTeacherHomeworkPages) {
+        return;
+      }
+    }
 
     try {
-      isAssignmentsLoading.value = true;
+      if (reset) {
+        isAssignmentsLoading.value = true;
+        teacherHomeworkCurrentPage.value = 1;
+      } else {
+        isTeacherAssignmentsLoadingMore.value = true;
+      }
+
       final res = await Get.find<ApiService>().get(
         EndPoints.teacherHomeworks,
+        queryParameters: <String, dynamic>{
+          'page': teacherHomeworkCurrentPage.value,
+        },
         isShowLoading: false,
       );
       final rawData = getPropertyFromJson(res.data, 'data');
       if (rawData is! Map) {
-        assignedHomeworkItems.clear();
+        if (reset) {
+          assignedHomeworkItems.clear();
+        }
         return;
       }
 
       final rows = rawData['data'];
       if (rows is! List) {
-        assignedHomeworkItems.clear();
+        if (reset) {
+          assignedHomeworkItems.clear();
+        }
         return;
       }
 
-      assignedHomeworkItems.assignAll(
-        rows.whereType<Map>().map(
-          (row) => _assignmentFromApi(Map<String, dynamic>.from(row)),
-        ),
-      );
+      teacherHomeworkCurrentPage.value =
+          (rawData['current_page'] as num?)?.toInt() ?? 1;
+      teacherHomeworkLastPage.value =
+          (rawData['last_page'] as num?)?.toInt() ??
+          teacherHomeworkCurrentPage.value;
+      teacherHomeworkPerPage.value =
+          (rawData['per_page'] as num?)?.toInt() ??
+          teacherHomeworkPerPage.value;
+      teacherHomeworkTotal.value =
+          (rawData['total'] as num?)?.toInt() ?? rows.length;
+
+      final parsed =
+          rows.whereType<Map>().map(
+            (row) => _assignmentFromApi(Map<String, dynamic>.from(row)),
+          ).toList(growable: false);
+
+      if (reset) {
+        assignedHomeworkItems.assignAll(parsed);
+      } else {
+        assignedHomeworkItems.addAll(
+          parsed.where(
+            (item) =>
+                !assignedHomeworkItems.any((existing) => existing.id == item.id),
+          ),
+        );
+      }
       _updateTeacherClassOptions();
       await _refreshTeacherHomeworkNotification();
     } catch (e) {
-      assignedHomeworkItems.clear();
-      teacherClassOptions.clear();
+      if (reset) {
+        assignedHomeworkItems.clear();
+        teacherClassOptions.clear();
+      }
       ExceptionHandler.handleException(e, alert: false);
     } finally {
-      isAssignmentsLoading.value = false;
+      if (reset) {
+        isAssignmentsLoading.value = false;
+      } else {
+        isTeacherAssignmentsLoadingMore.value = false;
+      }
     }
+  }
+
+  Future<void> loadMoreTeacherHomeworks() async {
+    if (!hasMoreTeacherHomeworkPages) return;
+    teacherHomeworkCurrentPage.value += 1;
+    await fetchTeacherHomeworks(reset: false);
   }
 
   // Teacher homework detail/submission review flow.

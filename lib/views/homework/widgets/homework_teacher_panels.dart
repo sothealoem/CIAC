@@ -437,6 +437,30 @@ class _AllAssignedHomeworkPanel extends GetView<HomeworkController> {
                   ),
             ),
           ),
+          if (controller.hasMoreTeacherHomeworkPages ||
+              controller.isTeacherAssignmentsLoadingMore.value) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child:
+                  controller.isTeacherAssignmentsLoadingMore.value
+                      ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: _onlineClassAccent,
+                          ),
+                        ),
+                      )
+                      : OutlinedButton(
+                        onPressed: controller.loadMoreTeacherHomeworks,
+                        child: Text(
+                          'Load more (${controller.teacherHomeworkCurrentPage.value}/${controller.teacherHomeworkLastPage.value})',
+                        ),
+                      ),
+            ),
+          ],
         ],
       );
     });

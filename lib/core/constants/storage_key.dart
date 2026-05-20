@@ -13,4 +13,5 @@ enum Credential {
   token,
   username,
   password,
+  testNotificationToken,
 }

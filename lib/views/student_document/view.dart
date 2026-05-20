@@ -32,8 +32,8 @@ class StudentDocumentView extends GetView<StudentDocumentController> {
             ),
           ),
           UIConstants.spacingSmall.height,
-          CustomIndicator(progress: 1 / 4),
-          StudentDocumentWidget(),
+          const CustomIndicator(progress: 1 / 4),
+          const StudentDocumentWidget(),
         ],
       ),
     );

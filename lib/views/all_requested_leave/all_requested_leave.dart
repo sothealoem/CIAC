@@ -10,7 +10,6 @@ class AllRequestedLeaveView extends GetView<RequestLeaveController> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: Column(

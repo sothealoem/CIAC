@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/models/staff/model.dart';
@@ -366,15 +367,21 @@ class _AttendenceRecordCardWidgetState
     Widget Function()? onError,
   }) {
     final errorFallback = onError ?? () => _avatarPlaceholder(size);
+    final cacheSize = (size * 3).round();
 
     if (_isNetworkUrl(source)) {
       return ClipOval(
-        child: Image.network(
-          source,
+        child: CachedNetworkImage(
+          imageUrl: source,
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => errorFallback(),
+          memCacheWidth: cacheSize,
+          memCacheHeight: cacheSize,
+          fadeInDuration: const Duration(milliseconds: 120),
+          fadeOutDuration: const Duration(milliseconds: 120),
+          placeholder: (_, __) => _avatarPlaceholder(size),
+          errorWidget: (_, __, ___) => errorFallback(),
         ),
       );
     }

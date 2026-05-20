@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:flutter/material.dart';
@@ -160,28 +161,38 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required Widget Function() onError,
   }) {
     final source = path.trim();
-    final errorWidgetBuilder = (_, __, ___) => onError();
+    final cacheSize = (_avatarSize * 3).round();
 
     if (_isNetworkUrl(source)) {
       final headers = _networkHeaders();
       return ClipOval(
-        child: Image.network(
-          source,
+        child: CachedNetworkImage(
+          imageUrl: source,
           width: _avatarSize,
           height: _avatarSize,
           fit: BoxFit.cover,
-          headers: headers,
-          errorBuilder: (_, __, ___) {
+          httpHeaders: headers,
+          memCacheWidth: cacheSize,
+          memCacheHeight: cacheSize,
+          fadeInDuration: const Duration(milliseconds: 120),
+          fadeOutDuration: const Duration(milliseconds: 120),
+          placeholder: (_, __) => _avatarPlaceholder(),
+          errorWidget: (_, __, ___) {
             if (headers == null || headers.isEmpty) {
               return onError();
             }
             // Retry once without auth header for public file endpoints.
-            return Image.network(
-              source,
+            return CachedNetworkImage(
+              imageUrl: source,
               width: _avatarSize,
               height: _avatarSize,
               fit: BoxFit.cover,
-              errorBuilder: errorWidgetBuilder,
+              memCacheWidth: cacheSize,
+              memCacheHeight: cacheSize,
+              fadeInDuration: const Duration(milliseconds: 120),
+              fadeOutDuration: const Duration(milliseconds: 120),
+              placeholder: (_, __) => _avatarPlaceholder(),
+              errorWidget: (_, __, ___) => onError(),
             );
           },
         ),
@@ -194,7 +205,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         width: _avatarSize,
         height: _avatarSize,
         fit: BoxFit.cover,
-        errorBuilder: errorWidgetBuilder,
+        errorBuilder: (_, __, ___) => onError(),
       ),
     );
   }

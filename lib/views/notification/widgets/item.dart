@@ -8,6 +8,7 @@ class NotificationItemWidget extends StatelessWidget {
     required this.dateText,
     required this.timeText,
     this.imagePath = '',
+    this.imageUrl = '',
     this.onTap,
   });
 
@@ -15,10 +16,16 @@ class NotificationItemWidget extends StatelessWidget {
   final String dateText;
   final String timeText;
   final String imagePath;
+  final String imageUrl;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final metaText = [
+      dateText.trim(),
+      timeText.trim(),
+    ].where((part) => part.isNotEmpty).join('   ');
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -42,21 +49,30 @@ class NotificationItemWidget extends StatelessWidget {
             Container(
               width: 78,
               height: 78,
-              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColor.red, width: 2),
               ),
               child: ClipOval(
-                child: Image.asset(
-                  imagePath.isEmpty ? AssetPath.placeholder.path : imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (_, __, ___) => Image.asset(
-                        AssetPath.placeholder.path,
-                        fit: BoxFit.cover,
-                      ),
-                ),
+                child:
+                    imageUrl.trim().isNotEmpty
+                        ? CustomNetworkImage(
+                          imageUrl: imageUrl,
+                          width: 78,
+                          height: 78,
+                          fit: BoxFit.cover,
+                        )
+                        : Image.asset(
+                          imagePath.isEmpty
+                              ? AssetPath.placeholder.path
+                              : imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder:
+                              (_, __, ___) => Image.asset(
+                                AssetPath.placeholder.path,
+                                fit: BoxFit.cover,
+                              ),
+                        ),
               ),
             ),
             const SizedBox(width: 12),
@@ -75,20 +91,21 @@ class NotificationItemWidget extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$dateText   $timeText',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF676B73),
-                      fontWeight: FontWeight.w500,
+                  if (metaText.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      metaText,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFF676B73),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
             const SizedBox(width: 4),
-            // const Icon(Icons.chevron_right, size: 20, color: Color(0xFF8A8F98)),
           ],
         ),
       ),

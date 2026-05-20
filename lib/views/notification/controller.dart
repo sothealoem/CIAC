@@ -1,7 +1,184 @@
 import 'package:get/get.dart';
+import 'package:schoolapp/core/core.dart';
 
 class NotificationController extends GetxController {
-  Future<void> refreshNotifications() async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+  final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxBool isDetailLoading = false.obs;
+  final RxList<AnnouncementItem> announcements = <AnnouncementItem>[].obs;
+  final RxInt currentPage = 1.obs;
+  final RxInt lastPage = 1.obs;
+  final RxInt perPage = 10.obs;
+  final RxInt total = 0.obs;
+
+  bool get hasMorePages => currentPage.value < lastPage.value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    refreshNotifications();
+  }
+
+  Future<void> refreshNotifications({bool reset = true}) async {
+    if (reset) {
+      if (isLoading.value) return;
+    } else {
+      if (isLoading.value || isLoadingMore.value || !hasMorePages) return;
+    }
+
+    try {
+      if (reset) {
+        isLoading.value = true;
+        currentPage.value = 1;
+      } else {
+        isLoadingMore.value = true;
+      }
+
+      final res = await Get.find<ApiService>().get(
+        EndPoints.announcements,
+        queryParameters: <String, dynamic>{'page': currentPage.value},
+        isShowLoading: false,
+      );
+
+      if (res.data is! Map) {
+        if (reset) {
+          announcements.clear();
+        }
+        return;
+      }
+
+      final root = Map<String, dynamic>.from(res.data as Map);
+      final data = root['data'];
+      if (data is! Map) {
+        if (reset) {
+          announcements.clear();
+        }
+        return;
+      }
+
+      final rows = data['data'];
+      if (rows is! List) {
+        if (reset) {
+          announcements.clear();
+        }
+        return;
+      }
+
+      currentPage.value = (data['current_page'] as num?)?.toInt() ?? 1;
+      lastPage.value =
+          (data['last_page'] as num?)?.toInt() ?? currentPage.value;
+      perPage.value = (data['per_page'] as num?)?.toInt() ?? perPage.value;
+      total.value = (data['total'] as num?)?.toInt() ?? rows.length;
+
+      final parsed =
+          rows
+              .whereType<dynamic>()
+              .map((row) {
+                if (row is Map<String, dynamic>) {
+                  return AnnouncementItem.fromJson(row);
+                }
+                if (row is Map) {
+                  return AnnouncementItem.fromJson(
+                    Map<String, dynamic>.from(row),
+                  );
+                }
+                return null;
+              })
+              .whereType<AnnouncementItem>()
+              .where((item) => item.title.isNotEmpty || item.image.isNotEmpty)
+              .toList();
+
+      if (reset) {
+        announcements.assignAll(parsed);
+      } else {
+        announcements.addAll(
+          parsed.where(
+            (item) => !announcements.any((existing) => existing.id == item.id),
+          ),
+        );
+      }
+    } catch (e) {
+      if (reset) {
+        announcements.clear();
+      }
+      ExceptionHandler.handleException(e, alert: false);
+    } finally {
+      if (reset) {
+        isLoading.value = false;
+      } else {
+        isLoadingMore.value = false;
+      }
+    }
+  }
+
+  Future<void> loadMoreAnnouncements() async {
+    if (!hasMorePages) return;
+    currentPage.value += 1;
+    await refreshNotifications(reset: false);
+  }
+
+  Future<AnnouncementDetailItem?> fetchAnnouncementDetail(int id) async {
+    isDetailLoading.value = true;
+    try {
+      final res = await Get.find<ApiService>().get(
+        EndPoints.announcementDetails(id),
+        isShowLoading: false,
+      );
+
+      if (res.data is! Map) return null;
+      final root = Map<String, dynamic>.from(res.data as Map);
+      final data = root['data'];
+      if (data is! Map) return null;
+
+      return AnnouncementDetailItem.fromJson(Map<String, dynamic>.from(data));
+    } catch (e) {
+      ExceptionHandler.handleException(e);
+      return null;
+    } finally {
+      isDetailLoading.value = false;
+    }
+  }
+}
+
+class AnnouncementItem {
+  const AnnouncementItem({
+    required this.id,
+    required this.title,
+    required this.image,
+  });
+
+  final int id;
+  final String title;
+  final String image;
+
+  factory AnnouncementItem.fromJson(Map<String, dynamic> json) {
+    return AnnouncementItem(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      title: (json['title'] ?? '').toString().trim(),
+      image: (json['image'] ?? '').toString().trim(),
+    );
+  }
+}
+
+class AnnouncementDetailItem {
+  const AnnouncementDetailItem({
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.description,
+  });
+
+  final int id;
+  final String title;
+  final String image;
+  final String description;
+
+  factory AnnouncementDetailItem.fromJson(Map<String, dynamic> json) {
+    return AnnouncementDetailItem(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      title: (json['title'] ?? '').toString().trim(),
+      image: (json['image'] ?? '').toString().trim(),
+      description: (json['description'] ?? '').toString().trim(),
+    );
   }
 }

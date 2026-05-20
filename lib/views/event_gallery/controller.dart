@@ -1,10 +1,20 @@
+import 'package:dio/dio.dart' as d;
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 
 class ActivityController extends GetxController {
+  final RxBool isSubmittingActivity = false.obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
   final RxBool isDetailLoading = false.obs;
   final RxList<ClassActivityItem> activities = <ClassActivityItem>[].obs;
+  final RxInt currentPage = 1.obs;
+  final RxInt lastPage = 1.obs;
+  final RxInt perPage = 10.obs;
+  final RxInt total = 0.obs;
+
+  bool get isTeacherRole => !UserRepository.shared.isDriver;
+  bool get hasMorePages => currentPage.value < lastPage.value;
 
   @override
   void onInit() {
@@ -12,32 +22,56 @@ class ActivityController extends GetxController {
     fetchClassActivities();
   }
 
-  Future<void> fetchClassActivities() async {
+  Future<void> fetchClassActivities({bool reset = true}) async {
+    if (reset) {
+      if (isLoading.value) return;
+    } else {
+      if (isLoading.value || isLoadingMore.value || !hasMorePages) return;
+    }
+
     try {
-      isLoading.value = true;
+      if (reset) {
+        isLoading.value = true;
+        currentPage.value = 1;
+      } else {
+        isLoadingMore.value = true;
+      }
 
       final res = await Get.find<ApiService>().get(
         EndPoints.classActivities,
+        queryParameters: <String, dynamic>{'page': currentPage.value},
         isShowLoading: false,
       );
 
       if (res.data is! Map) {
-        activities.clear();
+        if (reset) {
+          activities.clear();
+        }
         return;
       }
 
       final root = Map<String, dynamic>.from(res.data as Map);
       final data = root['data'];
       if (data is! Map) {
-        activities.clear();
+        if (reset) {
+          activities.clear();
+        }
         return;
       }
 
       final list = data['data'];
       if (list is! List) {
-        activities.clear();
+        if (reset) {
+          activities.clear();
+        }
         return;
       }
+
+      currentPage.value = (data['current_page'] as num?)?.toInt() ?? 1;
+      lastPage.value =
+          (data['last_page'] as num?)?.toInt() ?? currentPage.value;
+      perPage.value = (data['per_page'] as num?)?.toInt() ?? perPage.value;
+      total.value = (data['total'] as num?)?.toInt() ?? list.length;
 
       final List<ClassActivityItem> parsed =
           list.whereType<dynamic>().map((e) {
@@ -56,13 +90,33 @@ class ActivityController extends GetxController {
             );
           }).where((e) => e.image.isNotEmpty || e.title.isNotEmpty).toList();
 
-      activities.assignAll(parsed);
+      if (reset) {
+        activities.assignAll(parsed);
+      } else {
+        activities.addAll(
+          parsed.where(
+            (item) => !activities.any((existing) => existing.id == item.id),
+          ),
+        );
+      }
     } catch (e) {
       ExceptionHandler.handleException(e);
-      activities.clear();
+      if (reset) {
+        activities.clear();
+      }
     } finally {
-      isLoading.value = false;
+      if (reset) {
+        isLoading.value = false;
+      } else {
+        isLoadingMore.value = false;
+      }
     }
+  }
+
+  Future<void> loadMoreActivities() async {
+    if (!hasMorePages) return;
+    currentPage.value += 1;
+    await fetchClassActivities(reset: false);
   }
 
   Future<ClassActivityDetailItem?> fetchClassActivityDetail(int id) async {
@@ -84,6 +138,56 @@ class ActivityController extends GetxController {
       return null;
     } finally {
       isDetailLoading.value = false;
+    }
+  }
+
+  Future<ClassActivityItem?> createActivity({
+    required String title,
+    required String description,
+    String imagePath = '',
+  }) async {
+    final trimmedTitle = title.trim();
+    final trimmedDescription = description.trim();
+    final trimmedImagePath = imagePath.trim();
+
+    if (trimmedTitle.isEmpty) {
+      throw Exception('Activity title is required');
+    }
+
+    final formMap = <String, dynamic>{
+      'title': trimmedTitle,
+      'description': trimmedDescription,
+    };
+
+    if (trimmedImagePath.isNotEmpty) {
+      final file = await d.MultipartFile.fromFile(trimmedImagePath);
+      formMap['image'] = file;
+      formMap['file'] = file;
+    }
+
+    final payload = d.FormData.fromMap(formMap);
+
+    try {
+      isSubmittingActivity.value = true;
+      final res = await Get.find<ApiService>().post(
+        EndPoints.teacherActivities,
+        payload,
+        isShowLoading: false,
+      );
+
+      final rawData = getPropertyFromJson(res.data, 'data');
+      if (rawData is Map) {
+        final created = ClassActivityItem.fromJson(
+          Map<String, dynamic>.from(rawData),
+        );
+        await fetchClassActivities();
+        return created;
+      }
+
+      await fetchClassActivities();
+      return null;
+    } finally {
+      isSubmittingActivity.value = false;
     }
   }
 }

@@ -26,12 +26,14 @@ class EndPoints {
   static String get teacherTimeSheet => '/api/v1/time-sheet/teacher';
   static String get sliders => '/api/v1/setting/sliders';
   static String get generalSetting => '/api/v1/setting/general';
+  static String get announcements => '/api/v1/setting/announcement';
   static String get classActivities => '/api/v1/setting/class/activities';
   static String get registerFcmToken => '/api/v1/notifications/fcm-token';
 
   static String teacherDashboard(dynamic teacherId) =>
       '/api/v1/teacher/dashboard/$teacherId';
   static String get teacherHomeworks => '/api/v1/teacher/homeworks';
+  static String get teacherActivities => '/api/v1/teacher/activities';
   static String teacherHomeworkDetail(dynamic id) =>
       '/api/v1/teacher/homeworks/$id';
   static String teacherHomeworkDelete(dynamic id) =>
@@ -47,6 +49,8 @@ class EndPoints {
       '/api/v1/parent/$id/invoice/details';
   static String classActivityDetails(int id) =>
       '/api/v1/setting/class/activities/$id/details';
+  static String announcementDetails(int id) =>
+      '/api/v1/setting/announcement/$id/details';
   static String get deleteAccount => '/api/v1/disable-user';
   static String get studentScanCard => '/api/v1/student/scan-card';
 }

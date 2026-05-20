@@ -40,12 +40,14 @@ class FcmTokenSyncService {
   Future<void> syncCurrentTokenIfAuthenticated({bool force = false}) async {
     final token = await FirebaseMessaging.instance.getToken();
     if (token == null || token.trim().isEmpty) return;
+    debugPrint('FCM token: ${token.trim()}');
     await syncToken(token, force: force);
   }
 
   Future<void> syncToken(String token, {bool force = false}) async {
     final normalizedToken = token.trim();
     if (normalizedToken.isEmpty) return;
+    debugPrint('FCM token: $normalizedToken');
 
     final authToken = await _ensureAccessToken();
     if (authToken.isEmpty) return;

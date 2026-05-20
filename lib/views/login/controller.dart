@@ -11,6 +11,7 @@ import 'package:schoolapp/flavor/app_config.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/dashboard/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../core/services/api_service.dart';
@@ -57,6 +58,7 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
       final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
+      debugPrint('FCM token: $fcmToken');
 
       final response = await _loginByRole(
         loginIdentity: loginIdentity,
