@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as d;
+import 'package:http_parser/http_parser.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/models.dart';
 
@@ -9,6 +11,7 @@ class HomeworkController extends GetxController {
   final RxBool isAssignmentsLoading = false.obs;
   final RxBool isTeacherAssignmentsLoadingMore = false.obs;
   final RxBool isTeacherDashboardLoading = false.obs;
+  final RxBool isTeacherClassOptionsLoading = false.obs;
   final RxBool isSubmittingAssignment = false.obs;
   final Rxn<TeacherDashboardModel> teacherDashboard =
       Rxn<TeacherDashboardModel>();
@@ -18,6 +21,7 @@ class HomeworkController extends GetxController {
       <HomeworkAssignment>[].obs;
   final RxList<HomeworkClassOption> teacherClassOptions =
       <HomeworkClassOption>[].obs;
+  final RxInt selectedTeacherDashboardClassIndex = 0.obs;
   final RxBool hasHomeworkNotification = false.obs;
   final RxSet<String> submittedAssignmentIds = <String>{}.obs;
   final RxSet<String> submittingAssignmentIds = <String>{}.obs;
@@ -29,6 +33,8 @@ class HomeworkController extends GetxController {
   bool get isParentRole => UserRepository.shared.isDriver;
   bool get hasMoreTeacherHomeworkPages =>
       teacherHomeworkCurrentPage.value < teacherHomeworkLastPage.value;
+  List<String> get teacherDashboardClassLabels =>
+      teacherClassOptions.map((option) => option.name).toList(growable: false);
   int get totalAssignments => assignedHomeworkItems.length;
   int get submittedAssignments => submittedAssignmentIds.length;
   int get pendingAssignments => totalAssignments - submittedAssignments;
@@ -49,6 +55,7 @@ class HomeworkController extends GetxController {
     if (isParentRole) {
       fetchStudentHomeworks();
     } else {
+      fetchTeacherClassOptions();
       fetchTeacherDashboardStats();
       fetchTeacherHomeworks();
     }
@@ -125,12 +132,13 @@ class HomeworkController extends GetxController {
         EndPoints.teacherDashboard(teacherId),
         isShowLoading: false,
       );
-      final data = getPropertyFromJson(res.data, 'data');
-      if (data is! Map) return;
+      final raw = res.data;
+      if (raw is! Map) return;
 
-      teacherDashboard.value = TeacherDashboardModel.fromJson(
-        Map<String, dynamic>.from(data),
-      );
+      final root = Map<String, dynamic>.from(raw);
+      final source =
+          root['data'] is Map ? Map<String, dynamic>.from(root['data']) : root;
+      teacherDashboard.value = TeacherDashboardModel.fromJson(source);
     } catch (e) {
       ExceptionHandler.handleException(e);
     } finally {
@@ -282,6 +290,43 @@ class HomeworkController extends GetxController {
     if (!hasMoreTeacherHomeworkPages) return;
     teacherHomeworkCurrentPage.value += 1;
     await fetchTeacherHomeworks(reset: false);
+  }
+
+  Future<void> fetchTeacherClassOptions() async {
+    if (isTeacherClassOptionsLoading.value) return;
+
+    try {
+      isTeacherClassOptionsLoading.value = true;
+      final res = await Get.find<ApiService>().get(
+        EndPoints.classes,
+        isShowLoading: false,
+      );
+      final rows = _extractHomeworkRows(res.data);
+      if (rows.isEmpty) {
+        return;
+      }
+
+      final options = <HomeworkClassOption>[];
+      final seen = <String>{};
+      for (final row in rows) {
+        if (row is! Map) continue;
+        final option = _classOptionFromApiMap(Map<String, dynamic>.from(row));
+        if (option == null) continue;
+
+        final key = _classOptionKey(option.id, option.name);
+        if (seen.add(key)) {
+          options.add(option);
+        }
+      }
+
+      if (options.isNotEmpty) {
+        teacherClassOptions.assignAll(options);
+      }
+    } catch (_) {
+      // Keep existing options intact if the dedicated class lookup fails.
+    } finally {
+      isTeacherClassOptionsLoading.value = false;
+    }
   }
 
   // Teacher homework detail/submission review flow.
@@ -563,10 +608,9 @@ class HomeworkController extends GetxController {
         'submitted_by': studentId.toString(),
       };
 
-      // Keep the payload as close as possible to the original attach-only flow.
-      // When a file is attached, prefer the file submission path and avoid
-      // mixing in extra text unless there is no attachment.
-      if (!hasAttachment && trimmedAnswer.isNotEmpty) {
+      // Send the answer text whenever it exists. Some backends validate the
+      // text field even when an attachment is included.
+      if (trimmedAnswer.isNotEmpty) {
         formMap['answer_text'] = trimmedAnswer;
       }
       print('Homework submit fields: $formMap');
@@ -575,16 +619,34 @@ class HomeworkController extends GetxController {
         'student_id: $studentId, '
         'submitted_by: $studentId, '
         'has_file: $hasAttachment, '
-        'answer_length: ${trimmedAnswer.length}',
+        'answer_length: ${trimmedAnswer.length}, '
+        'file_path: $trimmedAttachmentPath',
       );
       if (hasAttachment) {
-        formMap['file'] = await d.MultipartFile.fromFile(trimmedAttachmentPath);
+        final extension = File(
+          trimmedAttachmentPath,
+        ).path.split('.').last.toLowerCase();
+        final mediaType = switch (extension) {
+          'jpg' || 'jpeg' => MediaType('image', 'jpeg'),
+          'png' => MediaType('image', 'png'),
+          'webp' => MediaType('image', 'webp'),
+          _ => MediaType('application', 'octet-stream'),
+        };
+        formMap['file'] = await d.MultipartFile.fromFile(
+          trimmedAttachmentPath,
+          filename: File(trimmedAttachmentPath).uri.pathSegments.last,
+          contentType: mediaType,
+        );
       }
 
       final payload = d.FormData.fromMap(formMap);
       final res = await Get.find<ApiService>().post(
         EndPoints.studentHomeworkSubmit,
         payload,
+        cusHeaders: const <String, dynamic>{
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+        },
         isShowLoading: false,
       );
       _ensureHomeworkSubmitSucceeded(res.data);
@@ -757,32 +819,30 @@ class HomeworkController extends GetxController {
   }
 
   void _updateTeacherClassOptions() {
-    final byId = <int, HomeworkClassOption>{};
-    final byName = <String, HomeworkClassOption>{};
+    final merged = <HomeworkClassOption>[];
+    final seen = <String>{};
 
-    for (final item in assignedHomeworkItems) {
-      final name = item.className.trim();
-      final classId = item.classId;
-      if (name.isEmpty) continue;
-
-      final option = HomeworkClassOption(id: classId, name: name);
-      if (classId != null && classId > 0) {
-        byId[classId] = option;
-      } else {
-        byName[name.toLowerCase()] = option;
+    for (final option in teacherClassOptions) {
+      final key = _classOptionKey(option.id, option.name);
+      if (seen.add(key)) {
+        merged.add(option);
       }
     }
 
-    final options = <HomeworkClassOption>[
-      ...byId.values,
-      ...byName.values.where(
-        (option) =>
-            option.id == null ||
-            !byId.containsKey(option.id),
-      ),
-    ]..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    for (final item in assignedHomeworkItems) {
+      final name = item.className.trim();
+      if (name.isEmpty) continue;
 
-    teacherClassOptions.assignAll(options);
+      final option = HomeworkClassOption(id: item.classId, name: name);
+      final key = _classOptionKey(option.id, option.name);
+      if (seen.add(key)) {
+        merged.add(option);
+      }
+    }
+
+    if (merged.isNotEmpty) {
+      teacherClassOptions.assignAll(merged);
+    }
   }
 
   List<dynamic> _extractHomeworkRows(dynamic raw) {
@@ -808,6 +868,15 @@ class HomeworkController extends GetxController {
   }
 
   Future<int?> _resolveStudentClassId() async {
+    if (Get.isRegistered<SelectedStudentService>()) {
+      final selectedClassId =
+          Get.find<SelectedStudentService>().current?.classId.trim() ?? '';
+      final parsed = int.tryParse(selectedClassId);
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+
     final cachedKeys = <String>[
       'selected_child_class_id',
       'student_info_class_id',
@@ -821,36 +890,11 @@ class HomeworkController extends GetxController {
       }
     }
 
-    final selectedStudentId =
-        (await SharedPreferencesManager.get('selected_child_id') ?? '')
-            .toString()
-            .trim();
-
     try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.parentStudentInfo,
-        isShowLoading: false,
-      );
-      final classId = await _findClassIdForSelectedStudent(
-        res.data,
-        selectedStudentId,
-      );
-      if (classId != null) {
-        await SharedPreferencesManager.setValue(
-          'selected_child_class_id',
-          classId.toString(),
-        );
-        await SharedPreferencesManager.setValue(
-          'student_info_class_id',
-          classId.toString(),
-        );
-        return classId;
-      }
-    } catch (_) {
-      // Fall through to the profile lookup below.
-    }
-
-    try {
+      final selectedStudentId =
+          (await SharedPreferencesManager.get('selected_child_id') ?? '')
+              .toString()
+              .trim();
       final res = await Get.find<ApiService>().get(
         EndPoints.parentProfile,
         queryParameters:
@@ -886,7 +930,18 @@ class HomeworkController extends GetxController {
         .trim();
   }
 
+
   Future<String> _resolveStudentClassName() async {
+    if (Get.isRegistered<SelectedStudentService>()) {
+      final selectedClassName =
+          Get.find<SelectedStudentService>().current?.className.trim() ?? '';
+      if (selectedClassName.isNotEmpty &&
+          selectedClassName.toLowerCase() != 'n/a' &&
+          selectedClassName.toLowerCase() != 'null') {
+        return selectedClassName;
+      }
+    }
+
     final cachedKeys = <String>[
       'selected_child_class_name',
       'student_info_class_name',
@@ -900,33 +955,6 @@ class HomeworkController extends GetxController {
         return raw;
       }
     }
-
-    final selectedStudentId =
-        (await SharedPreferencesManager.get('selected_child_id') ?? '')
-            .toString()
-            .trim();
-
-    try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.parentStudentInfo,
-        isShowLoading: false,
-      );
-      final className = _findClassNameForSelectedStudent(
-        res.data,
-        selectedStudentId,
-      );
-      if (className.isNotEmpty) {
-        await SharedPreferencesManager.setValue(
-          'selected_child_class_name',
-          className,
-        );
-        await SharedPreferencesManager.setValue(
-          'student_info_class_name',
-          className,
-        );
-        return className;
-      }
-    } catch (_) {}
 
     return 'N/A';
   }
@@ -1035,30 +1063,21 @@ class HomeworkController extends GetxController {
       return null;
     }
 
-    final local = _classIdFor(className);
-    if (local != null) {
-      return local;
+    for (final option in teacherClassOptions) {
+      if (option.name.trim().toLowerCase() == normalized &&
+          option.id != null &&
+          option.id! > 0) {
+        return option.id;
+      }
     }
 
     try {
-      final res = await Get.find<ApiService>().get(
-        EndPoints.teacherHomeworks,
-        isShowLoading: false,
-      );
-      final rows = _extractHomeworkRows(res.data);
-      for (final row in rows) {
-        if (row is! Map) continue;
-        final map = Map<String, dynamic>.from(row);
-        final rowClassName =
-            (map['class_name'] ?? map['class'] ?? map['grade'] ?? '')
-                .toString()
-                .trim()
-                .toLowerCase();
-        final rowClassId = _findClassId(map);
-        if (rowClassName == normalized &&
-            rowClassId != null &&
-            rowClassId > 0) {
-          return rowClassId;
+      await fetchTeacherClassOptions();
+      for (final option in teacherClassOptions) {
+        if (option.name.trim().toLowerCase() == normalized &&
+            option.id != null &&
+            option.id! > 0) {
+          return option.id;
         }
       }
     } catch (_) {}
@@ -1235,29 +1254,24 @@ class HomeworkController extends GetxController {
     );
   }
 
-  int? _classIdFor(String className) {
-    const classIds = <String, int>{
-      'K1': 1,
-      'K2': 2,
-      'K3': 3,
-      'Grade 3A': 1,
-      'Grade 4A': 2,
-      'Grade 5B': 3,
-    };
-    final trimmed = className.trim();
-    final direct = classIds[trimmed];
-    if (direct != null) {
-      return direct;
+  HomeworkClassOption? _classOptionFromApiMap(Map<String, dynamic> map) {
+    final classId = _readInt(map, const ['id', 'class_id', 'classId']);
+    final className = _readText(
+      map,
+      const ['class_name', 'name', 'class', 'grade', 'grade_name'],
+      '',
+    ).trim();
+    if (classId <= 0 || className.isEmpty) {
+      return null;
     }
+    return HomeworkClassOption(id: classId, name: className);
+  }
 
-    final kinder = RegExp(r'^K\s*(\d+)$', caseSensitive: false).firstMatch(
-      trimmed,
-    );
-    if (kinder != null) {
-      return int.tryParse(kinder.group(1)!);
+  String _classOptionKey(int? id, String name) {
+    if (id != null && id > 0) {
+      return 'id:$id';
     }
-
-    return null;
+    return 'name:${name.trim().toLowerCase()}';
   }
 
   Future<void> _refreshParentHomeworkNotification(String studentId) async {

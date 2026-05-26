@@ -8,9 +8,14 @@ class TeacherDashboardModel {
   final int totalStudents;
 
   factory TeacherDashboardModel.fromJson(Map<String, dynamic> json) {
+    final source =
+        json['data'] is Map
+            ? Map<String, dynamic>.from(json['data'] as Map)
+            : json;
     return TeacherDashboardModel(
-      totalClasses: _asInt(json['total_classes']),
-      totalStudents: _asInt(json['total_students']),
+      totalClasses: _asInt(source['total_classes'] ?? source['totalClasses']),
+      totalStudents:
+          _asInt(source['total_students'] ?? source['totalStudents']),
     );
   }
 

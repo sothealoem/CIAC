@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:schoolapp/core/utils/utils.dart';
 
 class ExceptionHandler {
@@ -20,6 +22,14 @@ class ExceptionHandler {
 
     if (error is DioException) {
       if (_shouldSilenceDio(error)) {
+        final transientMessage = _mapDioException(error).trim();
+        if (transientMessage.isNotEmpty) {
+          DialogManager.showTopBanner(
+            title: 'Network',
+            message: transientMessage,
+            backgroundColor: const Color(0xFFB45309),
+          );
+        }
         return;
       }
 
@@ -54,15 +64,22 @@ class ExceptionHandler {
       return;
     }
 
-    DialogManager.showDialog(
-      title: title,
-      subTitle: message.isEmpty ? 'Something went wrong' : message,
-    ).then((value) {
-      if (onValue == null) {
-        return;
+    try {
+      DialogManager.showDialog(
+        title: title,
+        subTitle: message.isEmpty ? 'Something went wrong' : message,
+      ).then((value) {
+        if (onValue == null) {
+          return;
+        }
+        onValue(value);
+      });
+    } catch (dialogError, stackTrace) {
+      if (kDebugMode) {
+        debugPrint('Failed to present error dialog: $dialogError');
+        debugPrintStack(stackTrace: stackTrace);
       }
-      onValue(value);
-    });
+    }
   }
 
   static String _mapDioException(DioException error) {

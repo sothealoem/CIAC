@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
-import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:logging/logging.dart';
@@ -24,13 +23,10 @@ Future<void> main() async {
       await dotenv.load(fileName: '.env');
       print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
       await Firebase.initializeApp();
-      await FirebaseMessaging.instance.requestPermission();
 
       await _initEnvironment();
       await _setAppSystemPreferences();
       await _initServices();
-      await FcmTokenSyncService.instance.initialize();
-      await HomeworkNotificationService.instance.initialize();
 
       if (kDebugMode) {
         Logger.root.level = Level.ALL;
@@ -39,7 +35,7 @@ Future<void> main() async {
         Logger.root.level = Level.OFF;
       }
       runApp(const MyApp());
-      unawaited(HomeworkNotificationService.instance.handleInitialMessage());
+      unawaited(_bootstrapDeferredServices());
     },
     (exception, trace) {
       ExceptionHandler.handleException(exception);
@@ -113,4 +109,21 @@ Future<void> _initEnvironment() async {
 Future<void> _initServices() async {
   AppConfig.shared;
   Get.put<ApiService>(ApiService());
+  await Get.put<SelectedStudentService>(SelectedStudentService()).initialize();
+}
+
+Future<void> _bootstrapDeferredServices() async {
+  try {
+    await FirebaseMessaging.instance.requestPermission();
+    await FcmTokenSyncService.instance.initialize();
+    await HomeworkNotificationService.instance.initialize();
+
+    unawaited(ClassTopicSubscriptionService.instance.syncSelectedClassTopic());
+    unawaited(HomeworkNotificationService.instance.handleInitialMessage());
+  } catch (error, stackTrace) {
+    if (kDebugMode) {
+      debugPrint('Deferred service bootstrap failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+  }
 }

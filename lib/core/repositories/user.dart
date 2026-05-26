@@ -23,6 +23,9 @@ class UserRepository {
   ProfileModel get profile => _profile;
 
   Future<void> logout() async {
+    if (Get.isRegistered<SelectedStudentService>()) {
+      await Get.find<SelectedStudentService>().clear();
+    }
     SharedPreferencesManager.remove(Credential.token.name);
     Get.offAllNamed(Routes.login);
   }

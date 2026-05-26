@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '478573598288',
     projectId: 'ciac-school',
     storageBucket: 'ciac-school.firebasestorage.app',
-    iosBundleId: 'com.example.swisSchool',
+    iosBundleId: 'com.example.ciacShcool',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '478573598288',
     projectId: 'ciac-school',
     storageBucket: 'ciac-school.firebasestorage.app',
-    iosBundleId: 'com.example.swisSchool',
+    iosBundleId: 'com.example.ciacShcool',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

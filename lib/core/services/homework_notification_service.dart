@@ -81,24 +81,24 @@ class HomeworkNotificationService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    final isHomework = _isHomeworkMessage(message);
+    final notificationType = _notificationType(message);
     debugPrint(
       'Foreground FCM received: '
       'title="${message.notification?.title ?? message.data['title'] ?? ''}", '
       'body="${message.notification?.body ?? message.data['body'] ?? ''}", '
       'data=${message.data}, '
-      'isHomework=$isHomework',
+      'type=$notificationType',
     );
-    if (!isHomework) return;
+    if (notificationType == null) return;
 
     await _localNotifications.show(
       message.hashCode,
       message.notification?.title ??
           message.data['title']?.toString() ??
-          'New Homework',
+          _defaultTitle(notificationType),
       message.notification?.body ??
           message.data['body']?.toString() ??
-          'You have a new homework assignment.',
+          _defaultBody(notificationType),
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'homework_channel',
@@ -117,24 +117,36 @@ class HomeworkNotificationService {
           sound: 'homework_notification.wav',
         ),
       ),
-      payload: 'homework',
+      payload: notificationType,
     );
-    debugPrint('Foreground local notification shown for homework message.');
+    debugPrint(
+      'Foreground local notification shown for $notificationType message.',
+    );
   }
 
   void _onNotificationResponse(NotificationResponse response) {
-    if (response.payload == 'homework') {
-      unawaited(Get.toNamed(Routes.homework));
+    switch (response.payload) {
+      case 'activity':
+        unawaited(_openActivityScreen());
+        break;
+      case 'homework':
+        unawaited(_openHomeworkScreen());
+        break;
     }
   }
 
   void _handleMessageTap(RemoteMessage message) {
-    if (_isHomeworkMessage(message)) {
-      unawaited(Get.toNamed(Routes.homework));
+    switch (_notificationType(message)) {
+      case 'activity':
+        unawaited(_openActivityScreen());
+        break;
+      case 'homework':
+        unawaited(_openHomeworkScreen());
+        break;
     }
   }
 
-  bool _isHomeworkMessage(RemoteMessage message) {
+  String? _notificationType(RemoteMessage message) {
     final type = (message.data['type'] ?? '').toString().trim().toLowerCase();
     final category =
         (message.data['category'] ?? '').toString().trim().toLowerCase();
@@ -143,8 +155,30 @@ class HomeworkNotificationService {
             .toString()
             .toLowerCase();
 
-    return type == 'homework' ||
-        category == 'homework' ||
-        title.contains('homework');
+    if (type == 'activity' || category == 'activity' || title.contains('activity')) {
+      return 'activity';
+    }
+    if (type == 'homework' || category == 'homework' || title.contains('homework')) {
+      return 'homework';
+    }
+    return null;
+  }
+
+  String _defaultTitle(String type) {
+    return type == 'activity' ? 'New Class Activity' : 'New Homework';
+  }
+
+  String _defaultBody(String type) {
+    return type == 'activity'
+        ? 'You have a new class activity.'
+        : 'You have a new homework assignment.';
+  }
+
+  Future<void> _openActivityScreen() async {
+    await Get.toNamed(Routes.activity);
+  }
+
+  Future<void> _openHomeworkScreen() async {
+    await Get.toNamed(Routes.homework);
   }
 }

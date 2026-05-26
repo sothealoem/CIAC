@@ -13,6 +13,8 @@ class PaymentHistoryController extends GetxController {
   final Rxn<ParentInvoiceDetailsResponse> selectedInvoice = Rxn();
   final RxnInt loadingInvoiceId = RxnInt();
   final RxInt selectedStatusTab = 0.obs; // 0=all,1=paid,2=unpaid
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
 
   @override
   void onInit() {
@@ -72,6 +74,12 @@ class PaymentHistoryController extends GetxController {
   }
 
   Future<void> _loadSelectedChildAvatar() async {
+    final selectedAvatar = _selectedStudentService.current?.avatar.trim() ?? '';
+    if (selectedAvatar.isNotEmpty) {
+      selectedChildAvatar.value = selectedAvatar;
+      return;
+    }
+
     selectedChildAvatar.value =
         (await SharedPreferencesManager.get('selected_child_avatar') ?? '')
             .toString()

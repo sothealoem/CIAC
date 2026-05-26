@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart' as d;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/resources/resources.dart';
 import 'package:schoolapp/core/services/end_points.dart';
+import 'package:schoolapp/core/services/class_topic_subscription_service.dart';
 import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
+import 'package:schoolapp/core/services/selected_student_service.dart';
 import 'package:schoolapp/core/utils/exception_manager.dart';
 import 'package:schoolapp/core/utils/form_validator.dart';
 import 'package:schoolapp/core/constants/constants.dart';
@@ -57,7 +61,7 @@ class LoginController extends GetxController {
 
     try {
       isLoading.value = true;
-      final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
+      final fcmToken = await _getFcmToken();
       debugPrint('FCM token: $fcmToken');
 
       final response = await _loginByRole(
@@ -142,16 +146,7 @@ class LoginController extends GetxController {
       }
 
       UserRepository.shared.setUserType(role);
-
-      if (Get.isRegistered<DashboardController>()) {
-        final dashboardController = Get.find<DashboardController>();
-        dashboardController.userName.value = name;
-        await dashboardController.fetchSliders();
-      }
       AppConfig.shared.token = token;
-      await FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
-        force: true,
-      );
 
       await SharedPreferencesManager.setValue('token', token);
       await SharedPreferencesManager.setValue('username', loginIdentity);
@@ -168,7 +163,14 @@ class LoginController extends GetxController {
 
       Get.updateLocale(AppConfig.shared.languageLocale);
 
+      if (Get.isRegistered<DashboardController>()) {
+        final dashboardController = Get.find<DashboardController>();
+        dashboardController.userName.value = name;
+      }
+
       Get.offAllNamed(Routes.start);
+
+      unawaited(_postLoginSetup());
     } catch (e) {
       DialogManager.showDialog(
         title: LocaleKeys.error.tr,
@@ -182,6 +184,10 @@ class LoginController extends GetxController {
   }
 
   Future<void> logout() async {
+    await ClassTopicSubscriptionService.instance.clearSubscription();
+    if (Get.isRegistered<SelectedStudentService>()) {
+      await Get.find<SelectedStudentService>().clear();
+    }
     await SharedPreferencesManager.clear();
     AppConfig.shared.token = '';
     Get.offAllNamed(Routes.login);
@@ -250,12 +256,41 @@ class LoginController extends GetxController {
     );
   }
 
+  Future<String> _getFcmToken() async {
+    try {
+      return await FirebaseMessaging.instance
+              .getToken()
+              .timeout(const Duration(seconds: 2), onTimeout: () => null) ??
+          '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Future<void> _postLoginSetup() async {
+    try {
+      await Future.wait([
+        FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
+          force: true,
+        ),
+        ClassTopicSubscriptionService.instance.syncSelectedClassTopic(),
+      ]);
+
+      if (Get.isRegistered<DashboardController>()) {
+        await Get.find<DashboardController>().fetchSliders();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Post-login setup failed: $e');
+      }
+    }
+  }
+
   Future<dynamic> _loginWithPhone({
     required String loginIdentity,
     required String password,
     required String fcmToken,
   }) async {
-    final api = Get.find<ApiService>();
     final rawPhone = loginIdentity.trim();
     final normalizedPhone = _normalizePhone(loginIdentity);
 
@@ -267,61 +302,24 @@ class LoginController extends GetxController {
     }
 
     final attempts = <Map<String, dynamic>>[
-      {"phone": rawPhone, "password": password, "fcm_token": fcmToken},
-      {"phone": normalizedPhone, "password": password, "fcm_token": fcmToken},
-      {"phone_number": rawPhone, "password": password, "fcm_token": fcmToken},
-      {
-        "phone_number": normalizedPhone,
-        "password": password,
-        "fcm_token": fcmToken,
-      },
       {
         "phone": rawPhone,
         "phone_number": rawPhone,
+        "username": rawPhone,
         "password": password,
         "fcm_token": fcmToken,
       },
-      {
-        "phone": normalizedPhone,
-        "phone_number": normalizedPhone,
-        "password": password,
-        "fcm_token": fcmToken,
-      },
-      {"username": rawPhone, "password": password, "fcm_token": fcmToken},
-      {
-        "username": normalizedPhone,
-        "password": password,
-        "fcm_token": fcmToken,
-      },
+      if (normalizedPhone != rawPhone)
+        {
+          "phone": normalizedPhone,
+          "phone_number": normalizedPhone,
+          "username": normalizedPhone,
+          "password": password,
+          "fcm_token": fcmToken,
+        },
     ];
 
-    dynamic latestResponse = {
-      "success": false,
-      "message": LocaleKeys.loginFailed.tr,
-    };
-
-    for (final payload in attempts) {
-      try {
-        final res = await api.post(
-          EndPoints.login,
-          payload,
-          isShowLoading: true,
-        );
-        latestResponse = res.data;
-        if (latestResponse is Map && latestResponse['success'] == true) {
-          return latestResponse;
-        }
-      } on d.DioException catch (e) {
-        latestResponse =
-            e.response?.data ??
-            {
-              "success": false,
-              "message": e.message ?? LocaleKeys.loginFailed.tr,
-            };
-      }
-    }
-
-    return latestResponse;
+    return _performLoginAttempts(attempts);
   }
 
   Future<dynamic> _loginTeacher({
@@ -329,70 +327,122 @@ class LoginController extends GetxController {
     required String password,
     required String fcmToken,
   }) async {
-    final api = Get.find<ApiService>();
     final attempts = <Map<String, dynamic>>[];
     final rawIdentity = loginIdentity.trim();
     final normalizedPhone = _normalizePhone(loginIdentity);
+    final normalizedEmail = loginIdentity.trim().toLowerCase();
 
-    if (_isLikelyPhone(loginIdentity)) {
+    attempts.add({
+      "username": rawIdentity,
+      if (_isLikelyEmail(loginIdentity)) "email": normalizedEmail,
+      "phone": rawIdentity,
+      "phone_number": rawIdentity,
+      "password": password,
+      "fcm_token": fcmToken,
+    });
+
+    if (_isLikelyPhone(loginIdentity) && normalizedPhone != rawIdentity) {
       attempts.add({
-        "phone": rawIdentity,
-        "password": password,
-        "fcm_token": fcmToken,
-      });
-      attempts.add({
+        "username": normalizedPhone,
         "phone": normalizedPhone,
-        "password": password,
-        "fcm_token": fcmToken,
-      });
-      attempts.add({
-        "phone_number": rawIdentity,
-        "password": password,
-        "fcm_token": fcmToken,
-      });
-      attempts.add({
         "phone_number": normalizedPhone,
         "password": password,
         "fcm_token": fcmToken,
       });
     }
 
-    if (_isLikelyEmail(loginIdentity)) {
-      attempts.add({
-        "email": loginIdentity.toLowerCase(),
-        "password": password,
-        "fcm_token": fcmToken,
-      });
-    }
+    return _performLoginAttempts(attempts);
+  }
 
-    attempts.add({
-      "username": rawIdentity,
-      "password": password,
-      "fcm_token": fcmToken,
-    });
+  Future<dynamic> _performLoginAttempts(
+    List<Map<String, dynamic>> attempts,
+  ) async {
+    final api = Get.find<ApiService>();
+    final seenPayloads = <String>{};
+    dynamic bestFailure = {
+      "success": false,
+      "message": LocaleKeys.loginFailed.tr,
+    };
 
-    dynamic latestResponse;
     for (final payload in attempts) {
+      final filteredPayload = Map<String, dynamic>.fromEntries(
+        payload.entries.where(
+          (entry) => entry.value != null && entry.value.toString().trim().isNotEmpty,
+        ),
+      );
+      final payloadKey = filteredPayload.entries
+          .map((entry) => '${entry.key}=${entry.value}')
+          .join('&');
+      if (!seenPayloads.add(payloadKey)) {
+        continue;
+      }
+
       try {
         final res = await api.post(
           EndPoints.login,
-          payload,
+          filteredPayload,
           isShowLoading: true,
         );
-        latestResponse = res.data;
-        if (latestResponse is Map && latestResponse['success'] == true) {
-          return latestResponse;
+        final response = res.data;
+        if (response is Map && response['success'] == true) {
+          return response;
+        }
+        if (_preferFailure(response, bestFailure)) {
+          bestFailure = response;
         }
       } on d.DioException catch (e) {
-        latestResponse =
+        final failure =
             e.response?.data ??
             {
               "success": false,
               "message": e.message ?? LocaleKeys.loginFailed.tr,
             };
+        if (_preferFailure(failure, bestFailure)) {
+          bestFailure = failure;
+        }
       }
     }
-    return latestResponse;
+
+    return bestFailure;
+  }
+
+  bool _preferFailure(dynamic candidate, dynamic current) {
+    final candidateMessage = _extractErrorMessage(candidate);
+    final currentMessage = _extractErrorMessage(current);
+    if (candidateMessage.isEmpty) {
+      return false;
+    }
+    if (currentMessage.isEmpty) {
+      return true;
+    }
+    final candidateGeneric = _isGenericLoginMessage(candidateMessage);
+    final currentGeneric = _isGenericLoginMessage(currentMessage);
+    if (candidateGeneric == currentGeneric) {
+      return candidateMessage.length > currentMessage.length;
+    }
+    return !candidateGeneric;
+  }
+
+  String _extractErrorMessage(dynamic response) {
+    if (response is Map) {
+      final message =
+          response['message'] ??
+          response['error'] ??
+          response['detail'] ??
+          '';
+      return message.toString().trim();
+    }
+    return (response ?? '').toString().trim();
+  }
+
+  bool _isGenericLoginMessage(String message) {
+    final lower = message.trim().toLowerCase();
+    return lower.isEmpty ||
+        lower == 'login failed' ||
+        lower == 'invalid credentials' ||
+        lower == 'invalid credential' ||
+        lower == 'unauthorized' ||
+        lower == 'error';
   }
 
   bool _isLikelyPhone(String text) {

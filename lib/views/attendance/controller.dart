@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
@@ -25,6 +27,9 @@ class AttendanceController extends GetxController {
   final RxInt currentPage = 1.obs;
   final RxInt lastPage = 1.obs;
   final RxInt perPage = 15.obs;
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
+  bool get isParentMode => UserRepository.shared.isDriver;
 
   bool isDone = false;
 
@@ -92,17 +97,16 @@ class AttendanceController extends GetxController {
     }
     summaryError.value = '';
     try {
-      final studentId = await _resolveStudentId();
+      final studentId = isParentMode ? await _resolveStudentId() : null;
       final month = MonthFilterItem.fromMonth(selectedMonth.value);
       final startDate = month.startDate(selectedYear.value);
       final endDate = month.endDate(selectedYear.value);
       final queryParams = <String, dynamic>{
-        'student_id': studentId,
-        'class_id': null,
         'start_date': _formatDate(startDate),
         'end_date': _formatDate(endDate),
         'page': currentPage.value,
         'per_page': perPage.value,
+        if (studentId != null) 'student_id': studentId,
       };
 
       final res = await Get.find<ApiService>().get(
@@ -141,8 +145,8 @@ class AttendanceController extends GetxController {
       } else {
         _setSummaries(_filterItemsBySelectedMonth(data), append: !reset);
       }
-      if (reset) {
-        await _fetchLateCountFromAttendanceRecord(studentId);
+      if (reset && isParentMode) {
+        unawaited(_fetchLateCountFromAttendanceRecord(studentId));
       }
     } catch (e) {
       if (reset) {
@@ -327,6 +331,14 @@ class AttendanceController extends GetxController {
   }
 
   Future<int?> _resolveStudentId() async {
+    final selectedId = _selectedStudentService.current?.id.trim() ?? '';
+    if (selectedId.isNotEmpty) {
+      final parsed = int.tryParse(selectedId);
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+
     final keys = <String>[
       'selected_child_id',
       'student_info_id',

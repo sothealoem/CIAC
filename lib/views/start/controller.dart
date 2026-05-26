@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:schoolapp/views/scan/scan_log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,17 +15,35 @@ class StartController extends GetxController {
   final RxString userName = ''.obs;
   final RxBool isParentUser = false.obs;
   late Rx<Widget> selectedScreen = _buildScreen(0).obs;
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
+  Worker? _selectedStudentWorker;
 
   @override
   void onInit() {
     UserRepository.shared;
     isParentUser.value = UserRepository.shared.isDriver;
+    _selectedStudentWorker = ever<ChildProfile?>(
+      _selectedStudentService.selected,
+      (child) {
+        if (!isParentUser.value) {
+          return;
+        }
+        profileUrl.value = _normalizeProfileUrl(child?.avatar ?? '');
+      },
+    );
     _syncRoleFromStorage();
     _setLocalProfileFallback();
     _loadLocalProfileFromStorage();
     fetchUserProfileFromApi();
 
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _selectedStudentWorker?.dispose();
+    super.onClose();
   }
 
   void handleClickBack() {
@@ -100,7 +120,11 @@ class StartController extends GetxController {
   void _refreshDashboardSliderIfNeeded(int index) {
     if (index != 0) return;
     if (!Get.isRegistered<DashboardController>()) return;
-    Get.find<DashboardController>().fetchSliders();
+    final controller = Get.find<DashboardController>();
+    if (controller.sliderImages.isNotEmpty || controller.isSliderLoading.value) {
+      return;
+    }
+    controller.fetchSliders();
   }
 
   void _refreshPaymentHistoryIfNeeded(int index) {
@@ -252,11 +276,12 @@ class StartController extends GetxController {
       return;
     }
 
-    final cachedAvatar =
-        (await SharedPreferencesManager.get('selected_child_avatar') ?? '')
-            .toString()
-            .trim();
-    profileUrl.value = _normalizeProfileUrl(cachedAvatar);
+    final selectedChild = _selectedStudentService.current;
+    if (selectedChild != null) {
+      profileUrl.value = _normalizeProfileUrl(selectedChild.avatar);
+      unawaited(ClassTopicSubscriptionService.instance.syncSelectedClassTopic());
+      return;
+    }
 
     try {
       final res = await Get.find<ApiService>().get(
@@ -275,70 +300,28 @@ class StartController extends GetxController {
         return;
       }
 
-      var selectedId =
-          (await SharedPreferencesManager.get('selected_child_id') ?? '')
-              .toString()
-              .trim();
-      if (selectedId.isEmpty) {
-        selectedId = (students.first.id?.toString() ?? '').trim();
-        if (selectedId.isNotEmpty) {
-          await SharedPreferencesManager.setValue(
-            'selected_child_id',
-            selectedId,
-          );
-        }
-      }
+      final children = students
+          .map(
+            (student) => ChildProfile(
+              id: (student.id?.toString() ?? student.admissionNo ?? '').trim(),
+              name: _firstNonEmpty([
+                student.nameKh,
+                student.name,
+                student.admissionNo,
+              ]),
+              avatar: (student.profile ?? '').trim(),
+              classId: (student.classId?.toString() ?? '').trim(),
+              className: (student.className ?? '').trim(),
+            ),
+          )
+          .where((child) => child.id.isNotEmpty || child.name.isNotEmpty)
+          .toList(growable: false);
 
-      parent_model.Student selected = students.first;
-      var matchedSelectedId = false;
-      if (selectedId.isNotEmpty) {
-        for (final child in students) {
-          if ((child.id?.toString() ?? '').trim() == selectedId) {
-            selected = child;
-            matchedSelectedId = true;
-            break;
-          }
-        }
-      }
-
-      if (!matchedSelectedId) {
-        final fallbackSelectedId = (selected.id?.toString() ?? '').trim();
-        if (fallbackSelectedId.isNotEmpty) {
-          await SharedPreferencesManager.setValue(
-            'selected_child_id',
-            fallbackSelectedId,
-          );
-        }
-      }
-
-      final selectedProfile = _normalizeProfileUrl(selected.profile);
-
-      profileUrl.value = selectedProfile;
-      final selectedName = _firstNonEmpty([
-        selected.nameKh,
-        selected.name,
-        selected.admissionNo,
-      ]);
-      await SharedPreferencesManager.setValue(
-        'selected_child_name',
-        selectedName,
+      await _selectedStudentService.setChildren(children);
+      profileUrl.value = _normalizeProfileUrl(
+        _selectedStudentService.current?.avatar ?? '',
       );
-      await SharedPreferencesManager.setValue(
-        'selected_child_class_id',
-        (selected.classId?.toString() ?? '').trim(),
-      );
-      await SharedPreferencesManager.setValue(
-        'selected_child_class_name',
-        (selected.className ?? '').trim(),
-      );
-      await SharedPreferencesManager.setValue(
-        'student_info_class_name',
-        (selected.className ?? '').trim(),
-      );
-      await SharedPreferencesManager.setValue(
-        'selected_child_avatar',
-        selected.profile ?? '',
-      );
+      await ClassTopicSubscriptionService.instance.syncSelectedClassTopic();
     } catch (_) {}
   }
 

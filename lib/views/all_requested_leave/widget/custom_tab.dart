@@ -82,7 +82,7 @@ class CustomTopTabBar extends StatelessWidget {
                                     : const Color(0xFF64748B),
                             fontWeight:
                                 isSelected ? FontWeight.w700 : FontWeight.w500,
-                            fontFamily: AppFontFamily.localized,
+                            fontFamily: AppFontFamily.forText(tab.title),
                           ),
                         ),
                       ),

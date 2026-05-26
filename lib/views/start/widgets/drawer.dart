@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:schoolapp/models/child_profile/child_profile.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/views/homework/controller.dart';
+import 'package:schoolapp/views/event_gallery/controller.dart';
 import 'package:schoolapp/views/payment_collection/controller.dart';
 import 'package:schoolapp/views/payment_history/controller.dart';
 import 'package:schoolapp/views/schedule/controller.dart';
@@ -20,23 +23,22 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  static List<ChildProfile> _cachedChildren = const <ChildProfile>[];
-  static String _cachedSelectedChildId = '';
-
   bool _isLoadingChildren = false;
   List<ChildProfile> _children = const <ChildProfile>[];
   String _selectedChildId = '';
 
   bool get _isParentRole => UserRepository.shared.isDriver;
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
 
   @override
   void initState() {
     super.initState();
     _loadSelectedChild();
     if (_isParentRole) {
-      if (_cachedChildren.isNotEmpty) {
-        _children = _cachedChildren;
-        _selectedChildId = _cachedSelectedChildId;
+      if (_selectedStudentService.children.isNotEmpty) {
+        _children = _selectedStudentService.children.toList(growable: false);
+        _selectedChildId = _selectedStudentService.current?.id ?? '';
       } else {
         _fetchParentChildren();
       }
@@ -44,10 +46,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   Future<void> _loadSelectedChild() async {
-    final value =
-        (await SharedPreferencesManager.get('selected_child_id') ?? '')
-            .toString()
-            .trim();
+    await _selectedStudentService.refreshFromStorage();
+    final value = _selectedStudentService.current?.id ?? '';
     if (!mounted) {
       return;
     }
@@ -87,49 +87,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         }
       }
 
-      setState(() {
-        _children = list;
-        _selectedChildId = selected;
-      });
-      _cachedChildren = list;
-      _cachedSelectedChildId = selected;
-
-      if (selected.isNotEmpty) {
-        await SharedPreferencesManager.setValue('selected_child_id', selected);
-        ChildProfile? current;
-        for (final child in list) {
-          if (child.id == selected) {
-            current = child;
-            break;
-          }
-        }
-        if (current != null) {
-          await SharedPreferencesManager.setValue(
-            'selected_child_name',
-            current.name,
-          );
-          await SharedPreferencesManager.setValue(
-            'selected_child_avatar',
-            current.avatar,
-          );
-          await SharedPreferencesManager.setValue(
-            'selected_child_class_id',
-            current.classId,
-          );
-          await SharedPreferencesManager.setValue(
-            'student_info_class_id',
-            current.classId,
-          );
-          await SharedPreferencesManager.setValue(
-            'selected_child_class_name',
-            current.className,
-          );
-          await SharedPreferencesManager.setValue(
-            'student_info_class_name',
-            current.className,
-          );
-        }
+      await _selectedStudentService.setChildren(list, preferredId: selected);
+      if (!mounted) {
+        return;
       }
+      setState(() {
+        _children = _selectedStudentService.children.toList(growable: false);
+        _selectedChildId = _selectedStudentService.current?.id ?? '';
+      });
     } catch (_) {
       if (!mounted) {
         return;
@@ -202,50 +167,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     setState(() {
       _selectedChildId = child.id;
     });
-    _cachedSelectedChildId = child.id;
     Get.back();
     try {
-      await SharedPreferencesManager.setValue('selected_child_id', child.id);
-      await SharedPreferencesManager.setValue(
-        'selected_child_name',
-        child.name,
-      );
-      await SharedPreferencesManager.setValue(
-        'selected_child_avatar',
-        child.avatar,
-      );
-      await SharedPreferencesManager.setValue(
-        'selected_child_class_id',
-        child.classId,
-      );
-      await SharedPreferencesManager.setValue(
-        'student_info_class_id',
-        child.classId,
-      );
-      await SharedPreferencesManager.setValue(
-        'selected_child_class_name',
-        child.className,
-      );
-      await SharedPreferencesManager.setValue(
-        'student_info_class_name',
-        child.className,
-      );
-      if (Get.isRegistered<ScheduleController>()) {
-        await Get.find<ScheduleController>().fetchStudentTimeSheet();
-      }
-      if (Get.isRegistered<HomeworkController>()) {
-        await Get.find<HomeworkController>().fetchStudentHomeworks(
-          resetBeforeLoad: true,
-        );
-      }
-      if (Get.isRegistered<PaymentHistoryController>()) {
-        await Get.find<PaymentHistoryController>().fetchPaymentHistory(
-          resetBeforeLoad: true,
-        );
-      }
-      if (Get.isRegistered<PaymentCollectionController>()) {
-        await Get.find<PaymentCollectionController>().fetchTracking();
-      }
+      await _selectedStudentService.selectChild(child);
+      unawaited(ClassTopicSubscriptionService.instance.syncSelectedClassTopic());
+      unawaited(_refreshSelectedChildData());
       Get.snackbar(
         LocaleKeys.student.tr,
         child.name.isEmpty ? LocaleKeys.student.tr : child.name,
@@ -278,6 +204,39 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         ),
       );
     } finally {}
+  }
+
+  Future<void> _refreshSelectedChildData() async {
+    final tasks = <Future<void>>[];
+    if (Get.isRegistered<ScheduleController>()) {
+      tasks.add(Get.find<ScheduleController>().fetchStudentTimeSheet());
+    }
+    if (Get.isRegistered<HomeworkController>()) {
+      tasks.add(
+        Get.find<HomeworkController>().fetchStudentHomeworks(
+          resetBeforeLoad: true,
+        ),
+      );
+    }
+    if (Get.isRegistered<ActivityController>()) {
+      tasks.add(Get.find<ActivityController>().fetchClassActivities());
+    }
+    if (Get.isRegistered<PaymentHistoryController>()) {
+      tasks.add(
+        Get.find<PaymentHistoryController>().fetchPaymentHistory(
+          resetBeforeLoad: true,
+        ),
+      );
+    }
+    if (Get.isRegistered<PaymentCollectionController>()) {
+      tasks.add(Get.find<PaymentCollectionController>().fetchTracking());
+    }
+
+    if (tasks.isEmpty) {
+      return;
+    }
+
+    await Future.wait(tasks);
   }
 
   void languageHandleTap() {

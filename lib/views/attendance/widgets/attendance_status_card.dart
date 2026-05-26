@@ -70,7 +70,7 @@ class AttendanceStatusCard extends StatelessWidget {
               statusStyle.label,
               style: TextStyle(
                 color: Colors.white,
-                fontFamily: AppFontFamily.localized,
+                  fontFamily: AppFontFamily.forText(statusStyle.label),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
@@ -89,7 +89,7 @@ class AttendanceStatusCard extends StatelessWidget {
           child: Text(
             '$label:',
             style: TextStyle(
-              fontFamily: AppFontFamily.localized,
+                fontFamily: AppFontFamily.forText(label),
               fontWeight: FontWeight.w700,
               fontSize: 13,
             ),

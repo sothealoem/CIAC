@@ -27,8 +27,6 @@ class StartView extends GetView<StartController> {
           isParent
               ? LocaleKeys.welcomeParentSubtitle.tr
               : LocaleKeys.welcomeTeacherSubtitle.tr;
-      final titleFontFamily = AppFontFamily.localized;
-
       return PopScope(
         canPop: selectedIndex == 0,
         onPopInvoked: (didPop) {
@@ -56,7 +54,9 @@ class StartView extends GetView<StartController> {
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                                fontFamily: titleFontFamily,
+                                fontFamily: AppFontFamily.forText(
+                                  roleWelcomePrefix,
+                                ),
                               ),
                             ),
                             TextSpan(
@@ -69,7 +69,11 @@ class StartView extends GetView<StartController> {
                                 fontStyle: FontStyle.italic,
                                 color: AppColor.yellow,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: titleFontFamily,
+                                fontFamily: AppFontFamily.forText(
+                                  controller.userName.value.trim().isEmpty
+                                      ? dashboardController.displayName
+                                      : controller.userName.value,
+                                ),
                               ),
                             ),
                             TextSpan(
@@ -77,7 +81,7 @@ class StartView extends GetView<StartController> {
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                                fontFamily: titleFontFamily,
+                                fontFamily: AppFontFamily.forText('!'),
                               ),
                             ),
                           ],

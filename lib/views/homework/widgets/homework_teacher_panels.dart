@@ -53,11 +53,11 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
   Widget build(BuildContext context) {
     final controller = Get.find<HomeworkController>();
     return Obx(() {
-      final classOptions =
-          controller.teacherClassOptions
-              .map((option) => option.name)
-              .where((name) => name.trim().isNotEmpty)
-              .toList();
+      final classOptions = <String>[
+        ...controller.teacherClassOptions
+            .map((option) => option.name)
+            .where((name) => name.trim().isNotEmpty),
+      ];
       final selectedValue =
           classOptions.contains(_selectedClass)
               ? _selectedClass
@@ -85,7 +85,9 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           if (classOptions.isEmpty) ...[
             const SizedBox(height: 8),
             Text(
-              'No class list available yet.',
+              controller.isTeacherClassOptionsLoading.value
+                  ? 'Loading class list...'
+                  : 'No class list available yet.',
               style: AppTextStyle.smallGreyRegular.copyWith(
                 color: _homeworkMutedText,
               ),
@@ -322,60 +324,158 @@ class _ClassDetailPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Panel(
-      title: LocaleKeys.onlineClassActionClassDetail.tr,
-      children: [
-        _DropdownPreview(
-          label: LocaleKeys.onlineClassSelectClass.tr,
-          value: 'Grade 4A',
-        ),
-        const SizedBox(height: 16),
-        const Row(
+    return GetX<HomeworkController>(
+      builder: (controller) {
+        final dashboard = controller.teacherDashboard.value;
+        final isLoading = controller.isTeacherDashboardLoading.value;
+
+        return _Panel(
+          title: LocaleKeys.onlineClassActionClassDetail.tr,
           children: [
-            Expanded(
-              child: _ClassInfoStat(
-                icon: Icons.groups_rounded,
-                value: '36',
-                label: 'Students',
-                color: Color(0xFF10A850),
-              ),
+            _DashboardClassDropdown(
+              options: controller.teacherDashboardClassLabels,
+              isLoading: isLoading,
+              selectedIndex: controller.selectedTeacherDashboardClassIndex.value,
+              onChanged: (index) {
+                controller.selectedTeacherDashboardClassIndex.value = index;
+              },
             ),
-            SizedBox(width: 10),
-            Expanded(
-              child: _ClassInfoStat(
-                icon: Icons.book_rounded,
-                value: '6',
-                label: 'Subjects',
-                color: Color(0xFFF3B51B),
-              ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _ClassInfoStat(
+                    icon: Icons.class_rounded,
+                    value:
+                        isLoading ? '...' : '${dashboard?.totalClasses ?? 0}',
+                    label: LocaleKeys.onlineClassTotalClass.tr,
+                    color: const Color(0xFFF3B51B),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ClassInfoStat(
+                    icon: Icons.groups_rounded,
+                    value:
+                        isLoading ? '...' : '${dashboard?.totalStudents ?? 0}',
+                    label: LocaleKeys.onlineClassStudents.tr,
+                    color: const Color(0xFF10A850),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const _ClassDetailTile(
+              icon: Icons.info_outline_rounded,
+              title: 'Dashboard source',
+              value: 'Teacher homework dashboard API',
+            ),
+            const SizedBox(height: 10),
+            _ClassDetailTile(
+              icon: Icons.analytics_outlined,
+              title: 'Latest response',
+              value:
+                  isLoading
+                      ? 'Loading summary...'
+                      : '${dashboard?.totalClasses ?? 0} classes, ${dashboard?.totalStudents ?? 0} students',
             ),
           ],
-        ),
-        const SizedBox(height: 16),
-        const _ClassDetailTile(
-          icon: Icons.person_rounded,
-          title: 'Homeroom Teacher',
-          value: 'Teacher Sokha',
-        ),
-        const SizedBox(height: 10),
-        const _ClassDetailTile(
-          icon: Icons.meeting_room_rounded,
-          title: 'Room',
-          value: 'Building A - Room 204',
-        ),
-        const SizedBox(height: 10),
-        const _ClassDetailTile(
-          icon: Icons.schedule_rounded,
-          title: 'Class Time',
-          value: 'Monday - Friday, 8:00 AM - 11:30 AM',
-        ),
-        const SizedBox(height: 10),
-        const _ClassDetailTile(
-          icon: Icons.event_note_rounded,
-          title: 'Current Term',
-          value: 'Term 2, Academic Year 2026',
-        ),
-      ],
+        );
+      },
+    );
+  }
+}
+
+class _DashboardClassDropdown extends StatelessWidget {
+  const _DashboardClassDropdown({
+    required this.options,
+    required this.isLoading,
+    required this.selectedIndex,
+    required this.onChanged,
+  });
+
+  final List<String> options;
+  final bool isLoading;
+  final int selectedIndex;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final safeIndex =
+        options.isEmpty
+            ? 0
+            : selectedIndex.clamp(0, options.length - 1).toInt();
+    final selectedValue = options.isEmpty ? null : options[safeIndex];
+
+    return Container(
+      constraints: const BoxConstraints(minHeight: 48),
+      padding: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: isLoading ? _onlineClassAccentLight : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _onlineClassBorder),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFF7F8),
+              border: Border(right: BorderSide(color: _onlineClassBorder)),
+            ),
+            child: const Icon(
+              Icons.class_rounded,
+              color: _onlineClassAccent,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedValue,
+                isExpanded: true,
+                hint: Text(
+                  isLoading ? 'Loading classes...' : 'No classes available',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                dropdownColor: Colors.white,
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: AppColor.darkGrey,
+                ),
+                style: AppTextStyle.normalPrimaryRegular,
+                items:
+                    options
+                        .map(
+                          (option) => DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(
+                              option,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                onChanged:
+                    options.isEmpty
+                        ? null
+                        : (value) {
+                          if (value == null) return;
+                          final index = options.indexOf(value);
+                          if (index != -1) {
+                            onChanged(index);
+                          }
+                        },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -988,7 +1088,7 @@ class _AssignedHomeworkAttendanceCard extends StatelessWidget {
         Text(
           '$label: ',
           style: TextStyle(
-            fontFamily: AppFontFamily.localized,
+              fontFamily: AppFontFamily.forText(label),
             fontWeight: FontWeight.w700,
             fontSize: 13,
           ),

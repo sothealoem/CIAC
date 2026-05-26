@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/models/child_profile/model.dart';
 import 'package:schoolapp/models/models.dart';
 import 'package:schoolapp/models/parent/parent.dart';
 import 'package:schoolapp/models/requestleave/model.dart';
@@ -22,6 +24,9 @@ class RequestLeaveController extends GetxController {
   final RxString studentImageUrl = ''.obs;
   final RxBool isLoadingRequests = true.obs;
   final Map<String, Student> _studentsById = <String, Student>{};
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
+  bool get isParentMode => UserRepository.shared.isDriver;
 
   bool isDone = false;
   var selectedClass = 'Grade 5'.obs;
@@ -35,8 +40,12 @@ class RequestLeaveController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchSelectedStudentInfo();
-    fetchRequests();
+    unawaited(fetchSelectedStudentInfo());
+    if (isParentMode) {
+      unawaited(fetchRequests());
+    } else {
+      isLoadingRequests.value = false;
+    }
   }
 
   @override
@@ -133,6 +142,12 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<void> fetchRequests() async {
+    if (!isParentMode) {
+      requests.clear();
+      isLoadingRequests.value = false;
+      return;
+    }
+
     await _ensureStudentLookup();
     final selectedRaw = await _selectedStudentId();
     final selectedResolved = await _resolveStudentIdForRequest(selectedRaw);
@@ -185,6 +200,41 @@ class RequestLeaveController extends GetxController {
 
   Future<void> fetchSelectedStudentInfo() async {
     try {
+      if (!isParentMode) {
+        studentIdText.value =
+            (await SharedPreferencesManager.get('staff_code') ?? '')
+                .toString()
+                .trim();
+        studentNameText.value =
+            (await SharedPreferencesManager.get('name') ?? '')
+                .toString()
+                .trim();
+        studentGradeText.value = LocaleKeys.teacher.tr;
+        studentImageUrl.value =
+            (await SharedPreferencesManager.get('profile') ?? '')
+                .toString()
+                .trim();
+        return;
+      }
+
+      final selected = _selectedStudentService.current;
+      if (selected != null) {
+        studentIdText.value = selected.id.trim();
+        studentNameText.value = selected.name.trim();
+        studentGradeText.value = selected.className.trim();
+        studentImageUrl.value = selected.avatar.trim();
+        if (selected.className.trim().isNotEmpty) {
+          selectedClass.value = selected.className.trim();
+        }
+      }
+
+      if (_selectedStudentService.children.isNotEmpty) {
+        _updateStudentLookupFromProfiles(
+          _selectedStudentService.children.toList(growable: false),
+        );
+        return;
+      }
+
       final selectedId = await _selectedStudentId();
       final res = await Get.find<ApiService>().get(
         EndPoints.parentStudentInfo,
@@ -228,6 +278,16 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<RequestLeaveModel?> submitRequest() async {
+    if (!isParentMode) {
+      Get.snackbar(
+        LocaleKeys.error.tr,
+        'Teacher leave request is not configured in this app yet.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return null;
+    }
+
     final reason = reasonController.text.trim();
     if (reason.isEmpty) {
       reasonError.value = LocaleKeys.cannotBeEmpty.tr;
@@ -352,6 +412,14 @@ class RequestLeaveController extends GetxController {
     if (_studentsById.isNotEmpty) {
       return;
     }
+    if (_selectedStudentService.children.isNotEmpty) {
+      _updateStudentLookupFromProfiles(
+        _selectedStudentService.children.toList(growable: false),
+      );
+      if (_studentsById.isNotEmpty) {
+        return;
+      }
+    }
     await fetchSelectedStudentInfo();
   }
 
@@ -365,6 +433,23 @@ class RequestLeaveController extends GetxController {
       }
       if (admissionNo.isNotEmpty) {
         _studentsById[admissionNo] = student;
+      }
+    }
+  }
+
+  void _updateStudentLookupFromProfiles(List<ChildProfile> students) {
+    _studentsById.clear();
+    for (final student in students) {
+      final id = student.id.trim();
+      if (id.isNotEmpty) {
+        _studentsById[id] = Student(
+          id: int.tryParse(id),
+          admissionNo: id,
+          name: student.name,
+          nameKh: student.name,
+          profile: student.avatar,
+          className: student.className,
+        );
       }
     }
   }
@@ -414,6 +499,10 @@ class RequestLeaveController extends GetxController {
   }
 
   Future<String> _selectedStudentId() async {
+    final selectedId = _selectedStudentService.current?.id.trim() ?? '';
+    if (selectedId.isNotEmpty) {
+      return selectedId;
+    }
     final selected =
         (await SharedPreferencesManager.get('selected_child_id') ?? '')
             .toString()

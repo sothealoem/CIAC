@@ -115,35 +115,49 @@ class ActivityCardWidget extends StatelessWidget {
   }
 
   Widget _cardImage(String imagePath) {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    final normalizedPath = imagePath.trim();
+    if (normalizedPath.isEmpty) {
+      return Image.asset(
+        'assets/images/placeholder.png',
+        width: double.infinity,
+        height: 108,
+        fit: BoxFit.cover,
+        filterQuality: FilterQuality.high,
+      );
+    }
+
+    if (normalizedPath.startsWith('http://') ||
+        normalizedPath.startsWith('https://')) {
       return CachedNetworkImage(
-        imageUrl: imagePath,
+        imageUrl: normalizedPath,
         width: double.infinity,
         height: 95,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(color: const Color(0xFFE9EEF2)),
         errorWidget:
-            (_, __, ___) => Container(
+            (_, __, ___) => Image.asset(
+              'assets/images/placeholder.png',
+              width: double.infinity,
               height: 108,
-              color: const Color(0xFFE9EEF2),
-              alignment: Alignment.center,
-              child: const Icon(Icons.broken_image, color: Colors.grey),
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
             ),
       );
     }
 
     return Image.asset(
-      imagePath,
+      normalizedPath,
       width: double.infinity,
       height: 108,
       fit: BoxFit.cover,
       filterQuality: FilterQuality.high,
       errorBuilder:
-          (_, __, ___) => Container(
+          (_, __, ___) => Image.asset(
+            'assets/images/placeholder.png',
+            width: double.infinity,
             height: 108,
-            color: const Color(0xFFE9EEF2),
-            alignment: Alignment.center,
-            child: const Icon(Icons.broken_image, color: Colors.grey),
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
           ),
     );
   }

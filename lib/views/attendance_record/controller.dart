@@ -23,6 +23,8 @@ class AttendanceRecordController extends GetxController {
 
   final List<StaffAttendanceItem> _allLogs = <StaffAttendanceItem>[];
   bool get isParentMode => UserRepository.shared.isDriver;
+  SelectedStudentService get _selectedStudentService =>
+      Get.find<SelectedStudentService>();
 
   @override
   void onInit() {
@@ -297,6 +299,11 @@ class AttendanceRecordController extends GetxController {
   }
 
   Future<String> _selectedStudentId() async {
+    final selectedId = _selectedStudentService.current?.id.trim() ?? '';
+    if (selectedId.isNotEmpty) {
+      return selectedId;
+    }
+
     final selected =
         (await SharedPreferencesManager.get('selected_child_id') ?? '')
             .toString()

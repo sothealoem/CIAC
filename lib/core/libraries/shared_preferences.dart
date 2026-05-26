@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesManager {
-  static Future<SharedPreferences> get _instance =>
+  static final Future<SharedPreferences> _instance =
       SharedPreferences.getInstance();
 
   static Future<bool> containsKey(String key) async =>
@@ -11,7 +11,7 @@ class SharedPreferencesManager {
 
   static Future<bool> remove(String key) async => (await _instance).remove(key);
   static Future<void> clear() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _instance;
     await prefs.clear();
   }
 

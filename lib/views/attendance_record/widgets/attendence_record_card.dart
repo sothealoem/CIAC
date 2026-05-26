@@ -228,7 +228,9 @@ class _AttendenceRecordCardWidgetState
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 11,
-                        fontFamily: AppFontFamily.localized,
+                          fontFamily: AppFontFamily.forText(
+                            _statusText(item.status),
+                          ),
                       ),
                     ),
                   ),

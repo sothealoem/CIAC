@@ -137,7 +137,9 @@ class StudentInformationController extends GetxController {
         selectedStudent.value = parent_model.Student(
           id: profile.id.toInt(),
           admissionNo:
-              loginStaffCode.isNotEmpty ? loginStaffCode : profile.id.toString(),
+              loginStaffCode.isNotEmpty
+                  ? loginStaffCode
+                  : profile.id.toString(),
           name: profile.name,
           nameKh: profile.name,
           phone: profile.phone,
@@ -162,7 +164,9 @@ class StudentInformationController extends GetxController {
         final parentRes = await Get.find<ApiService>().get(
           EndPoints.parentProfile,
           queryParameters:
-              selectedId.isEmpty ? null : <String, dynamic>{'student_id': selectedId},
+              selectedId.isEmpty
+                  ? null
+                  : <String, dynamic>{'student_id': selectedId},
           isShowLoading: false,
         );
         final resData = parentRes.data;
@@ -201,7 +205,10 @@ class StudentInformationController extends GetxController {
             }
           }
           // Fallback: direct student object at root.
-          d ??= _looksLikeStudentProfile(map) ? StudentProfileData.fromJson(map) : null;
+          d ??=
+              _looksLikeStudentProfile(map)
+                  ? StudentProfileData.fromJson(map)
+                  : null;
           if (d != null && _hasStudentProfileData(d)) {
             selectedStudent.value = parent_model.Student(
               id: d.id,
@@ -268,7 +275,8 @@ class StudentInformationController extends GetxController {
               .toString()
               .trim();
     } catch (e) {
-      if (!isTeacherMode.value && (_fromProfileAction || parentInfo.value != null)) {
+      if (!isTeacherMode.value &&
+          (_fromProfileAction || parentInfo.value != null)) {
         await _loadParentOwnProfile();
       } else {
         ExceptionHandler.handleException(e);
@@ -326,7 +334,10 @@ class StudentInformationController extends GetxController {
       id: profile.id.toInt(),
       name: profile.name,
       phone: profile.phone,
-      profile: _validText(profile.profilePath) ? profile.profilePath : profile.profile,
+      profile:
+          _validText(profile.profilePath)
+              ? profile.profilePath
+              : profile.profile,
       occupation:
           _validText(profile.profession) ? profile.profession : profile.type,
     );
@@ -400,12 +411,7 @@ class StudentInformationController extends GetxController {
       return null;
     }
     final map = Map<String, dynamic>.from(raw);
-    final candidates = <dynamic>[
-      map['data'],
-      map['user'],
-      map['profile'],
-      map,
-    ];
+    final candidates = <dynamic>[map['data'], map['user'], map['profile'], map];
 
     for (final candidate in candidates) {
       if (candidate is Map<String, dynamic>) {

@@ -27,13 +27,21 @@ class EndPoints {
   static String get sliders => '/api/v1/setting/sliders';
   static String get generalSetting => '/api/v1/setting/general';
   static String get announcements => '/api/v1/setting/announcement';
+  static String get classes => '/api/v1/setting/classes';
   static String get classActivities => '/api/v1/setting/class/activities';
+  static String classActivitiesByClass(dynamic classId) =>
+      '/api/v1/setting/class/activities/$classId';
   static String get registerFcmToken => '/api/v1/notifications/fcm-token';
 
   static String teacherDashboard(dynamic teacherId) =>
       '/api/v1/teacher/dashboard/$teacherId';
   static String get teacherHomeworks => '/api/v1/teacher/homeworks';
   static String get teacherActivities => '/api/v1/teacher/activities';
+  static String get teacherClassActivity => '/api/v1/teacher/class-activity';
+  static String teacherClassActivityUpdate(dynamic id) =>
+      '/api/v1/teacher/class-activity/update/$id';
+  static String teacherClassActivityDelete(dynamic id) =>
+      '/api/v1/teacher/class-activity/delete/$id';
   static String teacherHomeworkDetail(dynamic id) =>
       '/api/v1/teacher/homeworks/$id';
   static String teacherHomeworkDelete(dynamic id) =>
