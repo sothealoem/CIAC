@@ -69,8 +69,10 @@ class HomeworkController extends GetxController {
       assignedHomeworkItems.clear();
     }
 
-    final classId = await _resolveStudentClassId();
     final fallbackClassName = await _resolveStudentClassName();
+    final classId =
+        await _resolveStudentClassId() ??
+        await _resolveClassIdFromClassName(fallbackClassName);
     final selectedStudentId = await _resolveSelectedStudentId();
     if (classId == null) {
       assignedHomeworkItems.clear();

@@ -138,15 +138,6 @@ class ActivityController extends GetxController {
                   timeText: '',
                 );
               })
-              .where(
-                (e) =>
-                    isTeacherRole ||
-                    _matchesStudentClass(
-                      activity: e,
-                      studentClassName: studentClassName,
-                      studentClassId: studentClassId,
-                    ),
-              )
               .where((e) => e.image.isNotEmpty || e.title.isNotEmpty)
               .toList();
 
@@ -486,36 +477,17 @@ class ActivityController extends GetxController {
     return raw.toString().trim();
   }
 
-  bool _matchesStudentClass({
-    required ClassActivityItem activity,
-    required String studentClassName,
-    required int? studentClassId,
-  }) {
-    if (activity.className.trim().isEmpty && activity.classId == null) {
-      return studentClassId == null && studentClassName.trim().isEmpty;
-    }
-
-    if (studentClassId != null &&
-        activity.classId != null &&
-        activity.classId == studentClassId) {
-      return true;
-    }
-
-    final normalizedStudentClassName = studentClassName.trim().toLowerCase();
-    if (normalizedStudentClassName.isEmpty && studentClassId == null) {
-      return true;
-    }
-
-    final activityClassName = activity.className.trim().toLowerCase();
-    if (normalizedStudentClassName.isNotEmpty &&
-        activityClassName == normalizedStudentClassName) {
-      return true;
-    }
-
-    return false;
-  }
-
   Future<String> _resolveStudentClassName() async {
+    if (Get.isRegistered<SelectedStudentService>()) {
+      final selectedClassName =
+          Get.find<SelectedStudentService>().current?.className.trim() ?? '';
+      if (selectedClassName.isNotEmpty &&
+          selectedClassName.toLowerCase() != 'n/a' &&
+          selectedClassName.toLowerCase() != 'null') {
+        return selectedClassName;
+      }
+    }
+
     final cachedKeys = <String>[
       'selected_child_class_name',
       'student_info_class_name',
@@ -533,12 +505,25 @@ class ActivityController extends GetxController {
   }
 
   Future<String> _resolveSelectedStudentId() async {
+    final resolved = await StudentIdResolver.resolve();
+    if (resolved != null) {
+      return resolved.toString().trim();
+    }
     return (await SharedPreferencesManager.get('selected_child_id') ?? '')
         .toString()
         .trim();
   }
 
   Future<int?> _resolveStudentClassId() async {
+    if (Get.isRegistered<SelectedStudentService>()) {
+      final selectedClassId =
+          Get.find<SelectedStudentService>().current?.classId.trim() ?? '';
+      final parsed = int.tryParse(selectedClassId);
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+
     final cachedKeys = <String>[
       'selected_child_class_id',
       'student_info_class_id',
@@ -551,7 +536,47 @@ class ActivityController extends GetxController {
         return parsed;
       }
     }
-    return null;
+
+    try {
+      final selectedStudentId = await _resolveSelectedStudentId();
+      final res = await Get.find<ApiService>().get(
+        EndPoints.parentProfile,
+        queryParameters:
+            selectedStudentId.isEmpty
+                ? null
+                : <String, dynamic>{'student_id': selectedStudentId},
+        isShowLoading: false,
+      );
+      final classId =
+          await _findClassIdForSelectedStudent(res.data, selectedStudentId);
+      final className = _findClassNameForSelectedStudent(
+        res.data,
+        selectedStudentId,
+      );
+      if (classId != null) {
+        await SharedPreferencesManager.setValue(
+          'selected_child_class_id',
+          classId.toString(),
+        );
+        await SharedPreferencesManager.setValue(
+          'student_info_class_id',
+          classId.toString(),
+        );
+      }
+      if (className.isNotEmpty) {
+        await SharedPreferencesManager.setValue(
+          'selected_child_class_name',
+          className,
+        );
+        await SharedPreferencesManager.setValue(
+          'student_info_class_name',
+          className,
+        );
+      }
+      return classId;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String> _resolveStudentScopeKey() async {
@@ -859,10 +884,31 @@ class ClassActivityItem {
   }
 
   static int? _readActivityClassId(Map<String, dynamic> json) {
-    final raw = json['class_id'] ?? json['classId'];
-    if (raw is int) return raw;
-    if (raw is num) return raw.toInt();
-    return int.tryParse((raw ?? '').toString().trim());
+    final direct = json['class_id'] ?? json['classId'];
+    if (direct is int) return direct;
+    if (direct is num) return direct.toInt();
+
+    final directParsed = int.tryParse((direct ?? '').toString().trim());
+    if (directParsed != null) {
+      return directParsed;
+    }
+
+    final nestedClass = json['class'];
+    if (nestedClass is Map<String, dynamic>) {
+      final nested = nestedClass['id'] ?? nestedClass['class_id'];
+      if (nested is int) return nested;
+      if (nested is num) return nested.toInt();
+      return int.tryParse((nested ?? '').toString().trim());
+    }
+    if (nestedClass is Map) {
+      final nested = Map<String, dynamic>.from(nestedClass);
+      final value = nested['id'] ?? nested['class_id'];
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      return int.tryParse((value ?? '').toString().trim());
+    }
+
+    return null;
   }
 
   static String _readActivityClassName(Map<String, dynamic> json) {
