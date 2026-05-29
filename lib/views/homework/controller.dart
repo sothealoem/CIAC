@@ -179,6 +179,7 @@ class HomeworkController extends GetxController {
     required String className,
     required String deadline,
     required String description,
+    String attachmentUrl = '',
     int submitted = 0,
     int total = 0,
   }) {
@@ -191,6 +192,7 @@ class HomeworkController extends GetxController {
       submitted: submitted,
       total: total,
       description: description,
+      attachmentUrl: attachmentUrl,
     );
   }
 
@@ -257,9 +259,16 @@ class HomeworkController extends GetxController {
           (rawData['total'] as num?)?.toInt() ?? rows.length;
 
       final parsed =
-          rows.whereType<Map>().map(
-            (row) => _assignmentFromApi(Map<String, dynamic>.from(row)),
-          ).toList(growable: false);
+          rows.whereType<Map>().map((row) {
+            final assignment = _assignmentFromApi(Map<String, dynamic>.from(row));
+            final existing = assignedHomeworkItems.firstWhereOrNull(
+              (item) => item.id == assignment.id,
+            );
+            if (assignment.attachmentUrl.isNotEmpty || existing == null) {
+              return assignment;
+            }
+            return assignment.copyWith(attachmentUrl: existing.attachmentUrl);
+          }).toList(growable: false);
 
       if (reset) {
         assignedHomeworkItems.assignAll(parsed);
@@ -369,12 +378,13 @@ class HomeworkController extends GetxController {
     required String className,
     required String deadline,
     required String description,
-    List<String> imagePaths = const <String>[],
+    String attachmentPath = '',
   }) async {
     final trimmedTitle = title.trim();
     final trimmedClassName = className.trim();
     final trimmedDescription = description.trim();
     final trimmedDeadline = deadline.trim();
+    final trimmedAttachmentPath = attachmentPath.trim();
 
     final localItem = buildAssignment(
       title: trimmedTitle,
@@ -382,6 +392,7 @@ class HomeworkController extends GetxController {
       className: trimmedClassName,
       deadline: trimmedDeadline,
       description: trimmedDescription,
+      attachmentUrl: trimmedAttachmentPath,
     );
 
     final formMap = <String, dynamic>{
@@ -390,13 +401,8 @@ class HomeworkController extends GetxController {
       'description': trimmedDescription,
       'due_date': _deadlineForApi(trimmedDeadline),
     };
-    if (imagePaths.isNotEmpty) {
-      final files = <d.MultipartFile>[
-        for (final path in imagePaths) await d.MultipartFile.fromFile(path),
-      ];
-      formMap['images'] = files;
-      formMap['images[]'] = files;
-      formMap['file'] = files.first;
+    if (trimmedAttachmentPath.isNotEmpty) {
+      formMap['file'] = await d.MultipartFile.fromFile(trimmedAttachmentPath);
     }
     final payload = d.FormData.fromMap(formMap);
 
@@ -437,6 +443,9 @@ class HomeworkController extends GetxController {
             'remark',
             'instructions',
           ], trimmedDescription),
+          attachmentUrl: _readAttachmentUrl(map).isEmpty
+              ? trimmedAttachmentPath
+              : _readAttachmentUrl(map),
         );
         assignedHomeworkItems.insert(0, createdItem);
         return createdItem;
@@ -459,7 +468,7 @@ class HomeworkController extends GetxController {
     required String description,
     int submitted = 0,
     int total = 0,
-    List<String> imagePaths = const <String>[],
+    String attachmentPath = '',
   }) async {
     final trimmedId = id.trim();
     if (trimmedId.isEmpty) {
@@ -470,6 +479,7 @@ class HomeworkController extends GetxController {
     final trimmedClassName = className.trim();
     final trimmedDescription = description.trim();
     final trimmedDeadline = deadline.trim();
+    final trimmedAttachmentPath = attachmentPath.trim();
 
     final localItem = buildAssignment(
       id: trimmedId,
@@ -478,6 +488,7 @@ class HomeworkController extends GetxController {
       className: trimmedClassName,
       deadline: trimmedDeadline,
       description: trimmedDescription,
+      attachmentUrl: trimmedAttachmentPath,
       submitted: submitted,
       total: total,
     );
@@ -488,13 +499,8 @@ class HomeworkController extends GetxController {
       'description': trimmedDescription,
       'due_date': _deadlineForApi(trimmedDeadline),
     };
-    if (imagePaths.isNotEmpty) {
-      final files = <d.MultipartFile>[
-        for (final path in imagePaths) await d.MultipartFile.fromFile(path),
-      ];
-      formMap['images'] = files;
-      formMap['images[]'] = files;
-      formMap['file'] = files.first;
+    if (trimmedAttachmentPath.isNotEmpty) {
+      formMap['file'] = await d.MultipartFile.fromFile(trimmedAttachmentPath);
     }
     final payload = d.FormData.fromMap(formMap);
 
@@ -531,6 +537,9 @@ class HomeworkController extends GetxController {
             'remark',
             'instructions',
           ], trimmedDescription),
+          attachmentUrl: _readAttachmentUrl(map).isEmpty
+              ? trimmedAttachmentPath
+              : _readAttachmentUrl(map),
         );
       }
 
@@ -817,7 +826,49 @@ class HomeworkController extends GetxController {
         'remark',
         'instructions',
       ], ''),
+      attachmentUrl: _readAttachmentUrl(map),
     );
+  }
+
+  String _readAttachmentUrl(Map<String, dynamic> map) {
+    final direct = _readText(map, const [
+      'image',
+      'image_url',
+      'file',
+      'file_url',
+      'attachment',
+      'attachment_url',
+      'photo',
+      'photo_url',
+    ], '');
+    if (direct.isNotEmpty) {
+      return direct;
+    }
+
+    final nestedKeys = <String>['images', 'attachments', 'files', 'photos'];
+    for (final key in nestedKeys) {
+      final value = map[key];
+      if (value is List) {
+        for (final item in value) {
+          if (item is String && item.trim().isNotEmpty) {
+            return item.trim();
+          }
+          if (item is Map) {
+            final nested = _readAttachmentUrl(Map<String, dynamic>.from(item));
+            if (nested.isNotEmpty) {
+              return nested;
+            }
+          }
+        }
+      } else if (value is Map) {
+        final nested = _readAttachmentUrl(Map<String, dynamic>.from(value));
+        if (nested.isNotEmpty) {
+          return nested;
+        }
+      }
+    }
+
+    return '';
   }
 
   void _updateTeacherClassOptions() {
@@ -1385,6 +1436,7 @@ class HomeworkAssignment {
     required this.submitted,
     required this.total,
     required this.description,
+    this.attachmentUrl = '',
   });
 
   final String id;
@@ -1395,6 +1447,31 @@ class HomeworkAssignment {
   final int submitted;
   final int total;
   final String description;
+  final String attachmentUrl;
+
+  HomeworkAssignment copyWith({
+    String? id,
+    int? classId,
+    String? title,
+    String? className,
+    String? deadline,
+    int? submitted,
+    int? total,
+    String? description,
+    String? attachmentUrl,
+  }) {
+    return HomeworkAssignment(
+      id: id ?? this.id,
+      classId: classId ?? this.classId,
+      title: title ?? this.title,
+      className: className ?? this.className,
+      deadline: deadline ?? this.deadline,
+      submitted: submitted ?? this.submitted,
+      total: total ?? this.total,
+      description: description ?? this.description,
+      attachmentUrl: attachmentUrl ?? this.attachmentUrl,
+    );
+  }
 }
 
 class HomeworkClassOption {
@@ -1436,16 +1513,26 @@ class HomeworkSubmissionStudent {
           'submission_status',
           'submitted_status',
         ], 'pending').toLowerCase();
+    final firstName = firstText(const ['firstname', 'first_name']);
+    final lastName = firstText(const ['lastname', 'last_name']);
+    final fullNameFromParts = [firstName, lastName]
+        .where((part) => part.trim().isNotEmpty)
+        .join(' ')
+        .trim();
 
     return HomeworkSubmissionStudent(
-      name: firstText(const [
-        'name',
-        'student_name',
-        'fullname',
-        'full_name',
-        'fullname_english',
-        'fullname_khmer',
-      ], 'Student'),
+      name: fullNameFromParts.isNotEmpty
+          ? fullNameFromParts
+          : firstText(const [
+              'name',
+              'student_name',
+              'fullname',
+              'full_name',
+              'fullname_english',
+              'fullname_khmer',
+              'firstname',
+              'first_name',
+            ], 'Student'),
       status: status.contains('submit') ? 'submitted' : 'pending',
     );
   }

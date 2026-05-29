@@ -113,7 +113,7 @@ class ApiService extends GetxService {
     try {
       return await _client.request<dynamic>(
         request.path,
-        data: request.data,
+        data: _prepareRequestData(request.data),
         queryParameters: request.queryParameters,
         options: nextOptions,
         cancelToken: request.cancelToken,
@@ -197,6 +197,13 @@ class ApiService extends GetxService {
     );
   }
 
+  dynamic _prepareRequestData(dynamic data) {
+    if (data is d.FormData) {
+      return data.clone();
+    }
+    return data;
+  }
+
   void _logTiming(
     d.RequestOptions options, {
     int? statusCode,
@@ -258,7 +265,7 @@ class ApiService extends GetxService {
       path,
       data:
           isMultipart
-              ? formData
+              ? _prepareRequestData(formData)
               : encode
               ? jsonEncode(formData)
               : formData,
@@ -280,7 +287,10 @@ class ApiService extends GetxService {
 
     return client.put(
       path,
-      data: isMultipart ? formData : jsonEncode(formData),
+      data:
+          isMultipart
+              ? _prepareRequestData(formData)
+              : jsonEncode(formData),
       options: _buildOptions(
         headers: headers,
         contentType: isMultipart ? null : 'application/json',
@@ -304,7 +314,10 @@ class ApiService extends GetxService {
 
     return client.patch(
       path,
-      data: isMultipart ? formData : jsonEncode(formData),
+      data:
+          isMultipart
+              ? _prepareRequestData(formData)
+              : jsonEncode(formData),
       options: _buildOptions(
         headers: headers,
         contentType: isMultipart ? null : 'application/json',

@@ -378,9 +378,7 @@ class ActivityController extends GetxController {
     if (isSubmittingActivity.value) {
       return;
     }
-
     isSubmittingActivity.value = true;
-
     try {
       await Get.find<ApiService>().delete(
         EndPoints.teacherClassActivityDelete(id),

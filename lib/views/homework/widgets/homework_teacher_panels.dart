@@ -7,6 +7,7 @@ class _AssignHomeworkPanel extends StatefulWidget {
     this.description,
     this.className,
     this.deadline,
+    this.attachmentUrl,
     this.submitted = 0,
     this.total = 0,
     this.showTitle = true,
@@ -17,6 +18,7 @@ class _AssignHomeworkPanel extends StatefulWidget {
   final String? description;
   final String? className;
   final String? deadline;
+  final String? attachmentUrl;
   final int submitted;
   final int total;
   final bool showTitle;
@@ -30,7 +32,9 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
   late final TextEditingController _descriptionCtl;
   late final TextEditingController _deadlineCtl;
   String _selectedClass = '';
-  final List<XFile> _selectedImages = <XFile>[];
+  String _selectedAttachmentPath = '';
+  String _selectedAttachmentName = '';
+  Uint8List? _selectedAttachmentBytes;
 
   @override
   void initState() {
@@ -52,6 +56,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HomeworkController>();
+    final existingAttachment = (widget.attachmentUrl ?? '').trim();
     return Obx(() {
       final classOptions = <String>[
         ...controller.teacherClassOptions
@@ -120,23 +125,28 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
               Expanded(
                 child: _UploadButton(
                   icon: Icons.attach_file_rounded,
-                  label: LocaleKeys.onlineClassUploadFile.tr,
-                  onPressed: () {},
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _UploadButton(
-                  icon: Icons.add_photo_alternate_rounded,
                   label:
-                      _selectedImages.isEmpty
-                          ? LocaleKeys.onlineClassUploadPicture.tr
-                          : '${_selectedImages.length} image(s) selected',
-                  onPressed: _pickImages,
+                      _selectedAttachmentName.isEmpty
+                          ? 'Upload picture or PDF'
+                          : _selectedAttachmentName,
+                  onPressed: _pickAttachment,
                 ),
               ),
             ],
           ),
+          if (_selectedAttachmentPath.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            _SelectedHomeworkAttachmentPreview(
+              path: _selectedAttachmentPath,
+              name: _selectedAttachmentName,
+              bytes: _selectedAttachmentBytes,
+            ),
+          ] else ...[
+            if (existingAttachment.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _ExistingHomeworkAttachment(url: existingAttachment),
+            ],
+          ],
           const SizedBox(height: 20),
           Obx(
             () => SizedBox(
@@ -243,7 +253,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           className: _selectedClass,
           deadline: _deadlineCtl.text,
           description: _descriptionCtl.text.trim(),
-          imagePaths: _selectedImages.map((image) => image.path).toList(),
+          attachmentPath: _selectedAttachmentPath,
         );
       } else {
         item = await controller.updateAssignment(
@@ -255,7 +265,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           description: _descriptionCtl.text.trim(),
           submitted: widget.submitted,
           total: widget.total,
-          imagePaths: _selectedImages.map((image) => image.path).toList(),
+          attachmentPath: _selectedAttachmentPath,
         );
       }
     } catch (e) {
@@ -303,19 +313,91 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     _deadlineCtl.text = Get.find<HomeworkController>().formatDeadline(picked);
   }
 
-  Future<void> _pickImages() async {
+  Future<void> _pickAttachment() async {
     try {
-      final picker = ImagePicker();
-      final images = await picker.pickMultiImage(imageQuality: 90);
-      if (!mounted || images.isEmpty) return;
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        withData: true,
+        allowedExtensions: const ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf'],
+      );
+      final file = result?.files.single;
+      if (!mounted || file == null || (file.path ?? '').trim().isEmpty) return;
       setState(() {
-        _selectedImages
-          ..clear()
-          ..addAll(images);
+        _selectedAttachmentPath = file.path!.trim();
+        _selectedAttachmentName = file.name.trim();
+        _selectedAttachmentBytes = file.bytes;
       });
     } catch (e) {
       ExceptionHandler.handleException(e);
     }
+  }
+}
+
+class _SelectedHomeworkAttachmentPreview extends StatelessWidget {
+  const _SelectedHomeworkAttachmentPreview({
+    required this.path,
+    required this.name,
+    this.bytes,
+  });
+
+  final String path;
+  final String name;
+  final Uint8List? bytes;
+
+  bool get _isImage {
+    final lower = name.toLowerCase();
+    return lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isImage) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child:
+            bytes != null
+                ? Image.memory(
+                  bytes!,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                )
+                : Image.file(
+                  File(path),
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _onlineClassBorder),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.picture_as_pdf_rounded, color: _onlineClassAccent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              name,
+              style: AppTextStyle.smallPrimaryBold,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -527,14 +609,25 @@ class _AllAssignedHomeworkPanel extends GetView<HomeworkController> {
                     ),
                   ),
               onEdit:
-                  () => Navigator.of(context).push(
-                    _homeworkRoute(
-                      _TeacherActionDetailScreen(
-                        title: LocaleKeys.onlineClassEdit.tr,
-                        child: _AssignedHomeworkEditPanel(item: item),
+                  () async {
+                    HomeworkAssignment editItem = item;
+                    try {
+                      final detail = await controller.fetchTeacherHomeworkDetail(
+                        item.id,
+                      );
+                      editItem = detail.assignment;
+                    } catch (_) {}
+
+                    if (!context.mounted) return;
+                    Navigator.of(context).push(
+                      _homeworkRoute(
+                        _TeacherActionDetailScreen(
+                          title: LocaleKeys.onlineClassEdit.tr,
+                          child: _AssignedHomeworkEditPanel(item: editItem),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
             ),
           ),
           if (controller.hasMoreTeacherHomeworkPages ||
@@ -753,6 +846,18 @@ class _AssignedHomeworkDetailPanelState
 
         final detail = snapshot.data!;
         final item = detail.assignment;
+        final submittedCount =
+            detail.students
+                .where((submission) => submission.status == 'submitted')
+                .length;
+        final pendingCountFromStudents =
+            detail.students
+                .where((submission) => submission.status != 'submitted')
+                .length;
+        final pendingCount =
+            pendingCountFromStudents > 0
+                ? pendingCountFromStudents
+                : (item.total > submittedCount ? item.total - submittedCount : 0);
         final filtered =
             detail.students
                 .where(
@@ -773,7 +878,7 @@ class _AssignedHomeworkDetailPanelState
                   children: [
                     Expanded(
                       child: _submissionMetricBox(
-                        value: '${item.submitted}',
+                        value: '$submittedCount',
                         label: LocaleKeys.onlineClassSubmitted.tr,
                         statusKey: LocaleKeys.onlineClassSubmitted,
                       ),
@@ -781,7 +886,7 @@ class _AssignedHomeworkDetailPanelState
                     const SizedBox(width: 8),
                     Expanded(
                       child: _submissionMetricBox(
-                        value: '${item.total - item.submitted}',
+                        value: '$pendingCount',
                         label: LocaleKeys.onlineClassPending.tr,
                         statusKey: LocaleKeys.onlineClassPending,
                       ),
@@ -855,9 +960,98 @@ class _AssignedHomeworkEditPanel extends StatelessWidget {
       description: item.description,
       className: item.className,
       deadline: item.deadline,
+      attachmentUrl: item.attachmentUrl,
       submitted: item.submitted,
       total: item.total,
       showTitle: false,
+    );
+  }
+}
+
+class _ExistingHomeworkAttachment extends StatelessWidget {
+  const _ExistingHomeworkAttachment({required this.url});
+
+  final String url;
+
+  bool get _isImage {
+    final lower = (Uri.tryParse(url)?.path ?? url).toLowerCase();
+    return lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif');
+  }
+
+  String get _fileName {
+    final uri = Uri.tryParse(url);
+    if (uri != null && uri.pathSegments.isNotEmpty) {
+      return uri.pathSegments.last;
+    }
+    return url.split('/').last;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isImage) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Current uploaded image',
+            style: AppTextStyle.smallGreyRegular.copyWith(
+              color: _homeworkMutedText,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Image.network(
+              url,
+              height: 180,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder:
+                  (_, __, ___) => Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: _onlineClassAccentSoft,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: _onlineClassBorder),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text('Unable to load current image'),
+                  ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _onlineClassBorder),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.attach_file_rounded, color: _onlineClassAccent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              _fileName,
+              style: AppTextStyle.smallPrimaryBold,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          TextButton(
+            onPressed: () => UrlLauncherManager.launch(url),
+            child: const Text('Open'),
+          ),
+        ],
+      ),
     );
   }
 }

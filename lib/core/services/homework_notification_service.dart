@@ -7,6 +7,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/routes.dart';
 
+const String _notificationIcon = '@drawable/ic_notification';
+const String _typeHomework = 'homework';
+const String _typeActivity = 'activity';
+const String _typeAttendance = 'attendance';
+const String _typeReminder = 'reminder';
+const String _typeAnnouncement = 'announcement';
+
 const AndroidNotificationChannel _homeworkChannel = AndroidNotificationChannel(
   'homework_channel',
   'Homework Notifications',
@@ -36,7 +43,7 @@ class HomeworkNotificationService {
     if (_initialized) return;
 
     const settings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings(_notificationIcon),
       iOS: DarwinInitializationSettings(),
     );
 
@@ -80,6 +87,34 @@ class HomeworkNotificationService {
     }
   }
 
+  Future<void> showTestHomeworkNotification() async {
+    await initialize();
+    await _localNotifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      'New Homework',
+      'Please check your class work.',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'homework_channel',
+          'Homework Notifications',
+          channelDescription: 'Alerts students when new homework is assigned.',
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('homework_notification'),
+          icon: _notificationIcon,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+          sound: 'homework_notification.wav',
+        ),
+      ),
+      payload: _typeHomework,
+    );
+  }
+
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
     final notificationType = _notificationType(message);
     debugPrint(
@@ -108,7 +143,7 @@ class HomeworkNotificationService {
           priority: Priority.high,
           playSound: true,
           sound: RawResourceAndroidNotificationSound('homework_notification'),
-          icon: '@mipmap/ic_launcher',
+          icon: _notificationIcon,
         ),
         iOS: DarwinNotificationDetails(
           presentAlert: true,
@@ -125,25 +160,11 @@ class HomeworkNotificationService {
   }
 
   void _onNotificationResponse(NotificationResponse response) {
-    switch (response.payload) {
-      case 'activity':
-        unawaited(_openActivityScreen());
-        break;
-      case 'homework':
-        unawaited(_openHomeworkScreen());
-        break;
-    }
+    unawaited(_openScreenForType(response.payload));
   }
 
   void _handleMessageTap(RemoteMessage message) {
-    switch (_notificationType(message)) {
-      case 'activity':
-        unawaited(_openActivityScreen());
-        break;
-      case 'homework':
-        unawaited(_openHomeworkScreen());
-        break;
-    }
+    unawaited(_openScreenForType(_notificationType(message)));
   }
 
   String? _notificationType(RemoteMessage message) {
@@ -155,30 +176,103 @@ class HomeworkNotificationService {
             .toString()
             .toLowerCase();
 
-    if (type == 'activity' || category == 'activity' || title.contains('activity')) {
-      return 'activity';
+    if (_matchesType(type, category, title, _typeAttendance, const [
+      'atterndance',
+      'attendance',
+      'check in',
+      'check-in',
+      'absent',
+      'late',
+    ])) {
+      return _typeAttendance;
     }
-    if (type == 'homework' || category == 'homework' || title.contains('homework')) {
-      return 'homework';
+    if (_matchesType(type, category, title, _typeActivity, const ['activity'])) {
+      return _typeActivity;
     }
-    return null;
+    if (_matchesType(type, category, title, _typeHomework, const ['homework'])) {
+      return _typeHomework;
+    }
+    if (_matchesType(type, category, title, _typeReminder, const [
+      'reminder',
+      'remider',
+    ])) {
+      return _typeReminder;
+    }
+    if (_matchesType(type, category, title, _typeAnnouncement, const [
+      'announcement',
+      'notice',
+    ])) {
+      return _typeAnnouncement;
+    }
+    return _typeAnnouncement;
   }
 
   String _defaultTitle(String type) {
-    return type == 'activity' ? 'New Class Activity' : 'New Homework';
+    switch (type) {
+      case _typeAttendance:
+        return 'Attendance Update';
+      case _typeActivity:
+        return 'New Class Activity';
+      case _typeHomework:
+        return 'New Homework';
+      case _typeReminder:
+        return 'School Reminder';
+      case _typeAnnouncement:
+      default:
+        return 'School Announcement';
+    }
   }
 
   String _defaultBody(String type) {
-    return type == 'activity'
-        ? 'You have a new class activity.'
-        : 'You have a new homework assignment.';
+    switch (type) {
+      case _typeAttendance:
+        return 'Your attendance information has been updated.';
+      case _typeActivity:
+        return 'You have a new class activity.';
+      case _typeHomework:
+        return 'You have a new homework assignment.';
+      case _typeReminder:
+        return 'You have a new reminder.';
+      case _typeAnnouncement:
+      default:
+        return 'You have a new school announcement.';
+    }
   }
 
-  Future<void> _openActivityScreen() async {
-    await Get.toNamed(Routes.activity);
+  bool _matchesType(
+    String type,
+    String category,
+    String title,
+    String expected,
+    List<String> hints,
+  ) {
+    if (type == expected || category == expected) {
+      return true;
+    }
+    for (final hint in hints) {
+      if (type == hint || category == hint || title.contains(hint)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  Future<void> _openHomeworkScreen() async {
-    await Get.toNamed(Routes.homework);
+  Future<void> _openScreenForType(String? type) async {
+    switch (type) {
+      case _typeAttendance:
+        await Get.toNamed(Routes.attendance);
+        break;
+      case _typeActivity:
+        await Get.toNamed(Routes.activity);
+        break;
+      case _typeHomework:
+        await Get.toNamed(Routes.homework);
+        break;
+      case _typeReminder:
+      case _typeAnnouncement:
+      default:
+        await Get.toNamed(Routes.notification);
+        break;
+    }
   }
 }

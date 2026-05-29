@@ -32,7 +32,6 @@ class EndPoints {
   static String classActivitiesByClass(dynamic classId) =>
       '/api/v1/setting/class/activities/$classId';
   static String get registerFcmToken => '/api/v1/notifications/fcm-token';
-
   static String teacherDashboard(dynamic teacherId) =>
       '/api/v1/teacher/dashboard/$teacherId';
   static String get teacherHomeworks => '/api/v1/teacher/homeworks';

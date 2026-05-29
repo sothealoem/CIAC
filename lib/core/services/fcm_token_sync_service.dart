@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:logging/logging.dart';
+import 'package:dio/dio.dart' as d;
 import 'package:schoolapp/core/constants/storage_key.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/services/api_service.dart';
@@ -69,6 +70,17 @@ class FcmTokenSyncService {
         normalizedToken,
       );
     } catch (error, stackTrace) {
+      if (error is d.DioException) {
+        final statusCode = error.response?.statusCode;
+        final responseData = error.response?.data;
+        _logger.warning(
+          'Unable to sync FCM token to backend '
+          '(status=$statusCode, response=$responseData)',
+          error,
+          stackTrace,
+        );
+        return;
+      }
       _logger.warning('Unable to sync FCM token to backend', error, stackTrace);
     }
   }

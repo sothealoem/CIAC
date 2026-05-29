@@ -270,9 +270,6 @@ class LoginController extends GetxController {
   Future<void> _postLoginSetup() async {
     try {
       await Future.wait([
-        FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
-          force: true,
-        ),
         ClassTopicSubscriptionService.instance.syncSelectedClassTopic(),
       ]);
 

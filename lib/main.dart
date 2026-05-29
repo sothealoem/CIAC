@@ -115,7 +115,6 @@ Future<void> _initServices() async {
 Future<void> _bootstrapDeferredServices() async {
   try {
     await FirebaseMessaging.instance.requestPermission();
-    await FcmTokenSyncService.instance.initialize();
     await HomeworkNotificationService.instance.initialize();
 
     unawaited(ClassTopicSubscriptionService.instance.syncSelectedClassTopic());
