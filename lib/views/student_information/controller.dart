@@ -36,7 +36,7 @@ class StudentInformationController extends GetxController {
           (await SharedPreferencesManager.get('student_info_mode') ?? '')
               .toString()
               .trim();
-      final currentMode = UserRepository.shared.isDriver ? 'parent' : 'teacher';
+      final currentMode = UserRepository.shared.isParent ? 'parent' : 'teacher';
       if (modeKey.isNotEmpty && modeKey != currentMode) {
         return;
       }
@@ -78,7 +78,7 @@ class StudentInformationController extends GetxController {
       isLoading.value = true;
     }
     try {
-      isTeacherMode.value = !UserRepository.shared.isDriver;
+      isTeacherMode.value = !UserRepository.shared.isParent;
       showParentProfile.value = false;
       if (isTeacherMode.value) {
         teacherRole.value =
@@ -353,7 +353,7 @@ class StudentInformationController extends GetxController {
     if (s == null) return;
     await SharedPreferencesManager.setValue(
       'student_info_mode',
-      UserRepository.shared.isDriver ? 'parent' : 'teacher',
+      UserRepository.shared.isParent ? 'parent' : 'teacher',
     );
     await SharedPreferencesManager.setValue(
       'student_info_name',
@@ -444,7 +444,7 @@ class StudentInformationController extends GetxController {
     if (nameKh.isNotEmpty) return nameKh;
     final name = (student.name ?? '').trim();
     if (name.isNotEmpty) return name;
-    if (UserRepository.shared.isDriver &&
+    if (UserRepository.shared.isParent &&
         selectedChildName.value.trim().isNotEmpty) {
       return selectedChildName.value.trim();
     }

@@ -7,7 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/routes.dart';
 
-const String _notificationIcon = '@drawable/ic_notification';
+const String _notificationIcon = 'ic_notification';
 const String _typeHomework = 'homework';
 const String _typeActivity = 'activity';
 const String _typeAttendance = 'attendance';

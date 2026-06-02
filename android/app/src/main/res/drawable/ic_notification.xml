@@ -3,10 +3,15 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
+    <!-- Main shield -->
     <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M12,3L3,7.5L12,12L19.36,8.32V13H21V7.5L12,3Z" />
+        android:fillColor="@android:color/white"
+        android:pathData="M12,2.5L4,6.1V12.2C4,17.2 7.4,21.6 12,22.5C16.6,21.6 20,17.2 20,12.2V6.1L12,2.5Z" />
+
+    <!-- House -->
     <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M6.27,10.37V14C6.27,16.21 8.82,18 12,18C15.18,18 17.73,16.21 17.73,14V10.37L12,13.23L6.27,10.37Z" />
+        android:fillColor="@android:color/black"
+        android:pathData="M9,10L12,8L15,10V15H13V12.5H11V15H9V10Z" />
+
 </vector>

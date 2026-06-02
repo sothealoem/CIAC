@@ -12,7 +12,7 @@ class ClassTopicSubscriptionService {
   static const String _lastTopicKey = 'last_class_topic_subscription';
 
   Future<void> syncSelectedClassTopic() async {
-    if (!UserRepository.shared.isDriver) {
+    if (!UserRepository.shared.isParent) {
       await _unsubscribePreviousTopic();
       return;
     }

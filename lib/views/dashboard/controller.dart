@@ -85,7 +85,7 @@ class DashboardController extends GetxController {
       date = date ?? now;
 
       String endPoint = '${EndPoints.dashboard}?date=$date';
-      if (!UserRepository.shared.isDriver) {
+      if (!UserRepository.shared.isParent) {
         endPoint = 'customer/$endPoint';
       }
 
@@ -96,7 +96,7 @@ class DashboardController extends GetxController {
 
       final data = getPropertyFromJson(res.data, 'data');
 
-      if (!UserRepository.shared.isDriver) {
+      if (!UserRepository.shared.isParent) {
         final bookingData = getPropertyFromJson(res.data, 'booking_list');
         bookings.value = List.from(
           (bookingData as List).map((e) => BookingModel.fromJson(e)).toList(),

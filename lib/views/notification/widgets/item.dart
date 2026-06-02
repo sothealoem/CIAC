@@ -9,6 +9,7 @@ class NotificationItemWidget extends StatelessWidget {
     required this.timeText,
     this.imagePath = '',
     this.imageUrl = '',
+    this.fallbackImagePath = '',
     this.onTap,
   });
 
@@ -17,6 +18,7 @@ class NotificationItemWidget extends StatelessWidget {
   final String timeText;
   final String imagePath;
   final String imageUrl;
+  final String fallbackImagePath;
   final VoidCallback? onTap;
 
   @override
@@ -25,6 +27,10 @@ class NotificationItemWidget extends StatelessWidget {
       dateText.trim(),
       timeText.trim(),
     ].where((part) => part.isNotEmpty).join('   ');
+    final resolvedFallbackImage =
+        fallbackImagePath.isEmpty ? AssetPath.placeholder.path : fallbackImagePath;
+    final resolvedAssetImage =
+        imagePath.isEmpty ? resolvedFallbackImage : imagePath;
 
     return InkWell(
       onTap: onTap,
@@ -61,15 +67,14 @@ class NotificationItemWidget extends StatelessWidget {
                           width: 78,
                           height: 78,
                           fit: BoxFit.cover,
+                          fallbackImagePath: resolvedAssetImage,
                         )
                         : Image.asset(
-                          imagePath.isEmpty
-                              ? AssetPath.placeholder.path
-                              : imagePath,
+                          resolvedAssetImage,
                           fit: BoxFit.cover,
                           errorBuilder:
                               (_, __, ___) => Image.asset(
-                                AssetPath.placeholder.path,
+                                resolvedFallbackImage,
                                 fit: BoxFit.cover,
                               ),
                         ),

@@ -30,7 +30,7 @@ class HomeworkController extends GetxController {
   final RxInt teacherHomeworkPerPage = 10.obs;
   final RxInt teacherHomeworkTotal = 0.obs;
 
-  bool get isParentRole => UserRepository.shared.isDriver;
+  bool get isParentRole => UserRepository.shared.isParent;
   bool get hasMoreTeacherHomeworkPages =>
       teacherHomeworkCurrentPage.value < teacherHomeworkLastPage.value;
   List<String> get teacherDashboardClassLabels =>

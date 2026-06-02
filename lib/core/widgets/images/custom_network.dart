@@ -11,12 +11,14 @@ class CustomNetworkImage extends StatelessWidget {
     this.width,
     this.height,
     this.fit,
+    this.fallbackImagePath,
   });
 
   final String imageUrl;
   final double? width;
   final double? height;
   final BoxFit? fit;
+  final String? fallbackImagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,9 @@ class CustomNetworkImage extends StatelessWidget {
 
   Widget _defaultImage() {
     return Image.asset(
-      AssetPath.placeholder.path,
+      fallbackImagePath?.trim().isNotEmpty == true
+          ? fallbackImagePath!
+          : AssetPath.placeholder.path,
       width: width,
       height: height,
       fit: BoxFit.cover,

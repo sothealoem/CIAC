@@ -26,7 +26,7 @@ class RequestLeaveController extends GetxController {
   final Map<String, Student> _studentsById = <String, Student>{};
   SelectedStudentService get _selectedStudentService =>
       Get.find<SelectedStudentService>();
-  bool get isParentMode => UserRepository.shared.isDriver;
+  bool get isParentMode => UserRepository.shared.isParent;
 
   bool isDone = false;
   var selectedClass = 'Grade 5'.obs;

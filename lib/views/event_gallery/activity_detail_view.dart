@@ -43,7 +43,7 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
         foregroundColor: Colors.white,
       ),
       floatingActionButton:
-          !UserRepository.shared.isDriver && _summary != null
+          !UserRepository.shared.isParent && _summary != null
               ? Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,

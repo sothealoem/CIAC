@@ -22,7 +22,7 @@ class StartController extends GetxController {
   @override
   void onInit() {
     UserRepository.shared;
-    isParentUser.value = UserRepository.shared.isDriver;
+    isParentUser.value = UserRepository.shared.isParent;
     _selectedStudentWorker = ever<ChildProfile?>(
       _selectedStudentService.selected,
       (child) {
@@ -164,7 +164,7 @@ class StartController extends GetxController {
       return;
     }
     UserRepository.shared.setUserType(savedRole);
-    isParentUser.value = UserRepository.shared.isDriver;
+    isParentUser.value = UserRepository.shared.isParent;
     _normalizeSelectionForRole();
     await _refreshParentAppBarChild();
   }
@@ -224,7 +224,7 @@ class StartController extends GetxController {
 
       final profile = ProfileModel.fromJson(data);
       UserRepository.shared.setProfile(profile);
-      isParentUser.value = UserRepository.shared.isDriver;
+      isParentUser.value = UserRepository.shared.isParent;
       await SharedPreferencesManager.setValue(
         'user_role',
         profile.type.toLowerCase(),
@@ -406,7 +406,7 @@ class StartController extends GetxController {
         icon: Icons.payment,
         onTap: () => changeMenu(1),
       ),
-      if (UserRepository.shared.isDriver)
+      if (UserRepository.shared.isParent)
         const Spacer()
       else
         BottomBarWidget(
@@ -415,7 +415,7 @@ class StartController extends GetxController {
           icon: Icons.timelapse_outlined,
           onTap: () => changeMenu(2),
         ),
-      if (UserRepository.shared.isDriver)
+      if (UserRepository.shared.isParent)
         BottomBarWidget(
           label: LocaleKeys.payment.tr,
           isSelected: selectedIndex.value == 3,
@@ -425,7 +425,7 @@ class StartController extends GetxController {
       BottomBarWidget(
         label: LocaleKeys.contactUs.tr,
         isSelected:
-            UserRepository.shared.isDriver
+            UserRepository.shared.isParent
                 ? selectedIndex.value == 4
                 : selectedIndex.value == 3,
         icon: Icons.more,

@@ -29,7 +29,7 @@ class ScheduleController extends GetxController {
     error.value = '';
 
     try {
-      final isParent = UserRepository.shared.isDriver;
+      final isParent = UserRepository.shared.isParent;
       final studentId = isParent ? await StudentIdResolver.resolve() : null;
       if (isParent && studentId == null) {
         schedules.clear();

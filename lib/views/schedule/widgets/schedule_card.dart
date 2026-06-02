@@ -50,7 +50,7 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
 
       final dayKey = _dayKeys[selectedDayIndex];
       final items = controller.schedules[dayKey] ?? const <ScheduleItem>[];
-      final isTeacherMode = !UserRepository.shared.isDriver;
+      final isTeacherMode = !UserRepository.shared.isParent;
       final classInfo = controller.classInfo.value;
       final parentClassLabel = [
         classInfo?.className.trim() ?? '',

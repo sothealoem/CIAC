@@ -20,7 +20,7 @@ class BottomBarWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: SizedBox(
-        width: UserRepository.shared.isDriver ? 85 : 80,
+        width: UserRepository.shared.isParent ? 85 : 80,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

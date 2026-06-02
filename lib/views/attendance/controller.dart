@@ -29,7 +29,7 @@ class AttendanceController extends GetxController {
   final RxInt perPage = 15.obs;
   SelectedStudentService get _selectedStudentService =>
       Get.find<SelectedStudentService>();
-  bool get isParentMode => UserRepository.shared.isDriver;
+  bool get isParentMode => UserRepository.shared.isParent;
 
   bool isDone = false;
 

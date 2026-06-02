@@ -22,7 +22,7 @@ class AttendanceRecordController extends GetxController {
   final RxInt perPage = 0.obs;
 
   final List<StaffAttendanceItem> _allLogs = <StaffAttendanceItem>[];
-  bool get isParentMode => UserRepository.shared.isDriver;
+  bool get isParentMode => UserRepository.shared.isParent;
   SelectedStudentService get _selectedStudentService =>
       Get.find<SelectedStudentService>();
 

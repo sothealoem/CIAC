@@ -18,7 +18,7 @@ class ActivityController extends GetxController {
   final RxInt total = 0.obs;
   String _lastStudentScopeKey = '';
  
-  bool get isTeacherRole => !UserRepository.shared.isDriver;
+  bool get isTeacherRole => !UserRepository.shared.isParent;
   bool get hasMorePages => currentPage.value < lastPage.value;
 
   @override

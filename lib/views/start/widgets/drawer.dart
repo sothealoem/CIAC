@@ -27,7 +27,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   List<ChildProfile> _children = const <ChildProfile>[];
   String _selectedChildId = '';
 
-  bool get _isParentRole => UserRepository.shared.isDriver;
+  bool get _isParentRole => UserRepository.shared.isParent;
   SelectedStudentService get _selectedStudentService =>
       Get.find<SelectedStudentService>();
 

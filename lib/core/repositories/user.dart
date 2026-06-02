@@ -35,11 +35,11 @@ class UserRepository {
     _profile = profile;
   }
 
-  bool _isDriver = false;
-  bool get isDriver => _isDriver;
+  bool _isParent = false;
+  bool get isParent => _isParent;
   void setUserType(String value) {
     final userType = UserType.fromKey(value);
-    _isDriver = userType == UserType.parent;
+    _isParent = userType == UserType.parent;
   }
 
   bool _isTablet = false;

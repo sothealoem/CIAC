@@ -50,7 +50,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     if (startCtl != null) {
       return startCtl.isParentUser.value;
     }
-    return UserRepository.shared.isDriver;
+    return UserRepository.shared.isParent;
   }
 
   List<int> _visibleMenuIndices() {

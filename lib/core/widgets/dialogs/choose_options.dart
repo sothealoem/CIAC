@@ -28,7 +28,7 @@ class ChooseOptionsDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (UserRepository.shared.isDriver &&
+            if (UserRepository.shared.isParent &&
                 controller.selectedIndex.value == 2)
               const SizedBox()
             else
