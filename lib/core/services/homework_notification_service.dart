@@ -5,7 +5,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 import 'package:schoolapp/routes.dart';
+import 'package:schoolapp/core/libraries/shared_preferences.dart';
+import 'package:schoolapp/core/services/class_topic_subscription_service.dart';
 
 const String _notificationIcon = 'ic_notification';
 const String _typeHomework = 'homework';
@@ -37,7 +40,30 @@ class HomeworkNotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
+  static const String _enabledKey = 'notifications_enabled';
   bool _initialized = false;
+
+  Future<bool> isEnabled() async {
+    final raw = (await SharedPreferencesManager.get(_enabledKey) ?? 'true')
+        .toString()
+        .trim()
+        .toLowerCase();
+    return raw != 'false' && raw != '0';
+  }
+
+  Future<void> setEnabled(bool enabled) async {
+    await SharedPreferencesManager.setValue(_enabledKey, enabled.toString());
+    if (!enabled) {
+      await _localNotifications.cancelAll();
+      await ClassTopicSubscriptionService.instance.clearSubscription();
+      return;
+    }
+    await FirebaseMessaging.instance.requestPermission();
+    await FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
+      force: true,
+    );
+    await ClassTopicSubscriptionService.instance.syncSelectedClassTopic();
+  }
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -89,6 +115,7 @@ class HomeworkNotificationService {
 
   Future<void> showTestHomeworkNotification() async {
     await initialize();
+    if (!await isEnabled()) return;
     await _localNotifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       'New Homework',
@@ -116,6 +143,7 @@ class HomeworkNotificationService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
+    if (!await isEnabled()) return;
     final notificationType = _notificationType(message);
     debugPrint(
       'Foreground FCM received: '

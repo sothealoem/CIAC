@@ -25,6 +25,7 @@ class HomeworkController extends GetxController {
   final RxBool hasHomeworkNotification = false.obs;
   final RxSet<String> submittedAssignmentIds = <String>{}.obs;
   final RxSet<String> submittingAssignmentIds = <String>{}.obs;
+  final RxSet<String> teacherSubmittingStudentIds = <String>{}.obs;
   final RxInt teacherHomeworkCurrentPage = 1.obs;
   final RxInt teacherHomeworkLastPage = 1.obs;
   final RxInt teacherHomeworkPerPage = 10.obs;
@@ -74,7 +75,12 @@ class HomeworkController extends GetxController {
         await _resolveStudentClassId() ??
         await _resolveClassIdFromClassName(fallbackClassName);
     final selectedStudentId = await _resolveSelectedStudentId();
+    print(
+      'Student homework debug -> studentId: $selectedStudentId, '
+      'classId: $classId, fallbackClassName: $fallbackClassName',
+    );
     if (classId == null) {
+      print('Student homework debug -> classId is null, clearing items');
       assignedHomeworkItems.clear();
       return;
     }
@@ -88,6 +94,10 @@ class HomeworkController extends GetxController {
         EndPoints.studentHomeworks(classId),
         isShowLoading: false,
       );
+      print(
+        'Student homework debug -> GET ${EndPoints.studentHomeworks(classId)}',
+      );
+      print('Student homework debug -> raw response: ${res.data}');
       final rows = _extractHomeworkRows(res.data);
       final items = rows
           .whereType<Map>()
@@ -98,6 +108,21 @@ class HomeworkController extends GetxController {
             ),
           )
           .toList(growable: false);
+      for (final row in rows.whereType<Map>()) {
+        final map = Map<String, dynamic>.from(row);
+        final id = (map['id'] ?? map['homework_id'] ?? '').toString();
+        print(
+          'Student homework debug -> row $id attachmentUrls: ${_readAttachmentUrls(map)} rawImages: ${map['images']}',
+        );
+      }
+      print(
+        'Student homework debug -> row count: ${rows.length}, '
+        'item ids: ${items.map((item) => item.id).toList()}',
+      );
+      print(
+        'Student homework debug -> item classes: '
+        '${items.map((item) => '${item.id}:${item.className}/${item.classId}').toList()}',
+      );
       assignedHomeworkItems.assignAll(items);
 
       final refreshedSubmittedIds = <String>{
@@ -114,6 +139,7 @@ class HomeworkController extends GetxController {
       await _saveSubmittedHomeworkIds(selectedStudentId, submittedAssignmentIds);
       await _refreshParentHomeworkNotification(selectedStudentId);
     } catch (e) {
+      print('Student homework debug -> fetch error: $e');
       assignedHomeworkItems.clear();
       ExceptionHandler.handleException(e, alert: false);
     } finally {
@@ -180,6 +206,7 @@ class HomeworkController extends GetxController {
     required String deadline,
     required String description,
     String attachmentUrl = '',
+    List<String> attachmentUrls = const <String>[],
     int submitted = 0,
     int total = 0,
   }) {
@@ -192,7 +219,12 @@ class HomeworkController extends GetxController {
       submitted: submitted,
       total: total,
       description: description,
-      attachmentUrl: attachmentUrl,
+      attachmentUrls:
+          attachmentUrls.isNotEmpty
+              ? attachmentUrls
+              : (attachmentUrl.trim().isEmpty
+                  ? const <String>[]
+                  : <String>[attachmentUrl.trim()]),
     );
   }
 
@@ -264,10 +296,10 @@ class HomeworkController extends GetxController {
             final existing = assignedHomeworkItems.firstWhereOrNull(
               (item) => item.id == assignment.id,
             );
-            if (assignment.attachmentUrl.isNotEmpty || existing == null) {
+            if (assignment.attachmentUrls.isNotEmpty || existing == null) {
               return assignment;
             }
-            return assignment.copyWith(attachmentUrl: existing.attachmentUrl);
+            return assignment.copyWith(attachmentUrls: existing.attachmentUrls);
           }).toList(growable: false);
 
       if (reset) {
@@ -392,7 +424,10 @@ class HomeworkController extends GetxController {
       className: trimmedClassName,
       deadline: trimmedDeadline,
       description: trimmedDescription,
-      attachmentUrl: trimmedAttachmentPath,
+      attachmentUrls:
+          trimmedAttachmentPath.isEmpty
+              ? const <String>[]
+              : <String>[trimmedAttachmentPath],
     );
 
     final formMap = <String, dynamic>{
@@ -408,14 +443,24 @@ class HomeworkController extends GetxController {
 
     try {
       isSubmittingAssignment.value = true;
+      print(
+        'Teacher homework create debug -> classId: $classId, '
+        'title: $trimmedTitle, due_date: ${_deadlineForApi(trimmedDeadline)}, '
+        'attachmentPath: $trimmedAttachmentPath',
+      );
       final res = await Get.find<ApiService>().post(
         EndPoints.teacherHomeworks,
         payload,
         isShowLoading: false,
       );
+      print('Teacher homework create debug -> raw response: ${res.data}');
       final data = getPropertyFromJson(res.data, 'data');
       if (data is Map) {
         final map = Map<String, dynamic>.from(data);
+        final attachmentUrls = _readAttachmentUrls(map);
+        print(
+          'Teacher homework create debug -> parsed attachmentUrls: $attachmentUrls',
+        );
         final createdItem = HomeworkAssignment(
           id: (map['id'] ?? map['homework_id'] ?? localItem.id).toString(),
           classId: _findClassId(map) ?? classId,
@@ -443,9 +488,10 @@ class HomeworkController extends GetxController {
             'remark',
             'instructions',
           ], trimmedDescription),
-          attachmentUrl: _readAttachmentUrl(map).isEmpty
-              ? trimmedAttachmentPath
-              : _readAttachmentUrl(map),
+          attachmentUrls:
+              attachmentUrls.isNotEmpty
+                  ? attachmentUrls
+                  : localItem.attachmentUrls,
         );
         assignedHomeworkItems.insert(0, createdItem);
         return createdItem;
@@ -488,7 +534,10 @@ class HomeworkController extends GetxController {
       className: trimmedClassName,
       deadline: trimmedDeadline,
       description: trimmedDescription,
-      attachmentUrl: trimmedAttachmentPath,
+      attachmentUrls:
+          trimmedAttachmentPath.isEmpty
+              ? const <String>[]
+              : <String>[trimmedAttachmentPath],
       submitted: submitted,
       total: total,
     );
@@ -506,15 +555,25 @@ class HomeworkController extends GetxController {
 
     try {
       isSubmittingAssignment.value = true;
+      print(
+        'Teacher homework update debug -> id: $trimmedId, classId: $classId, '
+        'title: $trimmedTitle, due_date: ${_deadlineForApi(trimmedDeadline)}, '
+        'attachmentPath: $trimmedAttachmentPath',
+      );
       final res = await Get.find<ApiService>().post(
         EndPoints.teacherHomeworkDetail(trimmedId),
         payload,
         isShowLoading: false,
       );
+      print('Teacher homework update debug -> raw response: ${res.data}');
       final data = getPropertyFromJson(res.data, 'data');
       HomeworkAssignment updatedItem = localItem;
       if (data is Map) {
         final map = Map<String, dynamic>.from(data);
+        final attachmentUrls = _readAttachmentUrls(map);
+        print(
+          'Teacher homework update debug -> parsed attachmentUrls: $attachmentUrls',
+        );
         updatedItem = HomeworkAssignment(
           id: (map['id'] ?? map['homework_id'] ?? localItem.id).toString(),
           classId: _findClassId(map) ?? classId,
@@ -537,9 +596,10 @@ class HomeworkController extends GetxController {
             'remark',
             'instructions',
           ], trimmedDescription),
-          attachmentUrl: _readAttachmentUrl(map).isEmpty
-              ? trimmedAttachmentPath
-              : _readAttachmentUrl(map),
+          attachmentUrls:
+              attachmentUrls.isNotEmpty
+                  ? attachmentUrls
+                  : localItem.attachmentUrls,
         );
       }
 
@@ -690,6 +750,49 @@ class HomeworkController extends GetxController {
     hasHomeworkNotification.value = false;
   }
 
+  bool isTeacherSubmittingForStudent(String studentId) {
+    return teacherSubmittingStudentIds.contains(studentId.trim());
+  }
+
+  Future<void> submitHomeworkForStudent({
+    required String homeworkId,
+    required HomeworkSubmissionStudent student,
+    String answerText = '',
+  }) async {
+    final trimmedHomeworkId = homeworkId.trim();
+    final trimmedStudentId = student.id.trim();
+    if (trimmedHomeworkId.isEmpty) {
+      throw Exception('Homework ID is missing');
+    }
+    if (trimmedStudentId.isEmpty) {
+      throw Exception('Student ID is missing');
+    }
+
+    final teacherId = await _resolveTeacherId();
+    if (teacherId.isEmpty) {
+      throw Exception('Teacher ID not found');
+    }
+
+    try {
+      teacherSubmittingStudentIds.add(trimmedStudentId);
+      final payload = <String, dynamic>{
+        'homework_id': int.tryParse(trimmedHomeworkId) ?? trimmedHomeworkId,
+        'answer_text': answerText.trim(),
+        'submitted_by': int.tryParse(teacherId) ?? teacherId,
+        'student_id': <dynamic>[int.tryParse(trimmedStudentId) ?? trimmedStudentId],
+      };
+      print('Teacher submit homework debug -> payload: $payload');
+      final res = await Get.find<ApiService>().post(
+        EndPoints.teacherSubmitHomework,
+        payload,
+        isShowLoading: false,
+      );
+      print('Teacher submit homework debug -> raw response: ${res.data}');
+    } finally {
+      teacherSubmittingStudentIds.remove(trimmedStudentId);
+    }
+  }
+
   // Shared deadline formatting helpers for homework forms and API payloads.
   String formatDeadline(DateTime picked) {
     const months = [
@@ -826,12 +929,23 @@ class HomeworkController extends GetxController {
         'remark',
         'instructions',
       ], ''),
-      attachmentUrl: _readAttachmentUrl(map),
+      attachmentUrls: _readAttachmentUrls(map),
     );
   }
 
-  String _readAttachmentUrl(Map<String, dynamic> map) {
-    final direct = _readText(map, const [
+  List<String> _readAttachmentUrls(Map<String, dynamic> map) {
+    final urls = <String>[];
+    final seen = <String>{};
+
+    void addUrl(String value) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) return;
+      if (seen.add(trimmed)) {
+        urls.add(trimmed);
+      }
+    }
+
+    for (final key in const [
       'image',
       'image_url',
       'file',
@@ -840,9 +954,14 @@ class HomeworkController extends GetxController {
       'attachment_url',
       'photo',
       'photo_url',
-    ], '');
-    if (direct.isNotEmpty) {
-      return direct;
+      'url',
+      'path',
+      'src',
+      'full_url',
+      'original_url',
+      'download_url',
+    ]) {
+      addUrl(_readText(map, <String>[key], ''));
     }
 
     final nestedKeys = <String>['images', 'attachments', 'files', 'photos'];
@@ -851,24 +970,18 @@ class HomeworkController extends GetxController {
       if (value is List) {
         for (final item in value) {
           if (item is String && item.trim().isNotEmpty) {
-            return item.trim();
+            addUrl(item);
           }
           if (item is Map) {
-            final nested = _readAttachmentUrl(Map<String, dynamic>.from(item));
-            if (nested.isNotEmpty) {
-              return nested;
-            }
+            urls.addAll(_readAttachmentUrls(Map<String, dynamic>.from(item)));
           }
         }
       } else if (value is Map) {
-        final nested = _readAttachmentUrl(Map<String, dynamic>.from(value));
-        if (nested.isNotEmpty) {
-          return nested;
-        }
+        urls.addAll(_readAttachmentUrls(Map<String, dynamic>.from(value)));
       }
     }
 
-    return '';
+    return urls.toSet().toList(growable: false);
   }
 
   void _updateTeacherClassOptions() {
@@ -1436,7 +1549,7 @@ class HomeworkAssignment {
     required this.submitted,
     required this.total,
     required this.description,
-    this.attachmentUrl = '',
+    this.attachmentUrls = const <String>[],
   });
 
   final String id;
@@ -1447,7 +1560,9 @@ class HomeworkAssignment {
   final int submitted;
   final int total;
   final String description;
-  final String attachmentUrl;
+  final List<String> attachmentUrls;
+  String get attachmentUrl =>
+      attachmentUrls.isEmpty ? '' : attachmentUrls.first;
 
   HomeworkAssignment copyWith({
     String? id,
@@ -1458,7 +1573,7 @@ class HomeworkAssignment {
     int? submitted,
     int? total,
     String? description,
-    String? attachmentUrl,
+    List<String>? attachmentUrls,
   }) {
     return HomeworkAssignment(
       id: id ?? this.id,
@@ -1469,7 +1584,7 @@ class HomeworkAssignment {
       submitted: submitted ?? this.submitted,
       total: total ?? this.total,
       description: description ?? this.description,
-      attachmentUrl: attachmentUrl ?? this.attachmentUrl,
+      attachmentUrls: attachmentUrls ?? this.attachmentUrls,
     );
   }
 }
@@ -1492,8 +1607,13 @@ class HomeworkAssignmentDetail {
 }
 
 class HomeworkSubmissionStudent {
-  const HomeworkSubmissionStudent({required this.name, required this.status});
+  const HomeworkSubmissionStudent({
+    required this.id,
+    required this.name,
+    required this.status,
+  });
 
+  final String id;
   final String name;
   final String status;
 
@@ -1521,6 +1641,12 @@ class HomeworkSubmissionStudent {
         .trim();
 
     return HomeworkSubmissionStudent(
+      id: firstText(const [
+        'student_id',
+        'id',
+        'user_id',
+        'admission_id',
+      ]),
       name: fullNameFromParts.isNotEmpty
           ? fullNameFromParts
           : firstText(const [

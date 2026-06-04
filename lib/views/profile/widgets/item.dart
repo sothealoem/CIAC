@@ -9,6 +9,7 @@ class ProfileItemWidget extends StatelessWidget {
     this.iconColor = AppColor.black,
     this.style = AppTextStyle.normalPrimaryRegular,
     this.onTap,
+    this.trailing,
   });
 
   final IconData icon;
@@ -16,6 +17,7 @@ class ProfileItemWidget extends StatelessWidget {
   final Color iconColor;
   final TextStyle style;
   final Function()? onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,11 @@ class ProfileItemWidget extends StatelessWidget {
                 child: Icon(icon, color: iconColor),
               ),
               16.width,
-              Text(text, style: style),
+              Expanded(child: Text(text, style: style)),
+              if (trailing != null) ...[
+                12.width,
+                trailing!,
+              ],
             ],
           ),
         ],

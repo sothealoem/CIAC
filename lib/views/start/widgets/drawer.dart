@@ -24,6 +24,7 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   bool _isLoadingChildren = false;
+  bool _notificationsEnabled = true;
   List<ChildProfile> _children = const <ChildProfile>[];
   String _selectedChildId = '';
 
@@ -34,6 +35,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void initState() {
     super.initState();
+    _loadNotificationPreference();
     _loadSelectedChild();
     if (_isParentRole) {
       if (_selectedStudentService.children.isNotEmpty) {
@@ -43,6 +45,23 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         _fetchParentChildren();
       }
     }
+  }
+
+  Future<void> _loadNotificationPreference() async {
+    final enabled = await HomeworkNotificationService.instance.isEnabled();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _notificationsEnabled = enabled;
+    });
+  }
+
+  Future<void> _toggleNotifications(bool enabled) async {
+    setState(() {
+      _notificationsEnabled = enabled;
+    });
+    await HomeworkNotificationService.instance.setEnabled(enabled);
   }
 
   Future<void> _loadSelectedChild() async {
@@ -325,6 +344,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             _divider(),
             _parentMenuItem(
+              icon: Icons.notifications_active_outlined,
+              label: LocaleKeys.notification.tr,
+              trailing: Switch(
+                value: _notificationsEnabled,
+                onChanged: _toggleNotifications,
+                activeColor: AppColor.red,
+              ),
+            ),
+            _divider(),
+            _parentMenuItem(
               icon: Icons.contact_support,
               label: LocaleKeys.contactUs.tr,
               onTap: contactUsHandleTap,
@@ -469,6 +498,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             _divider(),
             _parentMenuItem(
+              icon: Icons.notifications_active_outlined,
+              label: LocaleKeys.notification.tr,
+              trailing: Switch(
+                value: _notificationsEnabled,
+                onChanged: _toggleNotifications,
+                activeColor: AppColor.red,
+              ),
+            ),
+            _divider(),
+            _parentMenuItem(
               icon: Icons.contact_support,
               label: LocaleKeys.contactUs.tr,
               onTap: contactUsHandleTap,
@@ -520,6 +559,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     required String label,
     VoidCallback? onTap,
     String? trailingText,
+    Widget? trailing,
   }) {
     return ListTile(
       dense: true,
@@ -534,6 +574,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           fontWeight: FontWeight.w500,
         ),
       ),
+      trailing:
+          trailing ??
+          (trailingText == null
+              ? null
+              : Text(
+                trailingText,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              )),
     );
   }
 

@@ -5,6 +5,23 @@ import 'package:schoolapp/core/core.dart';
 
 class ProfileController extends GetxController {
   final Rxn<XFile> profile = Rxn<XFile>(XFile(''));
+  final RxBool notificationsEnabled = true.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadNotificationPreference();
+  }
+
+  Future<void> _loadNotificationPreference() async {
+    notificationsEnabled.value =
+        await HomeworkNotificationService.instance.isEnabled();
+  }
+
+  Future<void> toggleNotifications(bool enabled) async {
+    notificationsEnabled.value = enabled;
+    await HomeworkNotificationService.instance.setEnabled(enabled);
+  }
 
   Future<void> updateProfile(XFile file) async {
     try {

@@ -799,10 +799,14 @@ class _AssignedHomeworkDetailPanel extends StatefulWidget {
 class _AssignedHomeworkDetailPanelState
     extends State<_AssignedHomeworkDetailPanel> {
   String _selectedStatus = LocaleKeys.onlineClassSubmitted;
-  late final Future<HomeworkAssignmentDetail> _detailFuture;
+  late Future<HomeworkAssignmentDetail> _detailFuture;
   @override
   void initState() {
     super.initState();
+    _reloadDetail();
+  }
+
+  void _reloadDetail() {
     _detailFuture = Get.find<HomeworkController>().fetchTeacherHomeworkDetail(
       widget.item.id,
     );
@@ -904,8 +908,13 @@ class _AssignedHomeworkDetailPanelState
                 ...filtered.expand(
                   (submission) => [
                     _StudentSubmissionRow(
+                      homeworkId: item.id,
+                      submission: submission,
                       name: submission.name,
                       statusKey: _statusKeyFor(submission.status),
+                      onSubmitted: () {
+                        setState(_reloadDetail);
+                      },
                     ),
                     if (submission != filtered.last) const Divider(height: 16),
                   ],
@@ -969,9 +978,15 @@ class _AssignedHomeworkEditPanel extends StatelessWidget {
 }
 
 class _ExistingHomeworkAttachment extends StatelessWidget {
-  const _ExistingHomeworkAttachment({required this.url});
+  const _ExistingHomeworkAttachment({
+    required this.url,
+    this.label = 'Current uploaded image',
+    this.imageHeight = 180,
+  });
 
   final String url;
+  final String label;
+  final double imageHeight;
 
   bool get _isImage {
     final lower = (Uri.tryParse(url)?.path ?? url).toLowerCase();
@@ -990,6 +1005,43 @@ class _ExistingHomeworkAttachment extends StatelessWidget {
     return url.split('/').last;
   }
 
+  bool get _isLocalPath {
+    final trimmed = url.trim();
+    if (trimmed.isEmpty) return false;
+    final uri = Uri.tryParse(trimmed);
+    final scheme = uri?.scheme.toLowerCase() ?? '';
+    if (scheme == 'http' || scheme == 'https') {
+      return false;
+    }
+    return trimmed.startsWith('/') || trimmed.contains(':\\');
+  }
+
+  Widget _buildAttachmentImage() {
+    if (_isLocalPath) {
+      return Image.file(
+        File(url),
+        height: imageHeight,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder:
+            (_, __, ___) => Image.asset(
+              AssetPath.placeholder.path,
+              height: imageHeight,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+      );
+    }
+
+    return CustomNetworkImage(
+      imageUrl: url,
+      height: imageHeight,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      fallbackImagePath: AssetPath.placeholder.path,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isImage) {
@@ -997,7 +1049,7 @@ class _ExistingHomeworkAttachment extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Current uploaded image',
+            label,
             style: AppTextStyle.smallGreyRegular.copyWith(
               color: _homeworkMutedText,
             ),
@@ -1005,23 +1057,7 @@ class _ExistingHomeworkAttachment extends StatelessWidget {
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: Image.network(
-              url,
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (_, __, ___) => Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: _onlineClassAccentSoft,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: _onlineClassBorder),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text('Unable to load current image'),
-                  ),
-            ),
+            child: _buildAttachmentImage(),
           ),
         ],
       );
@@ -1084,6 +1120,13 @@ class _AssignedHomeworkSummaryPanel extends StatelessWidget {
           rightLabel: LocaleKeys.onlineClassDeadline.tr,
           rightValue: item.deadline,
         ),
+        if (item.attachmentUrl.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          _ExistingHomeworkAttachment(
+            url: item.attachmentUrl,
+            label: 'Attachment',
+          ),
+        ],
         const SizedBox(height: 14),
         // Row(
         //   children: [
@@ -1255,6 +1298,14 @@ class _AssignedHomeworkAttendanceCard extends StatelessWidget {
                     LocaleKeys.onlineClassDeadline.tr,
                     item.deadline,
                   ),
+                  if (item.attachmentUrl.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    _ExistingHomeworkAttachment(
+                      url: item.attachmentUrl,
+                      label: 'Attachment',
+                      imageHeight: 140,
+                    ),
+                  ],
                   const SizedBox(height: 5),
                   Row(
                     children: [
@@ -1730,10 +1781,19 @@ class _SummaryPair extends StatelessWidget {
 }
 
 class _StudentSubmissionRow extends StatelessWidget {
-  const _StudentSubmissionRow({required this.name, required this.statusKey});
+  const _StudentSubmissionRow({
+    required this.homeworkId,
+    required this.submission,
+    required this.name,
+    required this.statusKey,
+    required this.onSubmitted,
+  });
 
+  final String homeworkId;
+  final HomeworkSubmissionStudent submission;
   final String name;
   final String statusKey;
+  final VoidCallback onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -1768,16 +1828,60 @@ class _StudentSubmissionRow extends StatelessWidget {
             ],
           ),
         ),
-        if (!isPending)
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              LocaleKeys.onlineClassView.tr,
-              style: AppTextStyle.smallPrimaryBold.copyWith(
-                color: _onlineClassAccent,
-              ),
-            ),
-          ),
+        GetX<HomeworkController>(
+          builder: (controller) {
+            final isSubmitting = controller.isTeacherSubmittingForStudent(
+              submission.id,
+            );
+            if (!isPending) {
+              return TextButton(
+                onPressed: () {},
+                child: Text(
+                  LocaleKeys.onlineClassView.tr,
+                  style: AppTextStyle.smallPrimaryBold.copyWith(
+                    color: _onlineClassAccent,
+                  ),
+                ),
+              );
+            }
+
+            return TextButton(
+              onPressed:
+                  isSubmitting
+                      ? null
+                      : () async {
+                        try {
+                          await controller.submitHomeworkForStudent(
+                            homeworkId: homeworkId,
+                            student: submission,
+                          );
+                          await controller.fetchTeacherHomeworks();
+                          onSubmitted();
+                          Get.snackbar(
+                            LocaleKeys.onlineClassSuccessTitle.tr,
+                            'Homework submitted for $name',
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        } catch (e) {
+                          ExceptionHandler.handleException(e);
+                        }
+                      },
+              child:
+                  isSubmitting
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : Text(
+                        LocaleKeys.submit.tr,
+                        style: AppTextStyle.smallPrimaryBold.copyWith(
+                          color: _onlineClassAccent,
+                        ),
+                      ),
+            );
+          },
+        ),
       ],
     );
   }

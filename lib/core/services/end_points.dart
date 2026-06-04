@@ -45,6 +45,7 @@ class EndPoints {
       '/api/v1/teacher/homeworks/$id';
   static String teacherHomeworkDelete(dynamic id) =>
       '/api/v1/teacher/homeworks/$id/delete';
+  static String get teacherSubmitHomework => '/api/v1/teacher/submit/homework';
   static String studentHomeworks(dynamic classId) =>
       '/api/v1/student/homeworks/$classId';
   static String get studentHomeworkSubmit => '/api/v1/student/homework/submit';

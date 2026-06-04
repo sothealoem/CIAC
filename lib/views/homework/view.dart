@@ -34,82 +34,47 @@ class HomeworkView extends GetView<HomeworkController> {
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(32, 8, 32, 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 66,
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              await HomeworkNotificationService.instance
-                                  .showTestHomeworkNotification();
-                            },
-                            icon: const Icon(Icons.notifications_active_rounded),
-                            label: const Text(
-                              'Test Alert',
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFFD80F23),
-                              side: const BorderSide(color: Color(0xFFD80F23)),
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                            ),
+                  child: SizedBox(
+                    height: 66,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF3345), Color(0xFFD80F23)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x3BD80F23),
+                            blurRadius: 18,
+                            offset: Offset(0, 9),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: () => HomeworkWidget.openAssignHomework(context),
+                        icon: const Icon(Icons.add_rounded, size: 30),
+                        label: Text(
+                          LocaleKeys.onlineClassActionAssignHomework.tr,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(
-                          height: 66,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF3345), Color(0xFFD80F23)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x3BD80F23),
-                                  blurRadius: 18,
-                                  offset: Offset(0, 9),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  () => HomeworkWidget.openAssignHomework(context),
-                              icon: const Icon(Icons.add_rounded, size: 30),
-                              label: Text(
-                                LocaleKeys.onlineClassActionAssignHomework.tr,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                foregroundColor: Colors.white,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

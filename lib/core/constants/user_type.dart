@@ -17,3 +17,4 @@ enum UserType {
   static Set<String> get allowedRoleKeys =>
       UserType.values.map((type) => type.key).toSet();
 }
+

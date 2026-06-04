@@ -94,6 +94,18 @@ class ProfileView extends GetView<ProfileController> {
                       onTap: () => Get.toNamed(Routes.language),
                     ),
                     20.height,
+                    Obx(
+                      () => ProfileItemWidget(
+                        icon: Icons.notifications_active_outlined,
+                        text: LocaleKeys.notification.tr,
+                        trailing: Switch(
+                          value: controller.notificationsEnabled.value,
+                          onChanged: controller.toggleNotifications,
+                          activeColor: AppColor.red,
+                        ),
+                      ),
+                    ),
+                    20.height,
 
                     // Logout
                     ProfileItemWidget(

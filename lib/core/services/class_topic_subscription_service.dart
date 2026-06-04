@@ -10,8 +10,20 @@ class ClassTopicSubscriptionService {
       ClassTopicSubscriptionService._();
 
   static const String _lastTopicKey = 'last_class_topic_subscription';
+  static const String _notificationsEnabledKey = 'notifications_enabled';
 
   Future<void> syncSelectedClassTopic() async {
+    final notificationsEnabled =
+        ((await SharedPreferencesManager.get(_notificationsEnabledKey) ?? 'true')
+                .toString()
+                .trim()
+                .toLowerCase() !=
+            'false');
+    if (!notificationsEnabled) {
+      await _unsubscribePreviousTopic();
+      return;
+    }
+
     if (!UserRepository.shared.isParent) {
       await _unsubscribePreviousTopic();
       return;
@@ -61,6 +73,7 @@ class ClassTopicSubscriptionService {
     if (previousTopic.isEmpty) {
       return;
     }
+    
 
     try {
       await FirebaseMessaging.instance.unsubscribeFromTopic(previousTopic);

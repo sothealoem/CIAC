@@ -553,6 +553,42 @@ void _openStudentHomeworkSubmitSheet(
   );
 }
 
+void _openHomeworkAttachmentViewer(BuildContext context, String url) {
+  showDialog<void>(
+    context: context,
+    barrierColor: Colors.black87,
+    builder:
+        (_) => Dialog.fullscreen(
+          backgroundColor: Colors.black,
+          child: Stack(
+            children: [
+              Center(
+                child: InteractiveViewer(
+                  minScale: 0.8,
+                  maxScale: 4,
+                  child: CustomNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.contain,
+                    fallbackImagePath: AssetPath.placeholder.path,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 16,
+                right: 16,
+                child: SafeArea(
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+  );
+}
+
 class _StudentHomeworkSubmitSheet extends StatefulWidget {
   const _StudentHomeworkSubmitSheet({required this.item});
 
@@ -761,6 +797,70 @@ class _StudentHomeworkSubmitSheetState
                           ),
                         ],
                       ),
+                      if (widget.item.attachmentUrl.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          'Teacher Attachment',
+                          style: AppTextStyle.normalPrimaryBold.copyWith(
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap:
+                              () => _openHomeworkAttachmentViewer(
+                                context,
+                                widget.item.attachmentUrl,
+                              ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 180,
+                                  width: double.infinity,
+                                  child: CustomNetworkImage(
+                                    imageUrl: widget.item.attachmentUrl,
+                                    fit: BoxFit.cover,
+                                    fallbackImagePath:
+                                        AssetPath.placeholder.path,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0x99000000),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.visibility_rounded,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Tap to view',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
