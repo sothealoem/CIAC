@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -17,20 +18,25 @@ class FcmTokenSyncService {
   static final FcmTokenSyncService instance = FcmTokenSyncService._();
 
   static const String _lastSyncedTokenKey = 'last_synced_fcm_token';
+  static const int _apnsTokenRetries = 6;
+  static const Duration _apnsTokenRetryDelay = Duration(seconds: 2);
 
   final Logger _logger = Logger('FcmTokenSyncService');
-  StreamSubscription<String>? _tokenRefreshSubscription;
   bool _initialized = false;
 
   Future<void> initialize() async {
     if (_initialized) return;
 
-    _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh.listen(
+    FirebaseMessaging.instance.onTokenRefresh.listen(
       (token) {
         unawaited(syncToken(token, force: true));
       },
       onError: (Object error, StackTrace stackTrace) {
-        _logger.warning('Unable to listen for FCM token refresh', error, stackTrace);
+        _logger.warning(
+          'Unable to listen for FCM token refresh',
+          error,
+          stackTrace,
+        );
       },
     );
 
@@ -39,10 +45,23 @@ class FcmTokenSyncService {
   }
 
   Future<void> syncCurrentTokenIfAuthenticated({bool force = false}) async {
-    final token = await FirebaseMessaging.instance.getToken();
-    if (token == null || token.trim().isEmpty) return;
-    debugPrint('FCM token: ${token.trim()}');
-    await syncToken(token, force: force);
+    try {
+      await _waitForApnsTokenIfNeeded();
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null || token.trim().isEmpty) return;
+      debugPrint('FCM token: ${token.trim()}');
+      await syncToken(token, force: force);
+    } on FirebaseException catch (error, stackTrace) {
+      if (_isApnsTokenUnavailable(error)) {
+        if (kDebugMode) {
+          debugPrint('FCM token sync skipped: APNS token is not ready yet.');
+        }
+        return;
+      }
+      _logger.warning('Unable to read FCM token', error, stackTrace);
+    } catch (error, stackTrace) {
+      _logger.warning('Unable to read FCM token', error, stackTrace);
+    }
   }
 
   Future<void> syncToken(String token, {bool force = false}) async {
@@ -115,6 +134,25 @@ class FcmTokenSyncService {
         return 'linux';
       case TargetPlatform.fuchsia:
         return 'fuchsia';
+    }
+  }
+
+  bool _isApnsTokenUnavailable(FirebaseException error) {
+    return error.plugin == 'firebase_messaging' &&
+        error.code == 'apns-token-not-set';
+  }
+
+  Future<void> _waitForApnsTokenIfNeeded() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) {
+      return;
+    }
+
+    for (var attempt = 0; attempt < _apnsTokenRetries; attempt++) {
+      final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      if (apnsToken != null && apnsToken.trim().isNotEmpty) {
+        return;
+      }
+      await Future<void>.delayed(_apnsTokenRetryDelay);
     }
   }
 }

@@ -77,6 +77,7 @@ class HomeworkNotificationService {
     const settings = InitializationSettings(
       android: AndroidInitializationSettings(_notificationIcon),
       iOS: DarwinInitializationSettings(),
+      macOS: DarwinInitializationSettings(),
     );
 
     await _localNotifications.initialize(
@@ -98,6 +99,17 @@ class HomeworkNotificationService {
               IOSFlutterLocalNotificationsPlugin
             >();
     await iosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
+
+    final macOSPlugin =
+        _localNotifications
+            .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin
+            >();
+    await macOSPlugin?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
