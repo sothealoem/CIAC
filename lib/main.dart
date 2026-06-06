@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
+import 'package:schoolapp/firebase_options.dart';
 import 'package:schoolapp/flavor/flavor.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:logging/logging.dart';
@@ -18,12 +19,11 @@ Future<void> main() async {
   runZonedGuarded<Future<void>>(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
       await dotenv.load(fileName: '.env');
       print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
-      await Firebase.initializeApp();
 
+      final isFirebaseReady = await _initializeFirebase();
       await _initEnvironment();
       await _setAppSystemPreferences();
       await _initServices();
@@ -35,7 +35,12 @@ Future<void> main() async {
         Logger.root.level = Level.OFF;
       }
       runApp(const MyApp());
-      unawaited(_bootstrapDeferredServices());
+      if (isFirebaseReady) {
+        FirebaseMessaging.onBackgroundMessage(
+          firebaseMessagingBackgroundHandler,
+        );
+        unawaited(_bootstrapDeferredServices());
+      }
     },
     (exception, trace) {
       ExceptionHandler.handleException(exception);
@@ -92,6 +97,23 @@ class MyApp extends StatelessWidget {
 void customPrint(dynamic value) {
   if (kDebugMode) {
     debugPrint('[INFO] : $value');
+  }
+}
+
+Future<bool> _initializeFirebase() async {
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ).timeout(const Duration(seconds: 8));
+    }
+    return true;
+  } catch (error, stackTrace) {
+    if (kDebugMode) {
+      debugPrint('Firebase initialization failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+    return false;
   }
 }
 

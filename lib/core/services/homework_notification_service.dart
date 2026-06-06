@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:schoolapp/firebase_options.dart';
 import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 import 'package:schoolapp/routes.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
@@ -28,7 +29,11 @@ const AndroidNotificationChannel _homeworkChannel = AndroidNotificationChannel(
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 }
 
 class HomeworkNotificationService {
@@ -44,10 +49,11 @@ class HomeworkNotificationService {
   bool _initialized = false;
 
   Future<bool> isEnabled() async {
-    final raw = (await SharedPreferencesManager.get(_enabledKey) ?? 'true')
-        .toString()
-        .trim()
-        .toLowerCase();
+    final raw =
+        (await SharedPreferencesManager.get(_enabledKey) ?? 'true')
+            .toString()
+            .trim()
+            .toLowerCase();
     return raw != 'false' && raw != '0';
   }
 
@@ -214,10 +220,14 @@ class HomeworkNotificationService {
     ])) {
       return _typeAttendance;
     }
-    if (_matchesType(type, category, title, _typeActivity, const ['activity'])) {
+    if (_matchesType(type, category, title, _typeActivity, const [
+      'activity',
+    ])) {
       return _typeActivity;
     }
-    if (_matchesType(type, category, title, _typeHomework, const ['homework'])) {
+    if (_matchesType(type, category, title, _typeHomework, const [
+      'homework',
+    ])) {
       return _typeHomework;
     }
     if (_matchesType(type, category, title, _typeReminder, const [
