@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/routes.dart';
@@ -106,6 +107,14 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     20.height,
+                    if (kDebugMode) ...[
+                      ProfileItemWidget(
+                        icon: Icons.bug_report_outlined,
+                        text: 'Notification Debug',
+                        onTap: controller.showNotificationDebug,
+                      ),
+                      20.height,
+                    ],
 
                     // Logout
                     ProfileItemWidget(

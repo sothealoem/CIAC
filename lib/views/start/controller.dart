@@ -214,7 +214,7 @@ class StartController extends GetxController {
   Future<void> fetchUserProfileFromApi() async {
     try {
       final res = await Get.find<ApiService>().get(
-        EndPoints.profile,
+        isParentUser.value ? EndPoints.parentProfile : EndPoints.profile,
         isShowLoading: false,
       );
       final data = getPropertyFromJson(res.data, 'data');

@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/repositories/user.dart';
+import 'package:schoolapp/core/services/fcm_token_sync_service.dart';
 
 class ClassTopicSubscriptionService {
   ClassTopicSubscriptionService._();
@@ -53,6 +54,7 @@ class ClassTopicSubscriptionService {
     }
 
     try {
+      await FcmTokenSyncService.instance.waitForApnsTokenIfNeeded();
       await FirebaseMessaging.instance.subscribeToTopic(nextTopic);
       await SharedPreferencesManager.setValue(_lastTopicKey, nextTopic);
       debugPrint('Subscribed to class topic: $nextTopic');

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart' as d;
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:schoolapp/core/libraries/shared_preferences.dart';
 import 'package:schoolapp/core/resources/resources.dart';
 import 'package:schoolapp/core/services/end_points.dart';
@@ -62,12 +61,14 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
       final fcmToken = await _getFcmToken();
+      final deviceName = _deviceName;
       debugPrint('FCM token: $fcmToken');
 
       final response = await _loginByRole(
         loginIdentity: loginIdentity,
         password: password,
         fcmToken: fcmToken,
+        deviceName: deviceName,
       );
       if (response == null) {
         DialogManager.showDialog(
@@ -241,26 +242,27 @@ class LoginController extends GetxController {
     required String loginIdentity,
     required String password,
     required String fcmToken,
+    required String deviceName,
   }) async {
     if (selectedLoginRole.value == UserType.parent) {
       return _loginWithPhone(
         loginIdentity: loginIdentity,
         password: password,
         fcmToken: fcmToken,
+        deviceName: deviceName,
       );
     }
     return _loginTeacher(
       loginIdentity: loginIdentity,
       password: password,
       fcmToken: fcmToken,
+      deviceName: deviceName,
     );
   }
 
   Future<String> _getFcmToken() async {
     try {
-      return await FirebaseMessaging.instance
-              .getToken()
-              .timeout(const Duration(seconds: 2), onTimeout: () => null) ??
+      return await FcmTokenSyncService.instance.getCurrentToken() ??
           '';
     } catch (_) {
       return '';
@@ -270,6 +272,9 @@ class LoginController extends GetxController {
   Future<void> _postLoginSetup() async {
     try {
       await Future.wait([
+        FcmTokenSyncService.instance.syncCurrentTokenIfAuthenticated(
+          force: true,
+        ),
         ClassTopicSubscriptionService.instance.syncSelectedClassTopic(),
       ]);
 
@@ -287,6 +292,7 @@ class LoginController extends GetxController {
     required String loginIdentity,
     required String password,
     required String fcmToken,
+    required String deviceName,
   }) async {
     final rawPhone = loginIdentity.trim();
     final normalizedPhone = _normalizePhone(loginIdentity);
@@ -305,6 +311,7 @@ class LoginController extends GetxController {
         "username": rawPhone,
         "password": password,
         "fcm_token": fcmToken,
+        "device_name": deviceName,
       },
       if (normalizedPhone != rawPhone)
         {
@@ -313,6 +320,7 @@ class LoginController extends GetxController {
           "username": normalizedPhone,
           "password": password,
           "fcm_token": fcmToken,
+          "device_name": deviceName,
         },
     ];
 
@@ -323,6 +331,7 @@ class LoginController extends GetxController {
     required String loginIdentity,
     required String password,
     required String fcmToken,
+    required String deviceName,
   }) async {
     final attempts = <Map<String, dynamic>>[];
     final rawIdentity = loginIdentity.trim();
@@ -336,6 +345,7 @@ class LoginController extends GetxController {
       "phone_number": rawIdentity,
       "password": password,
       "fcm_token": fcmToken,
+      "device_name": deviceName,
     });
 
     if (_isLikelyPhone(loginIdentity) && normalizedPhone != rawIdentity) {
@@ -345,6 +355,7 @@ class LoginController extends GetxController {
         "phone_number": normalizedPhone,
         "password": password,
         "fcm_token": fcmToken,
+        "device_name": deviceName,
       });
     }
 
@@ -401,6 +412,24 @@ class LoginController extends GetxController {
     }
 
     return bestFailure;
+  }
+
+  String get _deviceName {
+    if (kIsWeb) return 'web';
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return 'android';
+      case TargetPlatform.iOS:
+        return 'ios';
+      case TargetPlatform.macOS:
+        return 'macos';
+      case TargetPlatform.windows:
+        return 'windows';
+      case TargetPlatform.linux:
+        return 'linux';
+      case TargetPlatform.fuchsia:
+        return 'fuchsia';
+    }
   }
 
   bool _preferFailure(dynamic candidate, dynamic current) {

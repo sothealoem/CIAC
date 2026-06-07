@@ -24,6 +24,11 @@ Future<void> main() async {
       print("ENV BASE_URL: ${dotenv.env['BASE_URL']}");
 
       final isFirebaseReady = await _initializeFirebase();
+      if (isFirebaseReady) {
+        FirebaseMessaging.onBackgroundMessage(
+          firebaseMessagingBackgroundHandler,
+        );
+      }
       await _initEnvironment();
       await _setAppSystemPreferences();
       await _initServices();
@@ -36,9 +41,6 @@ Future<void> main() async {
       }
       runApp(const MyApp());
       if (isFirebaseReady) {
-        FirebaseMessaging.onBackgroundMessage(
-          firebaseMessagingBackgroundHandler,
-        );
         unawaited(_bootstrapDeferredServices());
       }
     },

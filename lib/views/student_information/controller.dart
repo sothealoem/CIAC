@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolapp/core/core.dart';
 import 'package:schoolapp/models/student_profile_history/model.dart';
@@ -293,7 +292,7 @@ class StudentInformationController extends GetxController {
     parent_model.Parent? parent;
     try {
       final res = await Get.find<ApiService>().get(
-        EndPoints.profile,
+        EndPoints.parentProfile,
         isShowLoading: false,
       );
       final profile = _profileFromResponse(res.data);

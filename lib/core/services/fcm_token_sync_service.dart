@@ -18,6 +18,7 @@ class FcmTokenSyncService {
   static final FcmTokenSyncService instance = FcmTokenSyncService._();
 
   static const String _lastSyncedTokenKey = 'last_synced_fcm_token';
+  static const bool _backendTokenSyncEndpointEnabled = false;
   static const int _apnsTokenRetries = 6;
   static const Duration _apnsTokenRetryDelay = Duration(seconds: 2);
 
@@ -46,8 +47,7 @@ class FcmTokenSyncService {
 
   Future<void> syncCurrentTokenIfAuthenticated({bool force = false}) async {
     try {
-      await _waitForApnsTokenIfNeeded();
-      final token = await FirebaseMessaging.instance.getToken();
+      final token = await getCurrentToken();
       if (token == null || token.trim().isEmpty) return;
       debugPrint('FCM token: ${token.trim()}');
       await syncToken(token, force: force);
@@ -64,10 +64,29 @@ class FcmTokenSyncService {
     }
   }
 
+  Future<String?> getCurrentToken({
+    Duration timeout = const Duration(seconds: 12),
+  }) async {
+    await waitForApnsTokenIfNeeded();
+    return FirebaseMessaging.instance.getToken().timeout(
+      timeout,
+      onTimeout: () => null,
+    );
+  }
+
   Future<void> syncToken(String token, {bool force = false}) async {
     final normalizedToken = token.trim();
     if (normalizedToken.isEmpty) return;
     debugPrint('FCM token: $normalizedToken');
+
+    if (!_backendTokenSyncEndpointEnabled) {
+      if (kDebugMode) {
+        debugPrint(
+          'FCM token sync endpoint disabled; token is sent during login.',
+        );
+      }
+      return;
+    }
 
     final authToken = await _ensureAccessToken();
     if (authToken.isEmpty) return;
@@ -83,6 +102,7 @@ class FcmTokenSyncService {
       await api.post(EndPoints.registerFcmToken, {
         'fcm_token': normalizedToken,
         'platform': _platformName,
+        'device_name': _platformName,
       });
       await SharedPreferencesManager.setValue(
         _lastSyncedTokenKey,
@@ -142,7 +162,7 @@ class FcmTokenSyncService {
         error.code == 'apns-token-not-set';
   }
 
-  Future<void> _waitForApnsTokenIfNeeded() async {
+  Future<void> waitForApnsTokenIfNeeded() async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) {
       return;
     }
@@ -150,9 +170,14 @@ class FcmTokenSyncService {
     for (var attempt = 0; attempt < _apnsTokenRetries; attempt++) {
       final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
       if (apnsToken != null && apnsToken.trim().isNotEmpty) {
+        debugPrint('APNS token: ${apnsToken.trim()}');
         return;
       }
       await Future<void>.delayed(_apnsTokenRetryDelay);
+    }
+
+    if (kDebugMode) {
+      debugPrint('APNS token is still not ready after waiting.');
     }
   }
 }
