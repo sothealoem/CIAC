@@ -175,7 +175,7 @@ class HomeworkNotificationService {
     await _localNotifications.show(
       message.hashCode,
       message.notification?.title ??
-          message.data['title']?.toString() ??
+          message.data['title']?.toString() ?? 
           _defaultTitle(notificationType),
       message.notification?.body ??
           message.data['body']?.toString() ??

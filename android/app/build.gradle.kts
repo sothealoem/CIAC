@@ -46,13 +46,14 @@ android {
         coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     }
     signingConfigs {
-        if (hasReleaseKeystore) {
-            create("release") {
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-                storePassword = keystoreProperties.getProperty("storePassword")
+        create("release") {
+            if (!hasReleaseKeystore) {
+                throw GradleException("Release signing is not configured. Create android/key.properties with keyAlias, keyPassword, storeFile, and storePassword.")
             }
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = keystoreProperties.getProperty("storeFile")?.let { rootProject.file(it) }
+            storePassword = keystoreProperties.getProperty("storePassword")
         }
     }
 
@@ -71,11 +72,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (hasReleaseKeystore) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
