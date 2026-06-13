@@ -5,6 +5,7 @@ class _AssignHomeworkPanel extends StatefulWidget {
     this.id,
     this.title,
     this.description,
+    this.classId,
     this.className,
     this.deadline,
     this.attachmentUrl,
@@ -16,6 +17,7 @@ class _AssignHomeworkPanel extends StatefulWidget {
   final String? id;
   final String? title;
   final String? description;
+  final int? classId;
   final String? className;
   final String? deadline;
   final String? attachmentUrl;
@@ -31,7 +33,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
   late final TextEditingController _titleCtl;
   late final TextEditingController _descriptionCtl;
   late final TextEditingController _deadlineCtl;
-  String _selectedClass = '';
+  int? _selectedClassId;
   String _selectedAttachmentPath = '';
   String _selectedAttachmentName = '';
   Uint8List? _selectedAttachmentBytes;
@@ -42,7 +44,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     _titleCtl = TextEditingController(text: widget.title ?? '');
     _descriptionCtl = TextEditingController(text: widget.description ?? '');
     _deadlineCtl = TextEditingController(text: widget.deadline ?? '');
-    _selectedClass = (widget.className ?? '').trim();
+    _selectedClassId = widget.classId;
   }
 
   @override
@@ -58,21 +60,36 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     final controller = Get.find<HomeworkController>();
     final existingAttachment = (widget.attachmentUrl ?? '').trim();
     return Obx(() {
-      final classOptions = <String>[
-        ...controller.teacherClassOptions
-            .map((option) => option.name)
-            .where((name) => name.trim().isNotEmpty),
-      ];
-      final selectedValue =
-          classOptions.contains(_selectedClass)
-              ? _selectedClass
-              : classOptions.isNotEmpty
-              ? classOptions.first
-              : '';
-      if (_selectedClass != selectedValue) {
+      if (controller.teacherClassOptions.isEmpty &&
+          !controller.isTeacherClassOptionsLoading.value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.fetchTeacherClassOptions();
+        });
+      }
+      final classOptions = <int, HomeworkClassOption>{};
+      for (final option in controller.teacherClassOptions) {
+        final id = option.id;
+        if (id == null || id <= 0 || option.name.trim().isEmpty) continue;
+        classOptions[id] = option;
+      }
+      final options = classOptions.values.toList(growable: false);
+      final initialClassName = (widget.className ?? '').trim().toLowerCase();
+      final selectedId =
+          _selectedClassId != null && classOptions.containsKey(_selectedClassId)
+              ? _selectedClassId
+              : (initialClassName.isNotEmpty
+                  ? options
+                      .firstWhereOrNull(
+                        (option) =>
+                            option.name.trim().toLowerCase() ==
+                            initialClassName,
+                      )
+                      ?.id
+                  : null);
+      if (_selectedClassId != selectedId) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
-          setState(() => _selectedClass = selectedValue);
+          setState(() => _selectedClassId = selectedId);
         });
       }
 
@@ -83,16 +100,17 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           _FieldLabel(title: LocaleKeys.onlineClassSelectClass.tr),
           const SizedBox(height: 8),
           _ClassDropdownField(
-            value: selectedValue,
-            options: classOptions,
-            onChanged: (value) => setState(() => _selectedClass = value),
+            value: selectedId,
+            options: options,
+            isEnabled: !controller.isSubmittingAssignment.value,
+            onChanged: (value) => setState(() => _selectedClassId = value),
           ),
-          if (classOptions.isEmpty) ...[
+          if (options.isEmpty) ...[
             const SizedBox(height: 8),
             Text(
               controller.isTeacherClassOptionsLoading.value
-                  ? 'Loading class list...'
-                  : 'No class list available yet.',
+                  ? LocaleKeys.onlineClassLoadingClassList.tr
+                  : LocaleKeys.onlineClassNoClassAvailableYet.tr,
               style: AppTextStyle.smallGreyRegular.copyWith(
                 color: _homeworkMutedText,
               ),
@@ -103,7 +121,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           const SizedBox(height: 8),
           _StaticInput(
             icon: Icons.title_rounded,
-            label: 'Enter homework title',
+            label: LocaleKeys.onlineClassEnterHomeworkTitle.tr,
             controller: _titleCtl,
           ),
           const SizedBox(height: 22),
@@ -111,7 +129,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           const SizedBox(height: 8),
           _StaticInput(
             icon: Icons.notes_rounded,
-            label: 'Enter instruction or description',
+            label: LocaleKeys.onlineClassEnterHomeworkDescription.tr,
             minHeight: 78,
             controller: _descriptionCtl,
           ),
@@ -127,7 +145,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
                   icon: Icons.attach_file_rounded,
                   label:
                       _selectedAttachmentName.isEmpty
-                          ? 'Upload picture or PDF'
+                          ? LocaleKeys.onlineClassUploadPictureOrPdf.tr
                           : _selectedAttachmentName,
                   onPressed: _pickAttachment,
                 ),
@@ -184,7 +202,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
                           : const Icon(Icons.send_rounded, size: 22),
                   label: Text(
                     controller.isSubmittingAssignment.value
-                        ? 'Submitting...'
+                        ? LocaleKeys.onlineClassSubmitting.tr
                         : LocaleKeys.submit.tr,
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
@@ -218,17 +236,13 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     }
 
     final controller = Get.find<HomeworkController>();
-    HomeworkClassOption? selectedOption;
-    for (final option in controller.teacherClassOptions) {
-      if (option.name == _selectedClass) {
-        selectedOption = option;
-        break;
-      }
-    }
+    final selectedOption = controller.teacherClassOptions.firstWhereOrNull(
+      (option) => option.id == _selectedClassId,
+    );
     if (selectedOption == null) {
       Get.snackbar(
         LocaleKeys.error.tr,
-        'Please select a class.',
+        LocaleKeys.onlineClassPleaseSelectClass.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -237,7 +251,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
     if (selectedOption.id == null || selectedOption.id! <= 0) {
       Get.snackbar(
         LocaleKeys.error.tr,
-        'This class is missing its class ID.',
+        LocaleKeys.onlineClassMissingClassId.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -250,7 +264,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
         item = await controller.createAssignment(
           title: title,
           classId: selectedOption.id,
-          className: _selectedClass,
+          className: selectedOption.name,
           deadline: _deadlineCtl.text,
           description: _descriptionCtl.text.trim(),
           attachmentPath: _selectedAttachmentPath,
@@ -260,7 +274,7 @@ class _AssignHomeworkPanelState extends State<_AssignHomeworkPanel> {
           id: widget.id ?? '',
           classId: selectedOption.id,
           title: title,
-          className: _selectedClass,
+          className: selectedOption.name,
           deadline: _deadlineCtl.text,
           description: _descriptionCtl.text.trim(),
           submitted: widget.submitted,
@@ -417,7 +431,8 @@ class _ClassDetailPanel extends StatelessWidget {
             _DashboardClassDropdown(
               options: controller.teacherDashboardClassLabels,
               isLoading: isLoading,
-              selectedIndex: controller.selectedTeacherDashboardClassIndex.value,
+              selectedIndex:
+                  controller.selectedTeacherDashboardClassIndex.value,
               onChanged: (index) {
                 controller.selectedTeacherDashboardClassIndex.value = index;
               },
@@ -608,26 +623,25 @@ class _AllAssignedHomeworkPanel extends GetView<HomeworkController> {
                       ),
                     ),
                   ),
-              onEdit:
-                  () async {
-                    HomeworkAssignment editItem = item;
-                    try {
-                      final detail = await controller.fetchTeacherHomeworkDetail(
-                        item.id,
-                      );
-                      editItem = detail.assignment;
-                    } catch (_) {}
+              onEdit: () async {
+                HomeworkAssignment editItem = item;
+                try {
+                  final detail = await controller.fetchTeacherHomeworkDetail(
+                    item.id,
+                  );
+                  editItem = detail.assignment;
+                } catch (_) {}
 
-                    if (!context.mounted) return;
-                    Navigator.of(context).push(
-                      _homeworkRoute(
-                        _TeacherActionDetailScreen(
-                          title: LocaleKeys.onlineClassEdit.tr,
-                          child: _AssignedHomeworkEditPanel(item: editItem),
-                        ),
-                      ),
-                    );
-                  },
+                if (!context.mounted) return;
+                Navigator.of(context).push(
+                  _homeworkRoute(
+                    _TeacherActionDetailScreen(
+                      title: LocaleKeys.onlineClassEdit.tr,
+                      child: _AssignedHomeworkEditPanel(item: editItem),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           if (controller.hasMoreTeacherHomeworkPages ||
@@ -861,7 +875,9 @@ class _AssignedHomeworkDetailPanelState
         final pendingCount =
             pendingCountFromStudents > 0
                 ? pendingCountFromStudents
-                : (item.total > submittedCount ? item.total - submittedCount : 0);
+                : (item.total > submittedCount
+                    ? item.total - submittedCount
+                    : 0);
         final filtered =
             detail.students
                 .where(
@@ -967,6 +983,7 @@ class _AssignedHomeworkEditPanel extends StatelessWidget {
       id: item.id,
       title: item.title,
       description: item.description,
+      classId: item.classId,
       className: item.className,
       deadline: item.deadline,
       attachmentUrl: item.attachmentUrl,
@@ -1333,7 +1350,7 @@ class _AssignedHomeworkAttendanceCard extends StatelessWidget {
         Text(
           '$label: ',
           style: TextStyle(
-              fontFamily: AppFontFamily.forText(label),
+            fontFamily: AppFontFamily.forText(label),
             fontWeight: FontWeight.w700,
             fontSize: 13,
           ),
@@ -1583,89 +1600,87 @@ class _ClassDropdownField extends StatelessWidget {
   const _ClassDropdownField({
     required this.value,
     required this.options,
+    required this.isEnabled,
     required this.onChanged,
   });
 
-  final String value;
-  final List<String> options;
-  final ValueChanged<String> onChanged;
+  final int? value;
+  final List<HomeworkClassOption> options;
+  final bool isEnabled;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final options =
-        LinkedHashSet<String>.from(
-          this.options.where((option) => option.trim().isNotEmpty),
-        ).toList();
+    final options = <int, HomeworkClassOption>{};
+    for (final option in this.options) {
+      final id = option.id;
+      if (id == null || id <= 0 || option.name.trim().isEmpty) continue;
+      options[id] = option;
+    }
+    final items = options.values.toList(growable: false);
     final selectedValue =
-        options.contains(value)
-            ? value
-            : options.isNotEmpty
-            ? options.first
-            : LocaleKeys.classLabel.tr;
+        value != null && options.containsKey(value) ? value : null;
 
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 48),
-        padding: const EdgeInsets.only(right: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _onlineClassBorder),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 48,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFF7F8),
-                border: Border(right: BorderSide(color: _onlineClassBorder)),
-              ),
-              child: const Icon(
-                Icons.bookmark_rounded,
-                color: _onlineClassAccent,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: options.isEmpty ? null : selectedValue,
-                  isExpanded: true,
-                  borderRadius: BorderRadius.circular(12),
-                  dropdownColor: Colors.white,
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppColor.darkGrey,
-                  ),
-                  style: AppTextStyle.normalPrimaryRegular,
-                  items:
-                      options
-                          .map(
-                            (option) => DropdownMenuItem<String>(
-                              value: option,
-                              child: Text(
-                                option,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged:
-                      options.isEmpty
-                          ? null
-                          : (selected) {
-                            if (selected != null) onChanged(selected);
-                          },
-                ),
-              ),
-            ),
-          ],
-        ),
+    return DropdownButtonFormField<int>(
+      key: ValueKey<int?>(selectedValue),
+      initialValue: selectedValue,
+      decoration: _fieldDecoration(
+        hintText: LocaleKeys.onlineClassSelectClass.tr,
+        prefixIcon: Icons.groups_rounded,
       ),
+      isExpanded: true,
+      dropdownColor: Colors.white,
+      items: items
+          .map(
+            (option) => DropdownMenuItem<int>(
+              value: option.id,
+              child: Text(
+                option.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          )
+          .toList(growable: false),
+      onChanged:
+          items.isEmpty || !isEnabled
+              ? null
+              : (selected) {
+                if (selected != null) onChanged(selected);
+              },
+      disabledHint: Text(
+        items.isEmpty
+            ? LocaleKeys.onlineClassNoClassAvailable.tr
+            : LocaleKeys.onlineClassSelectClass.tr,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  InputDecoration _fieldDecoration({
+    required String hintText,
+    required IconData prefixIcon,
+  }) {
+    return InputDecoration(
+      hintText: hintText,
+      filled: true,
+      fillColor: const Color(0xFFF9FBFB),
+      prefixIcon: Icon(prefixIcon, color: _onlineClassAccent, size: 20),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: _onlineClassBorder),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: _onlineClassBorder),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: _onlineClassAccent, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
   }
 }

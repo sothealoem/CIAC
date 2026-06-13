@@ -77,7 +77,11 @@ class ContactUsView extends GetView<ContactUsController> {
                     child: _actionBtn(
                       icon: Icons.map_outlined,
                       label: LocaleKeys.openMap.tr,
-                      onTap: () => UrlLauncherManager.launch(mapUrl),
+                      onTap:
+                          () => UrlLauncherManager.openMap(
+                            address: address,
+                            mapUrl: mapUrl,
+                          ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -140,8 +144,14 @@ class ContactUsView extends GetView<ContactUsController> {
             color: _softRed,
             borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
             child: InkWell(
-              borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
-              onTap: () => UrlLauncherManager.launch(mapUrl),
+              borderRadius: BorderRadius.circular(
+                UIConstants.radius.toDouble(),
+              ),
+              onTap:
+                  () => UrlLauncherManager.openMap(
+                    address: address,
+                    mapUrl: mapUrl,
+                  ),
               child: SizedBox(
                 height: UIConstants.btnHeight,
                 width: double.infinity,
@@ -190,7 +200,9 @@ class ContactUsView extends GetView<ContactUsController> {
                 height: 50,
                 decoration: BoxDecoration(
                   color: _softRed,
-                  borderRadius: BorderRadius.circular(UIConstants.radius.toDouble()),
+                  borderRadius: BorderRadius.circular(
+                    UIConstants.radius.toDouble(),
+                  ),
                 ),
                 child: Icon(icon, color: _accentRed, size: 28),
               ),

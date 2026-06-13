@@ -41,14 +41,12 @@ class HomeworkController extends GetxController {
   int get pendingAssignments => totalAssignments - submittedAssignments;
   double get homeworkProgress =>
       totalAssignments == 0 ? 0 : submittedAssignments / totalAssignments;
-  List<HomeworkAssignment> get pendingHomeworkItems =>
-      assignedHomeworkItems
-          .where((item) => !submittedAssignmentIds.contains(item.id))
-          .toList(growable: false);
-  List<HomeworkAssignment> get submittedHomeworkItems =>
-      assignedHomeworkItems
-          .where((item) => submittedAssignmentIds.contains(item.id))
-          .toList(growable: false);
+  List<HomeworkAssignment> get pendingHomeworkItems => assignedHomeworkItems
+      .where((item) => !submittedAssignmentIds.contains(item.id))
+      .toList(growable: false);
+  List<HomeworkAssignment> get submittedHomeworkItems => assignedHomeworkItems
+      .where((item) => submittedAssignmentIds.contains(item.id))
+      .toList(growable: false);
 
   @override
   void onInit() {
@@ -132,11 +130,18 @@ class HomeworkController extends GetxController {
             ((row['id'] ?? row['homework_id'] ?? '').toString().trim()),
       }..removeWhere((id) => id.isEmpty);
 
-      final validIds = items.map((item) => item.id.trim()).where((id) => id.isNotEmpty).toSet();
+      final validIds =
+          items
+              .map((item) => item.id.trim())
+              .where((id) => id.isNotEmpty)
+              .toSet();
       submittedAssignmentIds
         ..clear()
         ..addAll(refreshedSubmittedIds.where(validIds.contains));
-      await _saveSubmittedHomeworkIds(selectedStudentId, submittedAssignmentIds);
+      await _saveSubmittedHomeworkIds(
+        selectedStudentId,
+        submittedAssignmentIds,
+      );
       await _refreshParentHomeworkNotification(selectedStudentId);
     } catch (e) {
       print('Student homework debug -> fetch error: $e');
@@ -290,9 +295,12 @@ class HomeworkController extends GetxController {
       teacherHomeworkTotal.value =
           (rawData['total'] as num?)?.toInt() ?? rows.length;
 
-      final parsed =
-          rows.whereType<Map>().map((row) {
-            final assignment = _assignmentFromApi(Map<String, dynamic>.from(row));
+      final parsed = rows
+          .whereType<Map>()
+          .map((row) {
+            final assignment = _assignmentFromApi(
+              Map<String, dynamic>.from(row),
+            );
             final existing = assignedHomeworkItems.firstWhereOrNull(
               (item) => item.id == assignment.id,
             );
@@ -300,7 +308,8 @@ class HomeworkController extends GetxController {
               return assignment;
             }
             return assignment.copyWith(attachmentUrls: existing.attachmentUrls);
-          }).toList(growable: false);
+          })
+          .toList(growable: false);
 
       if (reset) {
         assignedHomeworkItems.assignAll(parsed);
@@ -308,7 +317,9 @@ class HomeworkController extends GetxController {
         assignedHomeworkItems.addAll(
           parsed.where(
             (item) =>
-                !assignedHomeworkItems.any((existing) => existing.id == item.id),
+                !assignedHomeworkItems.any(
+                  (existing) => existing.id == item.id,
+                ),
           ),
         );
       }
@@ -317,7 +328,6 @@ class HomeworkController extends GetxController {
     } catch (e) {
       if (reset) {
         assignedHomeworkItems.clear();
-        teacherClassOptions.clear();
       }
       ExceptionHandler.handleException(e, alert: false);
     } finally {
@@ -417,6 +427,10 @@ class HomeworkController extends GetxController {
     final trimmedDescription = description.trim();
     final trimmedDeadline = deadline.trim();
     final trimmedAttachmentPath = attachmentPath.trim();
+    final teacherId = await _resolveTeacherId();
+    if (teacherId.isEmpty) {
+      throw Exception('Teacher ID not found');
+    }
 
     final localItem = buildAssignment(
       title: trimmedTitle,
@@ -432,6 +446,7 @@ class HomeworkController extends GetxController {
 
     final formMap = <String, dynamic>{
       'class_id': classId,
+      'teacher_id': int.tryParse(teacherId) ?? teacherId,
       'title': trimmedTitle,
       'description': trimmedDescription,
       'due_date': _deadlineForApi(trimmedDeadline),
@@ -444,7 +459,7 @@ class HomeworkController extends GetxController {
     try {
       isSubmittingAssignment.value = true;
       print(
-        'Teacher homework create debug -> classId: $classId, '
+        'Teacher homework create debug -> teacherId: $teacherId, classId: $classId, '
         'title: $trimmedTitle, due_date: ${_deadlineForApi(trimmedDeadline)}, '
         'attachmentPath: $trimmedAttachmentPath',
       );
@@ -526,6 +541,10 @@ class HomeworkController extends GetxController {
     final trimmedDescription = description.trim();
     final trimmedDeadline = deadline.trim();
     final trimmedAttachmentPath = attachmentPath.trim();
+    final teacherId = await _resolveTeacherId();
+    if (teacherId.isEmpty) {
+      throw Exception('Teacher ID not found');
+    }
 
     final localItem = buildAssignment(
       id: trimmedId,
@@ -544,6 +563,7 @@ class HomeworkController extends GetxController {
 
     final formMap = <String, dynamic>{
       'class_id': classId,
+      'teacher_id': int.tryParse(teacherId) ?? teacherId,
       'title': trimmedTitle,
       'description': trimmedDescription,
       'due_date': _deadlineForApi(trimmedDeadline),
@@ -556,7 +576,7 @@ class HomeworkController extends GetxController {
     try {
       isSubmittingAssignment.value = true;
       print(
-        'Teacher homework update debug -> id: $trimmedId, classId: $classId, '
+        'Teacher homework update debug -> id: $trimmedId, teacherId: $teacherId, classId: $classId, '
         'title: $trimmedTitle, due_date: ${_deadlineForApi(trimmedDeadline)}, '
         'attachmentPath: $trimmedAttachmentPath',
       );
@@ -694,9 +714,8 @@ class HomeworkController extends GetxController {
         'file_path: $trimmedAttachmentPath',
       );
       if (hasAttachment) {
-        final extension = File(
-          trimmedAttachmentPath,
-        ).path.split('.').last.toLowerCase();
+        final extension =
+            File(trimmedAttachmentPath).path.split('.').last.toLowerCase();
         final mediaType = switch (extension) {
           'jpg' || 'jpeg' => MediaType('image', 'jpeg'),
           'png' => MediaType('image', 'png'),
@@ -779,7 +798,9 @@ class HomeworkController extends GetxController {
         'homework_id': int.tryParse(trimmedHomeworkId) ?? trimmedHomeworkId,
         'answer_text': answerText.trim(),
         'submitted_by': int.tryParse(teacherId) ?? teacherId,
-        'student_id': <dynamic>[int.tryParse(trimmedStudentId) ?? trimmedStudentId],
+        'student_id': <dynamic>[
+          int.tryParse(trimmedStudentId) ?? trimmedStudentId,
+        ],
       };
       print('Teacher submit homework debug -> payload: $payload');
       final res = await Get.find<ApiService>().post(
@@ -1096,7 +1117,6 @@ class HomeworkController extends GetxController {
         .trim();
   }
 
-
   Future<String> _resolveStudentClassName() async {
     if (Get.isRegistered<SelectedStudentService>()) {
       final selectedClassName =
@@ -1196,7 +1216,10 @@ class HomeworkController extends GetxController {
     return _findClassId(raw);
   }
 
-  String _findClassNameForSelectedStudent(dynamic raw, String selectedStudentId) {
+  String _findClassNameForSelectedStudent(
+    dynamic raw,
+    String selectedStudentId,
+  ) {
     if (raw is! Map) {
       return '';
     }
@@ -1280,6 +1303,18 @@ class HomeworkController extends GetxController {
       }
     }
 
+    final rawClass = map['class'];
+    if (rawClass is Map) {
+      final nested = Map<String, dynamic>.from(rawClass);
+      final nestedId = nested['id'] ?? nested['class_id'] ?? nested['classId'];
+      if (nestedId is int) return nestedId;
+      if (nestedId is num) return nestedId.toInt();
+      if (nestedId != null) {
+        final parsed = int.tryParse(nestedId.toString().trim());
+        if (parsed != null) return parsed;
+      }
+    }
+
     for (final value in map.values) {
       final classId = _findClassId(value);
       if (classId != null) {
@@ -1290,11 +1325,12 @@ class HomeworkController extends GetxController {
   }
 
   String _readHomeworkClassName(Map<String, dynamic> map, String fallback) {
-    final direct = _readText(
-      map,
-      const ['class_name', 'class', 'grade', 'grade_name'],
-      '',
-    );
+    final direct = _readText(map, const [
+      'class_name',
+      'class',
+      'grade',
+      'grade_name',
+    ], '');
     final directLower = direct.toLowerCase();
     if (direct.isNotEmpty &&
         direct != '{}' &&
@@ -1308,20 +1344,22 @@ class HomeworkController extends GetxController {
 
     final rawClass = map['class'];
     if (rawClass is Map<String, dynamic>) {
-      final nested = _readText(
-        rawClass,
-        const ['name', 'class_name', 'title', 'label'],
-        '',
-      );
+      final nested = _readText(rawClass, const [
+        'name',
+        'class_name',
+        'title',
+        'label',
+      ], '');
       if (nested.isNotEmpty) {
         return nested;
       }
     } else if (rawClass is Map) {
-      final nested = _readText(
-        Map<String, dynamic>.from(rawClass),
-        const ['name', 'class_name', 'title', 'label'],
-        '',
-      );
+      final nested = _readText(Map<String, dynamic>.from(rawClass), const [
+        'name',
+        'class_name',
+        'title',
+        'label',
+      ], '');
       if (nested.isNotEmpty) {
         return nested;
       }
@@ -1370,9 +1408,7 @@ class HomeworkController extends GetxController {
     ];
     for (final key in statusKeys) {
       final text = (map[key] ?? '').toString().trim().toLowerCase();
-      if (text.contains('submit') ||
-          text == 'done' ||
-          text == 'completed') {
+      if (text.contains('submit') || text == 'done' || text == 'completed') {
         return true;
       }
       if (text.contains('pending') || text.contains('not submit')) {
@@ -1384,13 +1420,16 @@ class HomeworkController extends GetxController {
   }
 
   String _submittedHomeworkCacheKey(String studentId) {
-    final safeStudentId = studentId.trim().isEmpty ? 'default' : studentId.trim();
+    final safeStudentId =
+        studentId.trim().isEmpty ? 'default' : studentId.trim();
     return 'submitted_homework_ids_$safeStudentId';
   }
 
   Future<Set<String>> _loadSubmittedHomeworkIds(String studentId) async {
     final raw =
-        (await SharedPreferencesManager.get(_submittedHomeworkCacheKey(studentId)) ??
+        (await SharedPreferencesManager.get(
+                  _submittedHomeworkCacheKey(studentId),
+                ) ??
                 '')
             .toString()
             .trim();
@@ -1408,12 +1447,13 @@ class HomeworkController extends GetxController {
     String studentId,
     Iterable<String> ids,
   ) async {
-    final normalized = ids
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final normalized =
+        ids
+            .map((item) => item.trim())
+            .where((item) => item.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
     await SharedPreferencesManager.setValue(
       _submittedHomeworkCacheKey(studentId),
       normalized.join(','),
@@ -1421,13 +1461,23 @@ class HomeworkController extends GetxController {
   }
 
   HomeworkClassOption? _classOptionFromApiMap(Map<String, dynamic> map) {
-    final classId = _readInt(map, const ['id', 'class_id', 'classId']);
-    final className = _readText(
-      map,
-      const ['class_name', 'name', 'class', 'grade', 'grade_name'],
-      '',
-    ).trim();
-    if (classId <= 0 || className.isEmpty) {
+    final directClassId = _readInt(map, const ['id', 'class_id', 'classId']);
+    final classId = directClassId > 0 ? directClassId : _findClassId(map);
+    var className =
+        _readText(map, const [
+          'class_name',
+          'name',
+          'class',
+          'grade',
+          'grade_name',
+        ], '').trim();
+    if (className.startsWith('{') || className.toLowerCase() == 'null') {
+      className = _readHomeworkClassName(map, '').trim();
+    }
+    if (classId == null ||
+        classId <= 0 ||
+        className.isEmpty ||
+        className.toLowerCase() == 'n/a') {
       return null;
     }
     return HomeworkClassOption(id: classId, name: className);
@@ -1443,7 +1493,9 @@ class HomeworkController extends GetxController {
   Future<void> _refreshParentHomeworkNotification(String studentId) async {
     final currentIds = _currentHomeworkIds();
     final seenIds = await _loadSeenHomeworkIds(studentId);
-    hasHomeworkNotification.value = currentIds.any((id) => !seenIds.contains(id));
+    hasHomeworkNotification.value = currentIds.any(
+      (id) => !seenIds.contains(id),
+    );
   }
 
   Future<void> _refreshTeacherHomeworkNotification() async {
@@ -1469,13 +1521,15 @@ class HomeworkController extends GetxController {
   }
 
   String _seenHomeworkIdsKey(String studentId) {
-    final safeStudentId = studentId.trim().isEmpty ? 'default' : studentId.trim();
+    final safeStudentId =
+        studentId.trim().isEmpty ? 'default' : studentId.trim();
     return 'seen_homework_ids_$safeStudentId';
   }
 
   Future<Set<String>> _loadSeenHomeworkIds(String studentId) async {
     final raw =
-        (await SharedPreferencesManager.get(_seenHomeworkIdsKey(studentId)) ?? '')
+        (await SharedPreferencesManager.get(_seenHomeworkIdsKey(studentId)) ??
+                '')
             .toString()
             .trim();
     if (raw.isEmpty) {
@@ -1492,12 +1546,13 @@ class HomeworkController extends GetxController {
     String studentId,
     Iterable<String> ids,
   ) async {
-    final normalized = ids
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final normalized =
+        ids
+            .map((item) => item.trim())
+            .where((item) => item.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
     await SharedPreferencesManager.setValue(
       _seenHomeworkIdsKey(studentId),
       normalized.join(','),
@@ -1510,7 +1565,9 @@ class HomeworkController extends GetxController {
 
   Future<Map<String, int>> _loadSeenTeacherSubmissionCounts() async {
     final raw =
-        (await SharedPreferencesManager.get(_seenTeacherSubmissionCountsKey()) ??
+        (await SharedPreferencesManager.get(
+                  _seenTeacherSubmissionCountsKey(),
+                ) ??
                 '')
             .toString()
             .trim();
@@ -1627,6 +1684,7 @@ class HomeworkSubmissionStudent {
       }
       return fallback;
     }
+
     final status =
         firstText(const [
           'status',
@@ -1635,30 +1693,27 @@ class HomeworkSubmissionStudent {
         ], 'pending').toLowerCase();
     final firstName = firstText(const ['firstname', 'first_name']);
     final lastName = firstText(const ['lastname', 'last_name']);
-    final fullNameFromParts = [firstName, lastName]
-        .where((part) => part.trim().isNotEmpty)
-        .join(' ')
-        .trim();
+    final fullNameFromParts =
+        [
+          firstName,
+          lastName,
+        ].where((part) => part.trim().isNotEmpty).join(' ').trim();
 
     return HomeworkSubmissionStudent(
-      id: firstText(const [
-        'student_id',
-        'id',
-        'user_id',
-        'admission_id',
-      ]),
-      name: fullNameFromParts.isNotEmpty
-          ? fullNameFromParts
-          : firstText(const [
-              'name',
-              'student_name',
-              'fullname',
-              'full_name',
-              'fullname_english',
-              'fullname_khmer',
-              'firstname',
-              'first_name',
-            ], 'Student'),
+      id: firstText(const ['student_id', 'id', 'user_id', 'admission_id']),
+      name:
+          fullNameFromParts.isNotEmpty
+              ? fullNameFromParts
+              : firstText(const [
+                'name',
+                'student_name',
+                'fullname',
+                'full_name',
+                'fullname_english',
+                'fullname_khmer',
+                'firstname',
+                'first_name',
+              ], 'Student'),
       status: status.contains('submit') ? 'submitted' : 'pending',
     );
   }

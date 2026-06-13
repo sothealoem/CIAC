@@ -1,4 +1,4 @@
-﻿class AppTranslation {
+class AppTranslation {
   static Map<String, Map<String, String>> translations = {
     'EN_US': Locales.EN_US,
     'KM_KH': Locales.KM_KH,
@@ -361,12 +361,22 @@ class LocaleKeys {
       'onlineClassActionNotifications';
   static const onlineClassActionMessages = 'onlineClassActionMessages';
   static const onlineClassSelectClass = 'onlineClassSelectClass';
+  static const onlineClassLoadingClassList = 'onlineClassLoadingClassList';
+  static const onlineClassNoClassAvailable = 'onlineClassNoClassAvailable';
+  static const onlineClassNoClassAvailableYet =
+      'onlineClassNoClassAvailableYet';
+  static const onlineClassPleaseSelectClass = 'onlineClassPleaseSelectClass';
+  static const onlineClassMissingClassId = 'onlineClassMissingClassId';
   static const onlineClassStudentList = 'onlineClassStudentList';
   static const onlineClassHomeworkTitle = 'onlineClassHomeworkTitle';
+  static const onlineClassEnterHomeworkTitle = 'onlineClassEnterHomeworkTitle';
   static const onlineClassHomeworkDescription =
       'onlineClassHomeworkDescription';
+  static const onlineClassEnterHomeworkDescription =
+      'onlineClassEnterHomeworkDescription';
   static const onlineClassUploadFile = 'onlineClassUploadFile';
   static const onlineClassUploadPicture = 'onlineClassUploadPicture';
+  static const onlineClassUploadPictureOrPdf = 'onlineClassUploadPictureOrPdf';
   static const onlineClassMessageToStudents = 'onlineClassMessageToStudents';
   static const onlineClassNotificationStudents =
       'onlineClassNotificationStudents';
@@ -934,11 +944,19 @@ class Locales {
     'onlineClassActionNotifications': 'Notifications',
     'onlineClassActionMessages': 'Messages',
     'onlineClassSelectClass': 'Select class',
+    'onlineClassLoadingClassList': 'Loading class list...',
+    'onlineClassNoClassAvailable': 'No class available',
+    'onlineClassNoClassAvailableYet': 'No class list available yet.',
+    'onlineClassPleaseSelectClass': 'Please select a class.',
+    'onlineClassMissingClassId': 'This class is missing its class ID.',
     'onlineClassStudentList': 'Student list',
     'onlineClassHomeworkTitle': 'Homework:',
+    'onlineClassEnterHomeworkTitle': 'Enter homework title',
     'onlineClassHomeworkDescription': 'Homework instruction or description',
+    'onlineClassEnterHomeworkDescription': 'Enter instruction or description',
     'onlineClassUploadFile': 'Upload file',
     'onlineClassUploadPicture': 'Upload picture',
+    'onlineClassUploadPictureOrPdf': 'Upload picture or PDF',
     'onlineClassMessageToStudents': 'Message to students',
     'onlineClassNotificationStudents': 'Show students who will receive this',
     'onlineClassAllStudentSubmissions': 'All student submissions',
@@ -1350,11 +1368,19 @@ class Locales {
     'onlineClassActionNotifications': 'ការជូនដំណឹង',
     'onlineClassActionMessages': 'សារ',
     'onlineClassSelectClass': 'ជ្រើសរើសថ្នាក់',
+    'onlineClassLoadingClassList': 'កំពុងផ្ទុកបញ្ជីថ្នាក់...',
+    'onlineClassNoClassAvailable': 'មិនមានថ្នាក់',
+    'onlineClassNoClassAvailableYet': 'មិនទាន់មានបញ្ជីថ្នាក់ទេ។',
+    'onlineClassPleaseSelectClass': 'សូមជ្រើសរើសថ្នាក់។',
+    'onlineClassMissingClassId': 'ថ្នាក់នេះមិនមានលេខសម្គាល់ថ្នាក់ទេ។',
     'onlineClassStudentList': 'បញ្ជីសិស្ស',
     'onlineClassHomeworkTitle': 'កិច្ចការផ្ទះ:',
+    'onlineClassEnterHomeworkTitle': 'បញ្ចូលចំណងជើងកិច្ចការផ្ទះ',
     'onlineClassHomeworkDescription': 'សេចក្តីណែនាំ ឬការពិពណ៌នាកិច្ចការផ្ទះ',
+    'onlineClassEnterHomeworkDescription': 'បញ្ចូលសេចក្តីណែនាំ ឬការពិពណ៌នា',
     'onlineClassUploadFile': 'បញ្ចូលឯកសារ',
     'onlineClassUploadPicture': 'បញ្ចូលរូបភាព',
+    'onlineClassUploadPictureOrPdf': 'បញ្ចូលរូបភាព ឬ PDF',
     'onlineClassMessageToStudents': 'សារទៅកាន់សិស្ស',
     'onlineClassNotificationStudents': 'បង្ហាញសិស្សដែលនឹងទទួលបានសារ',
     'onlineClassAllStudentSubmissions': 'ការបញ្ជូនរបស់សិស្សទាំងអស់',
